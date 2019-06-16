@@ -1,0 +1,425 @@
+m4_changequote([[, ]])
+
+##################################################
+## "build" stage
+##################################################
+
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:18.04]], [[FROM docker.io/ubuntu:18.04]]) AS build
+m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
+
+# Install system packages
+RUN export DEBIAN_FRONTEND=noninteractive \
+	# Remove Canonical's "partner" repository
+	&& sed -i '/archive\.canonical\.com/d;' /etc/apt/sources.list \
+	# Uncomment source packages repositories
+	&& sed -i 's/^#\s*\(deb-src\s\)/\1/g' /etc/apt/sources.list \
+m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+	# Enable multiarch support
+	&& dpkg --add-architecture i386 \
+]])m4_dnl
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		autoconf \
+		automake \
+		bison \
+		build-essential \
+		ca-certificates \
+		checkinstall \
+		cmake \
+		flex \
+		git \
+		intltool \
+		libfdk-aac-dev \
+		libfuse-dev \
+		libgl1-mesa-dev \
+		libglu1-mesa-dev \
+		libmp3lame-dev \
+		libopus-dev \
+		libpam0g-dev \
+		libpixman-1-dev \
+		libpulse-dev \
+		libssl-dev \
+		libsystemd-dev \
+		libtool \
+		libx11-dev \
+		libxext-dev \
+		libxfixes-dev \
+		libxml2-dev \
+		libxrandr-dev \
+		libxtst-dev \
+		libxv-dev \
+		nasm \
+		pkg-config \
+		python \
+		python-libxml2 \
+		texinfo \
+		xserver-xorg-dev \
+		xsltproc \
+		xutils-dev \
+m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+		g++-multilib \
+		libgl1-mesa-dev:i386 \
+		libglu1-mesa-dev:i386 \
+		libxtst-dev:i386 \
+		libxv-dev:i386 \
+]])m4_dnl
+	&& rm -rf /var/lib/apt/lists/*
+
+# Build libjpeg-turbo
+ARG LIBJPEG_TURBO_TREEISH=2.0.2
+ARG LIBJPEG_TURBO_REMOTE=https://github.com/libjpeg-turbo/libjpeg-turbo.git
+WORKDIR /tmp/libjpeg-turbo/
+RUN git clone "${LIBJPEG_TURBO_REMOTE}" ./
+RUN git checkout "${LIBJPEG_TURBO_TREEISH}"
+RUN git submodule update --init --recursive
+WORKDIR ./build/
+RUN cmake ./ \
+		-G 'Unix Makefiles' \
+		-D PKGNAME=libjpeg-turbo \
+		-D CMAKE_BUILD_TYPE=Release \
+		-D CMAKE_INSTALL_PREFIX=/opt/libjpeg-turbo \
+		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
+		../
+RUN make -j"$(nproc)" && make deb
+RUN dpkg -i --force-architecture ./libjpeg-turbo_*.deb
+m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+WORKDIR ../build32/
+RUN CFLAGS='-m32' CXXFLAGS='-m32' LDFLAGS='-m32' \
+	cmake ./ \
+		-G 'Unix Makefiles' \
+		-D PKGNAME=libjpeg-turbo \
+		-D CMAKE_BUILD_TYPE=Release \
+		-D CMAKE_INSTALL_PREFIX=/opt/libjpeg-turbo \
+		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
+		../
+RUN make -j"$(nproc)" && make deb
+RUN dpkg -i --force-architecture ./libjpeg-turbo32_*.deb
+]])m4_dnl
+
+# Build VirtualGL
+ARG VIRTUALGL_TREEISH=2.6.2
+ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
+WORKDIR /tmp/virtualgl/
+RUN git clone "${VIRTUALGL_REMOTE}" ./
+RUN git checkout "${VIRTUALGL_TREEISH}"
+RUN git submodule update --init --recursive
+WORKDIR ./build/
+RUN cmake ./ \
+		-G 'Unix Makefiles' \
+		-D PKGNAME=virtualgl \
+		-D CMAKE_BUILD_TYPE=Release \
+		-D CMAKE_INSTALL_PREFIX=/opt/VirtualGL \
+		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
+		../
+RUN make -j"$(nproc)" && make deb
+RUN dpkg -i --force-architecture ./virtualgl_*.deb
+m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+WORKDIR ../build32/
+RUN CFLAGS='-m32' CXXFLAGS='-m32' LDFLAGS='-m32' \
+	cmake ./ \
+		-G 'Unix Makefiles' \
+		-D PKGNAME=virtualgl \
+		-D CMAKE_BUILD_TYPE=Release \
+		-D CMAKE_INSTALL_PREFIX=/opt/VirtualGL \
+		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
+		../
+RUN make -j"$(nproc)" && make deb
+RUN dpkg -i --force-architecture ./virtualgl32_*.deb
+]])m4_dnl
+
+# Build XRDP
+ARG XRDP_TREEISH=v0.9.10
+ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
+WORKDIR /tmp/xrdp/
+RUN git clone "${XRDP_REMOTE}" ./
+RUN git checkout "${XRDP_TREEISH}"
+RUN git submodule update --init --recursive
+RUN ./bootstrap
+RUN ./configure \
+		--prefix=/usr \
+		--enable-vsock \
+		--enable-tjpeg \
+		--enable-fuse \
+		--enable-fdkaac \
+		--enable-opus \
+		--enable-mp3lame \
+		--enable-pixman
+RUN make -j"$(nproc)"
+RUN checkinstall --default --pkgname=xrdp --pkgversion=0 --pkgrelease=0
+
+# Build xorgxrdp
+ARG XORGXRDP_TREEISH=v0.2.10
+ARG XORGXRDP_REMOTE=https://github.com/neutrinolabs/xorgxrdp.git
+WORKDIR /tmp/xorgxrdp/
+RUN git clone "${XORGXRDP_REMOTE}" ./
+RUN git checkout "${XORGXRDP_TREEISH}"
+RUN git submodule update --init --recursive
+RUN ./bootstrap
+RUN ./configure
+RUN make -j"$(nproc)"
+RUN checkinstall --default --pkgname=xorgxrdp --pkgversion=0 --pkgrelease=0
+
+# Build XRDP PulseAudio module
+ARG XRDP_PULSEAUDIO_TREEISH=v0.3
+ARG XRDP_PULSEAUDIO_REMOTE=https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
+WORKDIR /tmp/xrdp-pulseaudio/
+RUN git clone "${XRDP_PULSEAUDIO_REMOTE}" ./
+RUN git checkout "${XRDP_PULSEAUDIO_TREEISH}"
+RUN git submodule update --init --recursive
+RUN apt-get update
+RUN apt-get build-dep -y pulseaudio
+RUN apt-get source pulseaudio
+WORKDIR ./pulseaudio-11.1/
+RUN ./configure
+WORKDIR ../
+RUN ./bootstrap
+RUN ./configure PULSE_DIR="$(pwd)"/pulseaudio-11.1/
+RUN make -j"$(nproc)"
+RUN checkinstall --default --pkgname=xrdp-pulseaudio --pkgversion=0 --pkgrelease=0
+
+##################################################
+## "xubuntu" stage
+##################################################
+
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:18.04]], [[FROM docker.io/ubuntu:18.04]]) AS xubuntu
+m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
+
+# Install system packages
+RUN export DEBIAN_FRONTEND=noninteractive \
+m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+	&& dpkg --add-architecture i386 \
+]])m4_dnl
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		adwaita-qt \
+		apt-utils \
+		atril \
+		bash \
+		ca-certificates \
+		curl \
+		dbus \
+		dbus-x11 \
+		desktop-file-utils \
+		dialog \
+		engrampa \
+		file \
+		firefox \
+		fonts-dejavu \
+		fonts-liberation \
+		fonts-noto \
+		fonts-noto-color-emoji \
+		fuse \
+		gstreamer1.0-plugins-base \
+		gstreamer1.0-plugins-good \
+		gstreamer1.0-plugins-ugly \
+		gtk2-engines-pixbuf \
+		gtk2-engines-xfce \
+		gtk3-engines-xfce \
+		htop \
+		iproute2 \
+		less \
+		libavcodec-extra \
+		libcanberra-gtk-module \
+		libcanberra-gtk3-module \
+		libfdk-aac1 \
+		libgl1-mesa-dri \
+		libgl1-mesa-glx \
+		libglu1-mesa \
+		libgtk-3-bin \
+		libmp3lame0 \
+		libopus0 \
+		libpam0g \
+		libpixman-1-0 \
+		libpulse0 \
+		libssl1.1 \
+		libsystemd0 \
+		libx11-6 \
+		libxext6 \
+		libxfixes3 \
+		libxml2 \
+		libxrandr2 \
+		libxtst6 \
+		libxv1 \
+		locales \
+		menu \
+		menu-xdg \
+		menulibre \
+		mesa-utils \
+		mesa-utils-extra \
+		mime-support \
+		mousepad \
+		mugshot \
+		nano \
+		openssh-server \
+		openssl \
+		pavucontrol \
+		procps \
+		psmisc \
+		pulseaudio \
+		pulseaudio-utils \
+		ristretto \
+		runit \
+		sudo \
+		thunar-archive-plugin \
+		thunar-volman \
+		tzdata \
+		unzip \
+		vlc \
+		xauth \
+		xdg-user-dirs \
+		xdg-utils \
+		xfce4 \
+		xfce4-indicator-plugin \
+		xfce4-notifyd \
+		xfce4-pulseaudio-plugin \
+		xfce4-statusnotifier-plugin \
+		xfce4-taskmanager \
+		xfce4-terminal \
+		xfce4-whiskermenu-plugin \
+		xfce4-xkb-plugin \
+		xfonts-base \
+		xfpanel-switch \
+		xserver-xorg-core \
+		xserver-xorg-video-all \
+		xterm \
+		xubuntu-default-settings \
+		xutils \
+		xz-utils \
+		zenity \
+		zip \
+m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+		libgl1-mesa-dri:i386 \
+		libgl1-mesa-glx:i386 \
+		libglu1-mesa:i386 \
+		libxtst6:i386 \
+		libxv1:i386 \
+]])m4_dnl
+	&& rm -rf /var/lib/apt/lists/*
+
+# Copy Tini build
+m4_define([[TINI_IMAGE_TAG]], m4_ifdef([[CROSS_ARCH]], [[latest-CROSS_ARCH]], [[latest]]))m4_dnl
+COPY --from=docker.io/hectormolinero/tini:TINI_IMAGE_TAG --chown=root:root /usr/bin/tini /usr/bin/tini
+
+# Install libjpeg-turbo from package
+COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build/libjpeg-turbo_*.deb /tmp/libjpeg-turbo.deb
+RUN dpkg -i --force-architecture /tmp/libjpeg-turbo.deb && rm -f /tmp/libjpeg-turbo.deb
+m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build32/libjpeg-turbo32_*.deb /tmp/libjpeg-turbo32.deb
+RUN dpkg -i --force-architecture /tmp/libjpeg-turbo32.deb && rm -f /tmp/libjpeg-turbo32.deb
+]])m4_dnl
+
+# Install VirtualGL from package
+COPY --from=build --chown=root:root /tmp/virtualgl/build/virtualgl_*.deb /tmp/virtualgl.deb
+RUN dpkg -i --force-architecture /tmp/virtualgl.deb && rm -f /tmp/virtualgl.deb
+m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+COPY --from=build --chown=root:root /tmp/virtualgl/build32/virtualgl32_*.deb /tmp/virtualgl32.deb
+RUN dpkg -i --force-architecture /tmp/virtualgl32.deb && rm -f /tmp/virtualgl32.deb
+]])m4_dnl
+
+# Install XRDP from package
+COPY --from=build --chown=root:root /tmp/xrdp/xrdp_*.deb /tmp/xrdp.deb
+RUN dpkg -i /tmp/xrdp.deb && rm -f /tmp/xrdp.deb
+
+# Install xorgxrdp from package
+COPY --from=build --chown=root:root /tmp/xorgxrdp/xorgxrdp_*.deb /tmp/xorgxrdp.deb
+RUN dpkg -i /tmp/xorgxrdp.deb && rm -f /tmp/xorgxrdp.deb
+
+# Install XRDP PulseAudio module from package
+COPY --from=build --chown=root:root /tmp/xrdp-pulseaudio/xrdp-pulseaudio_*.deb /tmp/xrdp-pulseaudio.deb
+RUN dpkg -i /tmp/xrdp-pulseaudio.deb && rm -f /tmp/xrdp-pulseaudio.deb
+
+# Environment
+ENV RDP_TLS_KEY_PATH=/etc/xrdp/key.pem
+ENV RDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
+ENV PATH=/opt/VirtualGL/bin:"${PATH}"
+ENV VGL_DISPLAY=:0
+ENV QT_STYLE_OVERRIDE=Adwaita
+
+# Setup locale
+RUN sed -i 's|^# \(en_US\.UTF-8 UTF-8\)$|\1|' /etc/locale.gen && locale-gen
+ENV LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+
+# Setup timezone
+ENV TZ=Etc/UTC
+RUN ln -sf /usr/share/zoneinfo/"${TZ}" /etc/localtime
+
+# Setup D-Bus
+RUN mkdir /run/dbus/ && chown messagebus:messagebus /run/dbus/
+RUN dbus-uuidgen > /etc/machine-id && ln -sf /var/lib/dbus/machine-id /etc/machine-id
+
+# Forward logs to Docker log collector
+RUN ln -sf /dev/stdout /var/log/xdummy.log
+RUN ln -sf /dev/stdout /var/log/xrdp.log
+RUN ln -sf /dev/stdout /var/log/xrdp-sesman.log
+
+# Create /etc/skel/.xsession file
+RUN printf '%s\n' 'xfce4-session' \
+		>> /etc/skel/.xsession
+
+# Create /etc/skel/.xsessionrc file
+RUN printf '%s\n' \
+		'export XDG_CACHE_HOME=${HOME}/.cache' \
+		'export XDG_CONFIG_DIRS=/etc/xdg/xdg-xubuntu:/etc/xdg' \
+		'export XDG_CONFIG_HOME=${HOME}/.config' \
+		'export XDG_CURRENT_DESKTOP=XFCE' \
+		'export XDG_DATA_DIRS=/usr/share/xubuntu:/usr/share/xfce4:/usr/local/share:/usr/share' \
+		'export XDG_DATA_HOME=${HOME}/.local/share' \
+		'export XDG_MENU_PREFIX=xfce-' \
+		'export XDG_RUNTIME_DIR=/run/user/$(id -u)' \
+		'export XDG_SESSION_DESKTOP=xubuntu' \
+		>> /etc/skel/.xsessionrc
+
+# Create /etc/skel/.Xauthority file
+RUN touch /etc/skel/.Xauthority
+
+# Create /run/sshd directory
+RUN mkdir /run/sshd/
+
+# Create socket directory for X server
+RUN mkdir /tmp/.X11-unix/ \
+	&& chmod 1777 /tmp/.X11-unix/ \
+	&& chown root:root /tmp/.X11-unix/
+
+# Configure server for use with VirtualGL
+RUN vglserver_config -config +s +f -t
+
+# Create guest user and group
+ARG GUEST_USER_UID=1000
+ARG GUEST_USER_GID=1000
+RUN groupadd --gid "${GUEST_USER_GID}" guest
+RUN useradd \
+		--uid "${GUEST_USER_UID}" \
+		--gid "${GUEST_USER_GID}" \
+		--shell "$(command -v bash)" \
+		--groups audio,video \
+		--home-dir /home/guest/ \
+		--create-home \
+		guest
+
+# Set guest user password
+ARG GUEST_USER_PASSWORD=guest
+RUN printf '%s' guest:"${GUEST_USER_PASSWORD}" | chpasswd
+
+# Create /run/user/${GUEST_USER_UID}/dbus-1/ directory
+RUN mkdir -p /run/user/"${GUEST_USER_UID}"/dbus-1/ \
+	&& chmod -R 700 /run/user/"${GUEST_USER_UID}"/ \
+	&& chown -R guest:guest /run/user/"${GUEST_USER_UID}"/
+
+# Copy config
+COPY --chown=root:root config/ssh/sshd_config /etc/ssh/sshd_config
+COPY --chown=root:root config/xrdp/xrdp.ini /etc/xrdp/xrdp.ini
+COPY --chown=root:root config/xrdp/sesman.ini /etc/xrdp/sesman.ini
+
+# Copy services
+COPY --chown=root:root scripts/service/ /etc/sv/
+RUN find /etc/sv/ -type d -mindepth 1 -maxdepth 1 -exec ln -sv '{}' /etc/service/ ';'
+
+# Copy scripts
+COPY --chown=root:root scripts/bin/ /usr/local/bin/
+
+# Expose RDP port
+EXPOSE 3389/tcp
+
+WORKDIR /
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["/usr/local/bin/docker-foreground-cmd"]

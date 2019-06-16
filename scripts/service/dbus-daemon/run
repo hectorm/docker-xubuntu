@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec /usr/bin/sudo -u messagebus /usr/bin/dbus-daemon --system --nofork

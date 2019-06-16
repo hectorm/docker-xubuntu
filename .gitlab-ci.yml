@@ -1,0 +1,137 @@
+image: docker:stable
+
+services:
+  - docker:dind
+
+stages:
+  - build:images
+  - push:images
+  - push:manifests
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+
+build:native-image:
+  stage: build:images
+  before_script:
+    - docker info
+    - apk add --no-cache coreutils git m4 make xz
+  script:
+    - make build-native-image save-native-image
+  except:
+    - tags
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - dist/
+
+build:amd64-image:
+  stage: build:images
+  before_script:
+    - docker info
+    - apk add --no-cache coreutils git m4 make xz
+    - make binfmt-register
+  script:
+    - make build-amd64-image save-amd64-image
+  only:
+    - /^v([0-9.]+)(-.+)?$/
+  except:
+    - branches
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - dist/
+
+build:arm32v7-image:
+  stage: build:images
+  before_script:
+    - docker info
+    - apk add --no-cache coreutils git m4 make xz
+    - make binfmt-register
+  script:
+    - make build-arm32v7-image save-arm32v7-image
+  only:
+    - /^v([0-9.]+)(-.+)?$/
+  except:
+    - branches
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - dist/
+
+build:arm64v8-image:
+  stage: build:images
+  before_script:
+    - docker info
+    - apk add --no-cache coreutils git m4 make xz
+    - make binfmt-register
+  script:
+    - make build-arm64v8-image save-arm64v8-image
+  only:
+    - /^v([0-9.]+)(-.+)?$/
+  except:
+    - branches
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - dist/
+
+push:amd64-image:
+  stage: push:images
+  before_script:
+    - apk add --no-cache coreutils git make xz
+    - docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}" >/dev/null 2>&1
+  script:
+    - make load-amd64-image push-amd64-image
+  only:
+    - /^v([0-9.]+)(-.+)?$/
+  except:
+    - branches
+  dependencies:
+    - build:amd64-image
+
+push:arm32v7-image:
+  stage: push:images
+  before_script:
+    - apk add --no-cache coreutils git make xz
+    - docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}" >/dev/null 2>&1
+  script:
+    - make load-arm32v7-image push-arm32v7-image
+  only:
+    - /^v([0-9.]+)(-.+)?$/
+  except:
+    - branches
+  dependencies:
+    - build:arm32v7-image
+
+push:arm64v8-image:
+  stage: push:images
+  before_script:
+    - apk add --no-cache coreutils git make xz
+    - docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}" >/dev/null 2>&1
+  script:
+    - make load-arm64v8-image push-arm64v8-image
+  only:
+    - /^v([0-9.]+)(-.+)?$/
+  except:
+    - branches
+  dependencies:
+    - build:arm64v8-image
+
+push:cross-manifest:
+  stage: push:manifests
+  before_script:
+    - apk add --no-cache coreutils git make xz
+    - "mkdir -p ~/.docker/ && printf '%s\n' '{\"experimental\": \"enabled\"}' > ~/.docker/config.json"
+    - docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}" >/dev/null 2>&1
+  script:
+    - make push-cross-manifest
+  only:
+    - /^v([0-9.]+)(-.+)?$/
+  except:
+    - branches
+  dependencies:
+    - push:amd64-image
+    - push:arm32v7-image
+    - push:arm64v8-image
