@@ -25,3 +25,7 @@ encounter any problem related to this you may use the `--shm-size` option.
 ## Environment variables
 
 * `GUEST_USER_PASSWORD`: guest user password (`guest` by default).
+
+## License
+
+See the [license](LICENSE.md) file.
