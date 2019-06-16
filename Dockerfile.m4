@@ -21,6 +21,8 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends \
 		autoconf \
 		automake \
+		bash \
+		bash-completion \
 		bison \
 		build-essential \
 		ca-certificates \
@@ -162,18 +164,18 @@ RUN checkinstall --default --pkgname=xorgxrdp --pkgversion=0 --pkgrelease=0
 # Build XRDP PulseAudio module
 ARG XRDP_PULSEAUDIO_TREEISH=v0.3
 ARG XRDP_PULSEAUDIO_REMOTE=https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
+WORKDIR /tmp/
+RUN apt-get update
+RUN apt-get build-dep -y pulseaudio
+RUN apt-get source pulseaudio && mv ./pulseaudio-*/ ./pulseaudio/
+WORKDIR /tmp/pulseaudio/
+RUN ./configure
 WORKDIR /tmp/xrdp-pulseaudio/
 RUN git clone "${XRDP_PULSEAUDIO_REMOTE}" ./
 RUN git checkout "${XRDP_PULSEAUDIO_TREEISH}"
 RUN git submodule update --init --recursive
-RUN apt-get update
-RUN apt-get build-dep -y pulseaudio
-RUN apt-get source pulseaudio
-WORKDIR ./pulseaudio-11.1/
-RUN ./configure
-WORKDIR ../
 RUN ./bootstrap
-RUN ./configure PULSE_DIR="$(pwd)"/pulseaudio-11.1/
+RUN ./configure PULSE_DIR=/tmp/pulseaudio/
 RUN make -j"$(nproc)"
 RUN checkinstall --default --pkgname=xrdp-pulseaudio --pkgversion=0 --pkgrelease=0
 
@@ -195,6 +197,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		apt-utils \
 		atril \
 		bash \
+		bash-completion \
 		ca-certificates \
 		curl \
 		dbus \
@@ -202,6 +205,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		desktop-file-utils \
 		dialog \
 		engrampa \
+		exo-utils \
 		file \
 		firefox \
 		fonts-dejavu \
@@ -221,6 +225,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libavcodec-extra \
 		libcanberra-gtk-module \
 		libcanberra-gtk3-module \
+		libexo-1-0 \
 		libfdk-aac1 \
 		libgl1-mesa-dri \
 		libgl1-mesa-glx \
