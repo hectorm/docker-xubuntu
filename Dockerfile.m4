@@ -195,6 +195,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends \
 		adwaita-qt \
 		apt-utils \
+		at-spi2-core \
 		atril \
 		bash \
 		bash-completion \
@@ -206,6 +207,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		dialog \
 		engrampa \
 		exo-utils \
+		ffmpegthumbnailer \
 		file \
 		firefox \
 		fonts-dejavu \
@@ -213,6 +215,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		fonts-noto \
 		fonts-noto-color-emoji \
 		fuse \
+		gnome-keyring \
 		gstreamer1.0-plugins-base \
 		gstreamer1.0-plugins-good \
 		gstreamer1.0-plugins-ugly \
@@ -220,6 +223,12 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		gtk2-engines-xfce \
 		gtk3-engines-xfce \
 		htop \
+		indicator-application \
+		indicator-datetime \
+		indicator-keyboard \
+		indicator-messages \
+		indicator-session \
+		indicator-sound \
 		iproute2 \
 		less \
 		libavcodec-extra \
@@ -258,6 +267,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		openssh-server \
 		openssl \
 		pavucontrol \
+		policykit-1 \
 		procps \
 		psmisc \
 		pulseaudio \
@@ -265,8 +275,10 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		ristretto \
 		runit \
 		sudo \
+		systemd \
 		thunar-archive-plugin \
 		thunar-volman \
+		tumbler \
 		tzdata \
 		unzip \
 		vlc \
@@ -276,6 +288,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xfce4 \
 		xfce4-indicator-plugin \
 		xfce4-notifyd \
+		xfce4-power-manager-plugins \
 		xfce4-pulseaudio-plugin \
 		xfce4-statusnotifier-plugin \
 		xfce4-taskmanager \
@@ -358,8 +371,7 @@ RUN ln -sf /dev/stdout /var/log/xrdp.log
 RUN ln -sf /dev/stdout /var/log/xrdp-sesman.log
 
 # Create /etc/skel/.xsession file
-RUN printf '%s\n' 'xfce4-session' \
-		>> /etc/skel/.xsession
+RUN printf '%s\n' 'exec xfce4-session' > /etc/skel/.xsession
 
 # Create /etc/skel/.xsessionrc file
 RUN printf '%s\n' \
@@ -372,7 +384,7 @@ RUN printf '%s\n' \
 		'export XDG_MENU_PREFIX=xfce-' \
 		'export XDG_RUNTIME_DIR=/run/user/$(id -u)' \
 		'export XDG_SESSION_DESKTOP=xubuntu' \
-		>> /etc/skel/.xsessionrc
+		> /etc/skel/.xsessionrc
 
 # Create /etc/skel/.Xauthority file
 RUN touch /etc/skel/.Xauthority

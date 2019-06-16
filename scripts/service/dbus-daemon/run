@@ -1,3 +1,4 @@
 #!/bin/sh
 
-exec /usr/bin/sudo -u messagebus /usr/bin/dbus-daemon --system --nofork
+exec 2>&1
+exec /usr/bin/chpst -u messagebus /usr/bin/dbus-daemon --system --nofork

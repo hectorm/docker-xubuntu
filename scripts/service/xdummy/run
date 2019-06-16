@@ -1,5 +1,6 @@
 #!/bin/sh
 
+exec 2>&1
 exec /usr/bin/Xorg \
 		-noreset -nolisten tcp \
 		+extension GLX +extension RANDR +extension RENDER \
