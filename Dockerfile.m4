@@ -351,6 +351,10 @@ ENV RDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV RDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
 ENV PATH=/opt/VirtualGL/bin:"${PATH}"
 ENV VGL_DISPLAY=:0
+## Workaround for AMDGPU X_GLXCreatePbuffer issue:
+## https://github.com/VirtualGL/virtualgl/issues/85#issuecomment-480291529
+ENV VGL_FORCEALPHA=1
+## Use Adwaita theme in QT applications
 ENV QT_STYLE_OVERRIDE=Adwaita
 
 # Setup locale
