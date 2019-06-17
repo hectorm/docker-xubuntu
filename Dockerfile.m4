@@ -55,7 +55,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		python \
 		python-libxml2 \
 		texinfo \
-		xserver-xorg-dev \
+		xserver-xorg-dev-hwe-18.04 \
 		xsltproc \
 		xutils-dev \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
@@ -297,8 +297,8 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xfce4-xkb-plugin \
 		xfonts-base \
 		xfpanel-switch \
-		xserver-xorg-core \
-		xserver-xorg-video-all \
+		xserver-xorg-core-hwe-18.04 \
+		xserver-xorg-video-all-hwe-18.04 \
 		xterm \
 		xubuntu-default-settings \
 		xutils \
