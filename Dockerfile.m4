@@ -412,7 +412,7 @@ RUN useradd \
 		--uid "${GUEST_USER_UID}" \
 		--gid "${GUEST_USER_GID}" \
 		--shell "$(command -v bash)" \
-		--groups audio,video \
+		--groups audio,input,video \
 		--home-dir /home/guest/ \
 		--create-home \
 		guest
