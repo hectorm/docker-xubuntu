@@ -16,6 +16,13 @@ fi
 # Dump environment variables
 export-env >> /etc/profile.d/env.sh
 
+# Copy /etc/skel/ to guest user home if empty
+GUEST_USER_HOME=$(getent passwd guest | cut -d: -f6)
+if [ -z "$(ls -A "${GUEST_USER_HOME}")" ]; then
+	cp -aT /etc/skel/ "${GUEST_USER_HOME}"
+	chown -R guest:guest "${GUEST_USER_HOME}"
+fi
+
 # Generate self-signed certificate
 if [ ! -f "${RDP_TLS_KEY_PATH}" ] || [ ! -f "${RDP_TLS_CERT_PATH}" ]; then
 	KEY_FILE=${RDP_TLS_KEY_PATH}
