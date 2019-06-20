@@ -255,6 +255,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libxtst6 \
 		libxv1 \
 		locales \
+		lsscsi \
 		menu \
 		menu-xdg \
 		menulibre \
@@ -267,6 +268,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		openssh-server \
 		openssl \
 		pavucontrol \
+		pciutils \
 		policykit-1 \
 		procps \
 		psmisc \
@@ -281,6 +283,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		tumbler \
 		tzdata \
 		unzip \
+		usbutils \
 		vlc \
 		xauth \
 		xdg-user-dirs \
