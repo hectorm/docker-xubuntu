@@ -193,10 +193,8 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 ]])m4_dnl
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends \
-		adwaita-qt \
 		apt-utils \
 		at-spi2-core \
-		atril \
 		bash \
 		bash-completion \
 		ca-certificates \
@@ -205,41 +203,21 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		dbus-x11 \
 		desktop-file-utils \
 		dialog \
-		engrampa \
 		exo-utils \
-		ffmpegthumbnailer \
 		file \
-		firefox \
 		fonts-dejavu \
 		fonts-liberation \
 		fonts-noto \
 		fonts-noto-color-emoji \
 		fuse \
-		gnome-keyring \
-		gstreamer1.0-plugins-base \
-		gstreamer1.0-plugins-good \
-		gstreamer1.0-plugins-ugly \
-		gtk2-engines-pixbuf \
-		gtk2-engines-xfce \
-		gtk3-engines-xfce \
 		htop \
-		indicator-application \
-		indicator-datetime \
-		indicator-keyboard \
-		indicator-messages \
-		indicator-session \
-		indicator-sound \
 		iproute2 \
 		less \
-		libavcodec-extra \
-		libcanberra-gtk-module \
-		libcanberra-gtk3-module \
 		libexo-1-0 \
 		libfdk-aac1 \
 		libgl1-mesa-dri \
 		libgl1-mesa-glx \
 		libglu1-mesa \
-		libgtk-3-bin \
 		libmp3lame0 \
 		libopus0 \
 		libpam0g \
@@ -258,36 +236,75 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		lsscsi \
 		menu \
 		menu-xdg \
-		menulibre \
 		mesa-utils \
 		mesa-utils-extra \
 		mime-support \
-		mousepad \
-		mugshot \
 		nano \
 		openssh-server \
 		openssl \
-		pavucontrol \
 		pciutils \
 		policykit-1 \
 		procps \
 		psmisc \
 		pulseaudio \
 		pulseaudio-utils \
-		ristretto \
 		runit \
 		sudo \
 		systemd \
-		thunar-archive-plugin \
-		thunar-volman \
-		tumbler \
 		tzdata \
 		unzip \
 		usbutils \
-		vlc \
 		xauth \
 		xdg-user-dirs \
 		xdg-utils \
+		xfonts-base \
+		xserver-xorg-core-hwe-18.04 \
+		xserver-xorg-video-all-hwe-18.04 \
+		xterm \
+		xutils \
+		xz-utils \
+		zenity \
+		zip \
+m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+	&& apt-get install -y --no-install-recommends \
+		libgl1-mesa-dri:i386 \
+		libgl1-mesa-glx:i386 \
+		libglu1-mesa:i386 \
+		libxtst6:i386 \
+		libxv1:i386 \
+]])m4_dnl
+	&& apt-get install -y --no-install-recommends \
+		adwaita-qt \
+		atril \
+		engrampa \
+		ffmpegthumbnailer \
+		firefox \
+		gnome-keyring \
+		gstreamer1.0-plugins-base \
+		gstreamer1.0-plugins-good \
+		gstreamer1.0-plugins-ugly \
+		gtk2-engines-pixbuf \
+		gtk2-engines-xfce \
+		gtk3-engines-xfce \
+		indicator-application \
+		indicator-datetime \
+		indicator-keyboard \
+		indicator-messages \
+		indicator-session \
+		indicator-sound \
+		libavcodec-extra \
+		libcanberra-gtk-module \
+		libcanberra-gtk3-module \
+		libgtk-3-bin \
+		menulibre \
+		mousepad \
+		mugshot \
+		pavucontrol \
+		ristretto \
+		thunar-archive-plugin \
+		thunar-volman \
+		tumbler \
+		vlc \
 		xfce4 \
 		xfce4-indicator-plugin \
 		xfce4-notifyd \
@@ -298,23 +315,8 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xfce4-terminal \
 		xfce4-whiskermenu-plugin \
 		xfce4-xkb-plugin \
-		xfonts-base \
 		xfpanel-switch \
-		xserver-xorg-core-hwe-18.04 \
-		xserver-xorg-video-all-hwe-18.04 \
-		xterm \
 		xubuntu-default-settings \
-		xutils \
-		xz-utils \
-		zenity \
-		zip \
-m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
-		libgl1-mesa-dri:i386 \
-		libgl1-mesa-glx:i386 \
-		libglu1-mesa:i386 \
-		libxtst6:i386 \
-		libxv1:i386 \
-]])m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
 
 # Copy Tini build
