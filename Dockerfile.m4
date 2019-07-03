@@ -240,6 +240,8 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		mesa-utils-extra \
 		mime-support \
 		nano \
+		net-tools \
+		netcat-openbsd \
 		openssh-server \
 		openssl \
 		pciutils \
