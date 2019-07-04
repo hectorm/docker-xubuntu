@@ -193,6 +193,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 ]])m4_dnl
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends \
+		apt-transport-https \
 		apt-utils \
 		at-spi2-core \
 		bash \
@@ -210,6 +211,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		fonts-noto \
 		fonts-noto-color-emoji \
 		fuse \
+		gnupg \
 		htop \
 		iproute2 \
 		less \
