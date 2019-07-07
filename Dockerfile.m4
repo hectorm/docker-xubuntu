@@ -211,6 +211,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		fonts-noto \
 		fonts-noto-color-emoji \
 		fuse \
+		git \
 		gnupg \
 		htop \
 		iproute2 \
@@ -246,6 +247,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		netcat-openbsd \
 		openssh-server \
 		openssl \
+		p7zip-full \
 		pciutils \
 		policykit-1 \
 		procps \
