@@ -360,6 +360,13 @@ COPY --from=build --chown=root:root /tmp/xrdp-pulseaudio/xrdp-pulseaudio_*.deb /
 RUN dpkg -i /tmp/xrdp-pulseaudio.deb && rm -f /tmp/xrdp-pulseaudio.deb
 
 # Environment
+ENV UNPRIVILEGED_USER_UID=1000
+ENV UNPRIVILEGED_USER_GID=1000
+ENV UNPRIVILEGED_USER_NAME=guest
+ENV UNPRIVILEGED_USER_PASSWORD=password
+ENV UNPRIVILEGED_USER_GROUPS=audio,input,video
+ENV UNPRIVILEGED_USER_SHELL=/bin/bash
+ENV DISABLE_GPU=false
 ENV RDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV RDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
 ENV PATH=/opt/VirtualGL/bin:"${PATH}"
@@ -416,28 +423,6 @@ RUN mkdir /tmp/.X11-unix/ \
 
 # Configure server for use with VirtualGL
 RUN vglserver_config -config +s +f -t
-
-# Create guest user and group
-ARG GUEST_USER_UID=1000
-ARG GUEST_USER_GID=1000
-RUN groupadd --gid "${GUEST_USER_GID}" guest
-RUN useradd \
-		--uid "${GUEST_USER_UID}" \
-		--gid "${GUEST_USER_GID}" \
-		--shell "$(command -v bash)" \
-		--groups audio,input,video \
-		--home-dir /home/guest/ \
-		--create-home \
-		guest
-
-# Set guest user password
-ARG GUEST_USER_PASSWORD=guest
-RUN printf '%s' guest:"${GUEST_USER_PASSWORD}" | chpasswd
-
-# Create /run/user/${GUEST_USER_UID}/dbus-1/ directory
-RUN mkdir -p /run/user/"${GUEST_USER_UID}"/dbus-1/ \
-	&& chmod -R 700 /run/user/"${GUEST_USER_UID}"/ \
-	&& chown -R guest:guest /run/user/"${GUEST_USER_UID}"/
 
 # Copy config
 COPY --chown=root:root config/ssh/sshd_config /etc/ssh/sshd_config

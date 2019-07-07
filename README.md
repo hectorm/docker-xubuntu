@@ -24,7 +24,13 @@ encounter any problem related to this you may use the `--shm-size` option.
 
 ## Environment variables
 
-* `GUEST_USER_PASSWORD`: guest user password (`guest` by default).
+* `UNPRIVILEGED_USER_UID`: unprivileged user UID (`1000` by default).
+* `UNPRIVILEGED_USER_GID`: unprivileged user GID (`1000` by default).
+* `UNPRIVILEGED_USER_NAME`: unprivileged user name (`guest` by default).
+* `UNPRIVILEGED_USER_PASSWORD`: unprivileged user password (`password` by default).
+* `UNPRIVILEGED_USER_GROUPS`: unprivileged user groups (`audio,input,video` by default).
+* `UNPRIVILEGED_USER_SHELL`: unprivileged user shell (`/bin/bash` by default).
+* `DISABLE_GPU`: disable the GPU in the container (`false` by default).
 
 ## License
 
