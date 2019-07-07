@@ -302,7 +302,9 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libcanberra-gtk-module \
 		libcanberra-gtk3-module \
 		libgtk-3-bin \
+		binutils \
 		menulibre \
+		wget \
 		mousepad \
 		mugshot \
 		pavucontrol \
