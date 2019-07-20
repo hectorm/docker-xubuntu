@@ -215,6 +215,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		gnupg \
 		htop \
 		iproute2 \
+		iputils-ping \
 		less \
 		libexo-1-0 \
 		libfdk-aac1 \
