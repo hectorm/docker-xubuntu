@@ -327,7 +327,10 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xfce4-xkb-plugin \
 		xfpanel-switch \
 		xubuntu-default-settings \
-	&& rm -rf /var/lib/apt/lists/*
+	&& rm -rf \
+		/tmp/* /var/tmp/* \
+		/var/lib/apt/lists/* \
+		/etc/ssh/ssh_host_*
 
 # Copy Tini build
 m4_define([[TINI_IMAGE_TAG]], m4_ifdef([[CROSS_ARCH]], [[latest-CROSS_ARCH]], [[latest]]))m4_dnl
