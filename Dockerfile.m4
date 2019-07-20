@@ -198,6 +198,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		at-spi2-core \
 		bash \
 		bash-completion \
+		binutils \
 		ca-certificates \
 		curl \
 		dbus \
@@ -261,6 +262,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		tzdata \
 		unzip \
 		usbutils \
+		wget \
 		xauth \
 		xdg-user-dirs \
 		xdg-utils \
@@ -303,11 +305,10 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libcanberra-gtk-module \
 		libcanberra-gtk3-module \
 		libgtk-3-bin \
-		binutils \
 		menulibre \
-		wget \
 		mousepad \
 		mugshot \
+		openjdk-8-jre \
 		pavucontrol \
 		ristretto \
 		thunar-archive-plugin \
