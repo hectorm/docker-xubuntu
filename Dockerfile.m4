@@ -438,6 +438,8 @@ RUN find /etc/sv/ -type d -mindepth 1 -maxdepth 1 -exec ln -sv '{}' /etc/service
 # Copy scripts
 COPY --chown=root:root scripts/bin/ /usr/local/bin/
 
+# Expose SSH port
+EXPOSE 3322/tcp
 # Expose RDP port
 EXPOSE 3389/tcp
 
