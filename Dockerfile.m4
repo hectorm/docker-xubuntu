@@ -129,6 +129,25 @@ RUN make -j"$(nproc)" && make deb
 RUN dpkg -i --force-architecture ./virtualgl32_*.deb
 ]])m4_dnl
 
+# Build TurboVNC
+ARG TURBOVNC_TREEISH=2.2.2
+ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
+WORKDIR /tmp/turbovnc/
+RUN git clone "${TURBOVNC_REMOTE}" ./
+RUN git checkout "${TURBOVNC_TREEISH}"
+RUN git submodule update --init --recursive
+WORKDIR ./build/
+RUN cmake ./ \
+		-G 'Unix Makefiles' \
+		-D PKGNAME=turbovnc \
+		-D CMAKE_BUILD_TYPE=Release \
+		-D CMAKE_INSTALL_PREFIX=/opt/TurboVNC \
+		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
+		-D TVNC_BUILDJAVA=0 \
+		../
+RUN make -j"$(nproc)" && make deb
+RUN dpkg -i --force-architecture ./turbovnc_*.deb
+
 # Build XRDP
 ARG XRDP_TREEISH=v0.9.10
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
@@ -352,6 +371,10 @@ COPY --from=build --chown=root:root /tmp/virtualgl/build32/virtualgl32_*.deb /tm
 RUN dpkg -i --force-architecture /tmp/virtualgl32.deb && rm -f /tmp/virtualgl32.deb
 ]])m4_dnl
 
+# Install TurboVNC from package
+COPY --from=build --chown=root:root /tmp/turbovnc/build/turbovnc_*.deb /tmp/turbovnc.deb
+RUN dpkg -i --force-architecture /tmp/turbovnc.deb && rm -f /tmp/turbovnc.deb
+
 # Install XRDP from package
 COPY --from=build --chown=root:root /tmp/xrdp/xrdp_*.deb /tmp/xrdp.deb
 RUN dpkg -i /tmp/xrdp.deb && rm -f /tmp/xrdp.deb
@@ -374,7 +397,7 @@ ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV DISABLE_GPU=false
 ENV RDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV RDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
-ENV PATH=/opt/VirtualGL/bin:"${PATH}"
+ENV PATH=/opt/VirtualGL/bin:/opt/TurboVNC/bin:"${PATH}"
 ENV VGL_DISPLAY=:0
 ## Workaround for AMDGPU X_GLXCreatePbuffer issue:
 ## https://github.com/VirtualGL/virtualgl/issues/85#issuecomment-480291529

@@ -40,8 +40,8 @@ fi
 
 # Create RANDFILE if it does not exist
 RANDFILE=${RANDFILE-${HOME}/.rnd}
-if [ ! -f "${RANDFILE}" ]; then
-	dd if=/dev/urandom of="${RANDFILE}" bs=256 count=1 >/dev/null 2>&1
+if [ ! -f "${RANDFILE:?}" ]; then
+	dd if=/dev/urandom of="${RANDFILE:?}" bs=256 count=1 >/dev/null 2>&1
 fi
 
 # Generate SSH keys if they do not exist
