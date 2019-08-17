@@ -169,7 +169,7 @@ RUN make -j"$(nproc)"
 RUN checkinstall --default --pkgname=xrdp --pkgversion=0 --pkgrelease=0
 
 # Build xorgxrdp
-ARG XORGXRDP_TREEISH=v0.2.10
+ARG XORGXRDP_TREEISH=v0.2.11
 ARG XORGXRDP_REMOTE=https://github.com/neutrinolabs/xorgxrdp.git
 WORKDIR /tmp/xorgxrdp/
 RUN git clone "${XORGXRDP_REMOTE}" ./
