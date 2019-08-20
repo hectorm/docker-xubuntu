@@ -149,7 +149,7 @@ RUN make -j"$(nproc)" && make deb
 RUN dpkg -i --force-architecture ./turbovnc_*.deb
 
 # Build XRDP
-ARG XRDP_TREEISH=v0.9.10
+ARG XRDP_TREEISH=v0.9.11
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp/
 RUN git clone "${XRDP_REMOTE}" ./
