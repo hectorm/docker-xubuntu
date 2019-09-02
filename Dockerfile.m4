@@ -71,8 +71,8 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 ARG LIBJPEG_TURBO_TREEISH=2.0.2
 ARG LIBJPEG_TURBO_REMOTE=https://github.com/libjpeg-turbo/libjpeg-turbo.git
 WORKDIR /tmp/libjpeg-turbo/
-RUN git clone "${LIBJPEG_TURBO_REMOTE}" ./
-RUN git checkout "${LIBJPEG_TURBO_TREEISH}"
+RUN git clone "${LIBJPEG_TURBO_REMOTE:?}" ./
+RUN git checkout "${LIBJPEG_TURBO_TREEISH:?}"
 RUN git submodule update --init --recursive
 WORKDIR ./build/
 RUN cmake ./ \
@@ -102,8 +102,8 @@ RUN dpkg -i --force-architecture ./libjpeg-turbo32_*.deb
 ARG VIRTUALGL_TREEISH=2.6.2
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
 WORKDIR /tmp/virtualgl/
-RUN git clone "${VIRTUALGL_REMOTE}" ./
-RUN git checkout "${VIRTUALGL_TREEISH}"
+RUN git clone "${VIRTUALGL_REMOTE:?}" ./
+RUN git checkout "${VIRTUALGL_TREEISH:?}"
 RUN git submodule update --init --recursive
 WORKDIR ./build/
 RUN cmake ./ \
@@ -133,8 +133,8 @@ RUN dpkg -i --force-architecture ./virtualgl32_*.deb
 ARG TURBOVNC_TREEISH=2.2.2
 ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
 WORKDIR /tmp/turbovnc/
-RUN git clone "${TURBOVNC_REMOTE}" ./
-RUN git checkout "${TURBOVNC_TREEISH}"
+RUN git clone "${TURBOVNC_REMOTE:?}" ./
+RUN git checkout "${TURBOVNC_TREEISH:?}"
 RUN git submodule update --init --recursive
 WORKDIR ./build/
 RUN cmake ./ \
@@ -152,8 +152,8 @@ RUN dpkg -i --force-architecture ./turbovnc_*.deb
 ARG XRDP_TREEISH=v0.9.11
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp/
-RUN git clone "${XRDP_REMOTE}" ./
-RUN git checkout "${XRDP_TREEISH}"
+RUN git clone "${XRDP_REMOTE:?}" ./
+RUN git checkout "${XRDP_TREEISH:?}"
 RUN git submodule update --init --recursive
 RUN ./bootstrap
 RUN ./configure \
@@ -172,8 +172,8 @@ RUN checkinstall --default --pkgname=xrdp --pkgversion=0 --pkgrelease=0
 ARG XORGXRDP_TREEISH=v0.2.11
 ARG XORGXRDP_REMOTE=https://github.com/neutrinolabs/xorgxrdp.git
 WORKDIR /tmp/xorgxrdp/
-RUN git clone "${XORGXRDP_REMOTE}" ./
-RUN git checkout "${XORGXRDP_TREEISH}"
+RUN git clone "${XORGXRDP_REMOTE:?}" ./
+RUN git checkout "${XORGXRDP_TREEISH:?}"
 RUN git submodule update --init --recursive
 RUN ./bootstrap
 RUN ./configure
@@ -190,8 +190,8 @@ RUN apt-get source pulseaudio && mv ./pulseaudio-*/ ./pulseaudio/
 WORKDIR /tmp/pulseaudio/
 RUN ./configure
 WORKDIR /tmp/xrdp-pulseaudio/
-RUN git clone "${XRDP_PULSEAUDIO_REMOTE}" ./
-RUN git checkout "${XRDP_PULSEAUDIO_TREEISH}"
+RUN git clone "${XRDP_PULSEAUDIO_REMOTE:?}" ./
+RUN git checkout "${XRDP_PULSEAUDIO_TREEISH:?}"
 RUN git submodule update --init --recursive
 RUN ./bootstrap
 RUN ./configure PULSE_DIR=/tmp/pulseaudio/
@@ -397,7 +397,7 @@ ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV DISABLE_GPU=false
 ENV RDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV RDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
-ENV PATH=/opt/VirtualGL/bin:/opt/TurboVNC/bin:"${PATH}"
+ENV PATH=/opt/VirtualGL/bin:/opt/TurboVNC/bin:${PATH}
 ENV VGL_DISPLAY=:0
 ## Workaround for AMDGPU X_GLXCreatePbuffer issue:
 ## https://github.com/VirtualGL/virtualgl/issues/85#issuecomment-480291529
@@ -406,12 +406,14 @@ ENV VGL_FORCEALPHA=1
 ENV QT_STYLE_OVERRIDE=Adwaita
 
 # Setup locale
-RUN sed -i 's|^# \(en_US\.UTF-8 UTF-8\)$|\1|' /etc/locale.gen && locale-gen
+RUN printf '%s\n' 'en_US.UTF-8 UTF-8' > /etc/locale.gen
+RUN localedef -c -i en_US -f UTF-8 en_US.UTF-8 ||:
 ENV LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 
 # Setup timezone
-ENV TZ=Etc/UTC
-RUN ln -sf /usr/share/zoneinfo/"${TZ}" /etc/localtime
+ENV TZ=UTC
+RUN ln -snf "/usr/share/zoneinfo/${TZ:?}" /etc/localtime
+RUN printf '%s\n' "${TZ:?}" > /etc/timezone
 
 # Setup D-Bus
 RUN mkdir /run/dbus/ && chown messagebus:messagebus /run/dbus/
@@ -427,12 +429,12 @@ RUN printf '%s\n' 'exec xfce4-session' > /etc/skel/.xsession
 
 # Create /etc/skel/.xsessionrc file
 RUN printf '%s\n' \
-		'export XDG_CACHE_HOME=${HOME}/.cache' \
+		'export XDG_CACHE_HOME=${HOME:?}/.cache' \
 		'export XDG_CONFIG_DIRS=/etc/xdg/xdg-xubuntu:/etc/xdg' \
-		'export XDG_CONFIG_HOME=${HOME}/.config' \
+		'export XDG_CONFIG_HOME=${HOME:?}/.config' \
 		'export XDG_CURRENT_DESKTOP=XFCE' \
 		'export XDG_DATA_DIRS=/usr/share/xubuntu:/usr/share/xfce4:/usr/local/share:/usr/share' \
-		'export XDG_DATA_HOME=${HOME}/.local/share' \
+		'export XDG_DATA_HOME=${HOME:?}/.local/share' \
 		'export XDG_MENU_PREFIX=xfce-' \
 		'export XDG_RUNTIME_DIR=/run/user/$(id -u)' \
 		'export XDG_SESSION_DESKTOP=xubuntu' \
@@ -471,4 +473,4 @@ EXPOSE 3389/tcp
 
 WORKDIR /
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["/usr/local/bin/docker-foreground-cmd"]
+CMD ["/usr/local/bin/container-foreground-cmd"]

@@ -31,7 +31,7 @@ printf '%s' "${UNPRIVILEGED_USER_NAME:?}:${UNPRIVILEGED_USER_PASSWORD:?}" | chpa
 unset UNPRIVILEGED_USER_PASSWORD
 
 # Dump environment variables
-export-env >> /etc/profile.d/env.sh
+export-env > /etc/profile.d/env.sh
 
 # Disable xdummy if there is no graphics card
 if [ "${DISABLE_GPU:?}" = 'true' ] || [ ! -d /dev/dri/ ]; then
@@ -39,7 +39,7 @@ if [ "${DISABLE_GPU:?}" = 'true' ] || [ ! -d /dev/dri/ ]; then
 fi
 
 # Create RANDFILE if it does not exist
-RANDFILE=${RANDFILE-${HOME}/.rnd}
+RANDFILE=${RANDFILE-${HOME:?}/.rnd}
 if [ ! -f "${RANDFILE:?}" ]; then
 	dd if=/dev/urandom of="${RANDFILE:?}" bs=256 count=1 >/dev/null 2>&1
 fi
