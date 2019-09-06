@@ -68,7 +68,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
 
 # Build libjpeg-turbo
-ARG LIBJPEG_TURBO_TREEISH=2.0.2
+ARG LIBJPEG_TURBO_TREEISH=2.0.3
 ARG LIBJPEG_TURBO_REMOTE=https://github.com/libjpeg-turbo/libjpeg-turbo.git
 WORKDIR /tmp/libjpeg-turbo/
 RUN git clone "${LIBJPEG_TURBO_REMOTE:?}" ./
