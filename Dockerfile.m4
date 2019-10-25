@@ -99,7 +99,7 @@ RUN dpkg -i --force-architecture ./libjpeg-turbo32_*.deb
 ]])m4_dnl
 
 # Build VirtualGL
-ARG VIRTUALGL_TREEISH=2.6.2
+ARG VIRTUALGL_TREEISH=2.6.3
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
 WORKDIR /tmp/virtualgl/
 RUN git clone "${VIRTUALGL_REMOTE:?}" ./
