@@ -44,6 +44,8 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libsystemd-dev \
 		libtool \
 		libx11-dev \
+		libxcb-keysyms1-dev \
+		libxcb1-dev \
 		libxext-dev \
 		libxfixes-dev \
 		libxml2-dev \
@@ -51,6 +53,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libxtst-dev \
 		libxv-dev \
 		nasm \
+		ocl-icd-opencl-dev \
 		pkg-config \
 		python \
 		python-libxml2 \
@@ -64,6 +67,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libglu1-mesa-dev:i386 \
 		libxtst-dev:i386 \
 		libxv-dev:i386 \
+		ocl-icd-opencl-dev:i386 \
 ]])m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -250,6 +254,8 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libssl1.1 \
 		libsystemd0 \
 		libx11-6 \
+		libxcb-keysyms1 \
+		libxcb1 \
 		libxext6 \
 		libxfixes3 \
 		libxml2 \
@@ -260,12 +266,14 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		lsscsi \
 		menu \
 		menu-xdg \
+		mesa-opencl-icd \
 		mesa-utils \
 		mesa-utils-extra \
 		mime-support \
 		nano \
 		net-tools \
 		netcat-openbsd \
+		ocl-icd-libopencl1 \
 		openssh-server \
 		openssl \
 		p7zip-full \
@@ -300,6 +308,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libglu1-mesa:i386 \
 		libxtst6:i386 \
 		libxv1:i386 \
+		ocl-icd-libopencl1:i386 \
 ]])m4_dnl
 	&& apt-get install -y --no-install-recommends \
 		adwaita-qt \
