@@ -74,11 +74,13 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 # Build libjpeg-turbo
 ARG LIBJPEG_TURBO_TREEISH=2.0.3
 ARG LIBJPEG_TURBO_REMOTE=https://github.com/libjpeg-turbo/libjpeg-turbo.git
+RUN mkdir /tmp/libjpeg-turbo/
 WORKDIR /tmp/libjpeg-turbo/
 RUN git clone "${LIBJPEG_TURBO_REMOTE:?}" ./
 RUN git checkout "${LIBJPEG_TURBO_TREEISH:?}"
 RUN git submodule update --init --recursive
-WORKDIR ./build/
+RUN mkdir /tmp/libjpeg-turbo/build/
+WORKDIR /tmp/libjpeg-turbo/build/
 RUN cmake ./ \
 		-G 'Unix Makefiles' \
 		-D PKGNAME=libjpeg-turbo \
@@ -86,10 +88,12 @@ RUN cmake ./ \
 		-D CMAKE_INSTALL_PREFIX=/opt/libjpeg-turbo \
 		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
 		../
-RUN make -j"$(nproc)" && make deb
-RUN dpkg -i --force-architecture ./libjpeg-turbo_*.deb
+RUN make -j"$(nproc)"
+RUN make deb
+RUN dpkg -i ./libjpeg-turbo_*.deb
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
-WORKDIR ../build32/
+RUN mkdir /tmp/libjpeg-turbo/build32/
+WORKDIR /tmp/libjpeg-turbo/build32/
 RUN CFLAGS='-m32' CXXFLAGS='-m32' LDFLAGS='-m32' \
 	cmake ./ \
 		-G 'Unix Makefiles' \
@@ -98,18 +102,22 @@ RUN CFLAGS='-m32' CXXFLAGS='-m32' LDFLAGS='-m32' \
 		-D CMAKE_INSTALL_PREFIX=/opt/libjpeg-turbo \
 		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
 		../
-RUN make -j"$(nproc)" && make deb
-RUN dpkg -i --force-architecture ./libjpeg-turbo32_*.deb
+RUN make -j"$(nproc)"
+RUN make deb
+RUN dpkg -i ./libjpeg-turbo32_*.deb
 ]])m4_dnl
 
 # Build VirtualGL
 ARG VIRTUALGL_TREEISH=2.6.3
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
+RUN mkdir /tmp/virtualgl/
 WORKDIR /tmp/virtualgl/
 RUN git clone "${VIRTUALGL_REMOTE:?}" ./
 RUN git checkout "${VIRTUALGL_TREEISH:?}"
 RUN git submodule update --init --recursive
-WORKDIR ./build/
+RUN mkdir /tmp/virtualgl/build/
+WORKDIR /tmp/virtualgl/build/
+RUN sed -i "s|@DEBARCH@|$(dpkg-architecture -qDEB_HOST_ARCH)|g" ../release/deb-control.in
 RUN cmake ./ \
 		-G 'Unix Makefiles' \
 		-D PKGNAME=virtualgl \
@@ -117,10 +125,12 @@ RUN cmake ./ \
 		-D CMAKE_INSTALL_PREFIX=/opt/VirtualGL \
 		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
 		../
-RUN make -j"$(nproc)" && make deb
-RUN dpkg -i --force-architecture ./virtualgl_*.deb
+RUN make -j"$(nproc)"
+RUN make deb
+RUN dpkg -i ./virtualgl_*.deb
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
-WORKDIR ../build32/
+RUN mkdir /tmp/virtualgl/build32/
+WORKDIR /tmp/virtualgl/build32/
 RUN CFLAGS='-m32' CXXFLAGS='-m32' LDFLAGS='-m32' \
 	cmake ./ \
 		-G 'Unix Makefiles' \
@@ -129,18 +139,21 @@ RUN CFLAGS='-m32' CXXFLAGS='-m32' LDFLAGS='-m32' \
 		-D CMAKE_INSTALL_PREFIX=/opt/VirtualGL \
 		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
 		../
-RUN make -j"$(nproc)" && make deb
-RUN dpkg -i --force-architecture ./virtualgl32_*.deb
+RUN make -j"$(nproc)"
+RUN make deb
+RUN dpkg -i ./virtualgl32_*.deb
 ]])m4_dnl
 
 # Build TurboVNC
 #ARG TURBOVNC_TREEISH=
 #ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
+#RUN mkdir /tmp/turbovnc/
 #WORKDIR /tmp/turbovnc/
 #RUN git clone "${TURBOVNC_REMOTE:?}" ./
 #RUN git checkout "${TURBOVNC_TREEISH:?}"
 #RUN git submodule update --init --recursive
-#WORKDIR ./build/
+#RUN mkdir /tmp/turbovnc/build/
+#WORKDIR /tmp/turbovnc/build/
 #RUN cmake ./ \
 #		-G 'Unix Makefiles' \
 #		-D PKGNAME=turbovnc \
@@ -149,12 +162,14 @@ RUN dpkg -i --force-architecture ./virtualgl32_*.deb
 #		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
 #		-D TVNC_BUILDJAVA=0 \
 #		../
-#RUN make -j"$(nproc)" && make deb
-#RUN dpkg -i --force-architecture ./turbovnc_*.deb
+#RUN make -j"$(nproc)"
+#RUN make deb
+#RUN dpkg -i ./turbovnc_*.deb
 
 # Build XRDP
 ARG XRDP_TREEISH=v0.9.11
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
+RUN mkdir /tmp/xrdp/
 WORKDIR /tmp/xrdp/
 RUN git clone "${XRDP_REMOTE:?}" ./
 RUN git checkout "${XRDP_TREEISH:?}"
@@ -175,6 +190,7 @@ RUN checkinstall --default --pkgname=xrdp --pkgversion=0 --pkgrelease=0
 # Build xorgxrdp
 ARG XORGXRDP_TREEISH=v0.2.11
 ARG XORGXRDP_REMOTE=https://github.com/neutrinolabs/xorgxrdp.git
+RUN mkdir /tmp/xorgxrdp/
 WORKDIR /tmp/xorgxrdp/
 RUN git clone "${XORGXRDP_REMOTE:?}" ./
 RUN git checkout "${XORGXRDP_TREEISH:?}"
@@ -193,6 +209,7 @@ RUN apt-get build-dep -y pulseaudio
 RUN apt-get source pulseaudio && mv ./pulseaudio-*/ ./pulseaudio/
 WORKDIR /tmp/pulseaudio/
 RUN ./configure
+RUN mkdir /tmp/xrdp-pulseaudio/
 WORKDIR /tmp/xrdp-pulseaudio/
 RUN git clone "${XRDP_PULSEAUDIO_REMOTE:?}" ./
 RUN git checkout "${XRDP_PULSEAUDIO_TREEISH:?}"
@@ -366,23 +383,23 @@ COPY --from=docker.io/hectormolinero/tini:TINI_IMAGE_TAG --chown=root:root /usr/
 
 # Install libjpeg-turbo from package
 COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build/libjpeg-turbo_*.deb /tmp/libjpeg-turbo.deb
-RUN dpkg -i --force-architecture /tmp/libjpeg-turbo.deb && rm -f /tmp/libjpeg-turbo.deb
+RUN dpkg -i /tmp/libjpeg-turbo.deb && rm -f /tmp/libjpeg-turbo.deb
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build32/libjpeg-turbo32_*.deb /tmp/libjpeg-turbo32.deb
-RUN dpkg -i --force-architecture /tmp/libjpeg-turbo32.deb && rm -f /tmp/libjpeg-turbo32.deb
+RUN dpkg -i /tmp/libjpeg-turbo32.deb && rm -f /tmp/libjpeg-turbo32.deb
 ]])m4_dnl
 
 # Install VirtualGL from package
 COPY --from=build --chown=root:root /tmp/virtualgl/build/virtualgl_*.deb /tmp/virtualgl.deb
-RUN dpkg -i --force-architecture /tmp/virtualgl.deb && rm -f /tmp/virtualgl.deb
+RUN dpkg -i /tmp/virtualgl.deb && rm -f /tmp/virtualgl.deb
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 COPY --from=build --chown=root:root /tmp/virtualgl/build32/virtualgl32_*.deb /tmp/virtualgl32.deb
-RUN dpkg -i --force-architecture /tmp/virtualgl32.deb && rm -f /tmp/virtualgl32.deb
+RUN dpkg -i /tmp/virtualgl32.deb && rm -f /tmp/virtualgl32.deb
 ]])m4_dnl
 
 ## Install TurboVNC from package
 #COPY --from=build --chown=root:root /tmp/turbovnc/build/turbovnc_*.deb /tmp/turbovnc.deb
-#RUN dpkg -i --force-architecture /tmp/turbovnc.deb && rm -f /tmp/turbovnc.deb
+#RUN dpkg -i /tmp/turbovnc.deb && rm -f /tmp/turbovnc.deb
 
 # Install XRDP from package
 COPY --from=build --chown=root:root /tmp/xrdp/xrdp_*.deb /tmp/xrdp.deb
