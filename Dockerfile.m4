@@ -31,8 +31,11 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		flex \
 		git \
 		intltool \
+		libegl1-mesa-dev \
+		libepoxy-dev \
 		libfdk-aac-dev \
 		libfuse-dev \
+		libgbm-dev \
 		libgl1-mesa-dev \
 		libglu1-mesa-dev \
 		libmp3lame-dev \
@@ -63,6 +66,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xutils-dev \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		g++-multilib \
+		libegl1-mesa-dev:i386 \
 		libgl1-mesa-dev:i386 \
 		libglu1-mesa-dev:i386 \
 		libxtst-dev:i386 \
@@ -144,28 +148,6 @@ RUN make deb
 RUN dpkg -i ./virtualgl32_*.deb
 ]])m4_dnl
 
-# Build TurboVNC
-#ARG TURBOVNC_TREEISH=
-#ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
-#RUN mkdir /tmp/turbovnc/
-#WORKDIR /tmp/turbovnc/
-#RUN git clone "${TURBOVNC_REMOTE:?}" ./
-#RUN git checkout "${TURBOVNC_TREEISH:?}"
-#RUN git submodule update --init --recursive
-#RUN mkdir /tmp/turbovnc/build/
-#WORKDIR /tmp/turbovnc/build/
-#RUN cmake ./ \
-#		-G 'Unix Makefiles' \
-#		-D PKGNAME=turbovnc \
-#		-D CMAKE_BUILD_TYPE=Release \
-#		-D CMAKE_INSTALL_PREFIX=/opt/TurboVNC \
-#		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
-#		-D TVNC_BUILDJAVA=0 \
-#		../
-#RUN make -j"$(nproc)"
-#RUN make deb
-#RUN dpkg -i ./turbovnc_*.deb
-
 # Build XRDP
 ARG XRDP_TREEISH=v0.9.11
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
@@ -188,7 +170,7 @@ RUN make -j"$(nproc)"
 RUN checkinstall --default --pkgname=xrdp --pkgversion=0 --pkgrelease=0
 
 # Build xorgxrdp
-ARG XORGXRDP_TREEISH=v0.2.11
+ARG XORGXRDP_TREEISH=v0.2.12
 ARG XORGXRDP_REMOTE=https://github.com/neutrinolabs/xorgxrdp.git
 RUN mkdir /tmp/xorgxrdp/
 WORKDIR /tmp/xorgxrdp/
@@ -196,7 +178,7 @@ RUN git clone "${XORGXRDP_REMOTE:?}" ./
 RUN git checkout "${XORGXRDP_TREEISH:?}"
 RUN git submodule update --init --recursive
 RUN ./bootstrap
-RUN ./configure
+RUN ./configure --enable-glamor
 RUN make -j"$(nproc)"
 RUN checkinstall --default --pkgname=xorgxrdp --pkgversion=0 --pkgrelease=0
 
@@ -258,8 +240,11 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		iproute2 \
 		iputils-ping \
 		less \
+		libegl1 \
+		libepoxy0 \
 		libexo-1-0 \
 		libfdk-aac1 \
+		libgbm1 \
 		libgl1-mesa-dri \
 		libgl1-mesa-glx \
 		libglu1-mesa \
@@ -320,9 +305,10 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		zip \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends \
+		libegl1:i386 \
 		libgl1-mesa-dri:i386 \
 		libgl1-mesa-glx:i386 \
-		libglu1-mesa:i386 \
+		libglu1:i386 \
 		libxtst6:i386 \
 		libxv1:i386 \
 		ocl-icd-libopencl1:i386 \
@@ -397,10 +383,6 @@ COPY --from=build --chown=root:root /tmp/virtualgl/build32/virtualgl32_*.deb /tm
 RUN dpkg -i /tmp/virtualgl32.deb && rm -f /tmp/virtualgl32.deb
 ]])m4_dnl
 
-## Install TurboVNC from package
-#COPY --from=build --chown=root:root /tmp/turbovnc/build/turbovnc_*.deb /tmp/turbovnc.deb
-#RUN dpkg -i /tmp/turbovnc.deb && rm -f /tmp/turbovnc.deb
-
 # Install XRDP from package
 COPY --from=build --chown=root:root /tmp/xrdp/xrdp_*.deb /tmp/xrdp.deb
 RUN dpkg -i /tmp/xrdp.deb && rm -f /tmp/xrdp.deb
@@ -420,11 +402,11 @@ ENV UNPRIVILEGED_USER_NAME=guest
 ENV UNPRIVILEGED_USER_PASSWORD=password
 ENV UNPRIVILEGED_USER_GROUPS=audio,input,video
 ENV UNPRIVILEGED_USER_SHELL=/bin/bash
-ENV DISABLE_GPU=false
 ENV RDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV RDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
+ENV ENABLE_SSHD=false
+ENV ENABLE_VIRTUALGL=false
 ENV PATH=/opt/VirtualGL/bin:${PATH}
-#ENV PATH=/opt/TurboVNC/bin:${PATH}
 ENV VGL_DISPLAY=:0
 ## Workaround for AMDGPU X_GLXCreatePbuffer issue:
 ## https://github.com/VirtualGL/virtualgl/issues/85#issuecomment-480291529
@@ -488,7 +470,9 @@ COPY --chown=root:root config/xrdp/sesman.ini /etc/xrdp/sesman.ini
 
 # Copy services
 COPY --chown=root:root scripts/service/ /etc/sv/
-RUN find /etc/sv/ -type d -mindepth 1 -maxdepth 1 -exec ln -sv '{}' /etc/service/ ';'
+RUN ln -sv /etc/sv/dbus-daemon /etc/service/
+RUN ln -sv /etc/sv/xrdp /etc/service/
+RUN ln -sv /etc/sv/xrdp-sesman /etc/service/
 
 # Copy scripts
 COPY --chown=root:root scripts/bin/ /usr/local/bin/

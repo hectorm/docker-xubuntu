@@ -33,9 +33,14 @@ unset UNPRIVILEGED_USER_PASSWORD
 # Dump environment variables
 export-env > /etc/profile.d/env.sh
 
-# Disable xdummy if there is no graphics card
-if [ "${DISABLE_GPU:?}" = 'true' ] || [ ! -d /dev/dri/ ]; then
-	unlink /etc/service/xdummy
+# Enable sshd service if ENABLE_SSHD is true
+if [ "${ENABLE_SSHD:?}" = 'true' ]; then
+	ln -s /etc/sv/sshd /etc/service/
+fi
+
+# Enable xdummy service if ENABLE_VIRTUALGL is true
+if [ "${ENABLE_VIRTUALGL:?}" = 'true' ]; then
+	ln -s /etc/sv/xdummy /etc/service/
 fi
 
 # Create RANDFILE if it does not exist
