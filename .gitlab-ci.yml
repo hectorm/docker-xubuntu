@@ -1,131 +1,97 @@
 stages:
-  - "build:images"
-  - "push:images"
-  - "push:manifests"
+  - 'build:images'
+  - 'push:images'
+  - 'push:manifests'
 
 variables:
-  DOCKER_HOST: "tcp://dockerd:2376"
-  DOCKER_TLS_SAN: "DNS:dockerd"
-  DOCKER_TLS_CERTDIR: "/certs"
-  DOCKER_DRIVER: "overlay2"
+  DOCKER_HOST: 'tcp://dockerd:2376'
+  DOCKER_TLS_SAN: 'DNS:dockerd'
+  DOCKER_TLS_CERTDIR: '/certs'
+  DOCKER_DRIVER: 'overlay2'
 
 default:
-  image: "docker.io/docker:stable"
+  image: 'docker.io/docker:stable'
   services:
-    - name: "docker.io/docker:dind"
-      alias: "dockerd"
+    - name: 'docker.io/docker:dind'
+      alias: 'dockerd'
 
 .cmds:
-  - &cmd_install_build_packages "apk add --no-cache coreutils git m4 make xz"
-  - &cmd_install_push_packages  "apk add --no-cache coreutils git make xz"
-  - &cmd_docker_login_registry  "docker login -u \"${CI_REGISTRY_USER:?}\" -p \"${CI_REGISTRY_PASSWORD:?}\" \"${CI_REGISTRY:?}\""
+  - &cmd_install_build_packages 'apk add --no-cache coreutils git m4 make xz'
+  - &cmd_install_push_packages  'apk add --no-cache coreutils git make xz'
+  - &cmd_docker_login_registry  'docker login -u "${CI_REGISTRY_USER:?}" -p "${CI_REGISTRY_PASSWORD:?}" "${CI_REGISTRY:?}"'
 
 .regexes:
-  - &regex_version "/^v[0-9]+$/"
+  - &regex_version '/^v[0-9]+$/'
 
 build:images:native:
-  stage: "build:images"
-  except:
-    - *regex_version
+  stage: 'build:images'
+  except: [*regex_version]
   before_script:
     - *cmd_install_build_packages
   script:
-    - "make build-native-image save-native-image"
+    - 'make build-native-image save-native-image'
   artifacts:
-    expire_in: "1 day"
+    expire_in: '1 day'
     paths:
-      - "./dist/"
+      - './dist/'
+
+.build:images:cross:
+  stage: 'build:images'
+  only: [*regex_version]
+  before_script:
+    - *cmd_install_build_packages
+  script:
+    - 'make binfmt-register'
+    - 'make "build-${ARCH:?}-image" "save-${ARCH:?}-image"'
+  artifacts:
+    expire_in: '1 week'
+    paths:
+      - './dist/'
 
 build:images:amd64:
-  stage: "build:images"
-  only:
-    - *regex_version
-  before_script:
-    - *cmd_install_build_packages
-  script:
-    - "make binfmt-register"
-    - "make build-amd64-image save-amd64-image"
-  artifacts:
-    expire_in: "1 week"
-    paths:
-      - "./dist/"
+  extends: .build:images:cross
+  variables: {ARCH: 'amd64'}
 
 build:images:arm64v8:
-  stage: "build:images"
-  only:
-    - *regex_version
-  before_script:
-    - *cmd_install_build_packages
-  script:
-    - "make binfmt-register"
-    - "make build-arm64v8-image save-arm64v8-image"
-  artifacts:
-    expire_in: "1 week"
-    paths:
-      - "./dist/"
+  extends: .build:images:cross
+  variables: {ARCH: 'arm64v8'}
 
 build:images:arm32v7:
-  stage: "build:images"
-  only:
-    - *regex_version
+  extends: .build:images:cross
+  variables: {ARCH: 'arm32v7'}
+
+.push:images:cross:
+  stage: 'push:images'
+  only: [*regex_version]
   before_script:
-    - *cmd_install_build_packages
+    - *cmd_install_push_packages
+    - *cmd_docker_login_registry
   script:
-    - "make binfmt-register"
-    - "make build-arm32v7-image save-arm32v7-image"
-  artifacts:
-    expire_in: "1 week"
-    paths:
-      - "./dist/"
+    - 'make "load-${ARCH:?}-image" "push-${ARCH:?}-image"'
 
 push:images:amd64:
-  stage: "push:images"
-  dependencies:
-    - "build:images:amd64"
-  only:
-    - *regex_version
-  before_script:
-    - *cmd_install_push_packages
-    - *cmd_docker_login_registry
-  script:
-    - "make load-amd64-image push-amd64-image"
+  extends: .push:images:cross
+  dependencies: ['build:images:amd64']
+  variables: {ARCH: 'amd64'}
 
 push:images:arm64v8:
-  stage: "push:images"
-  dependencies:
-    - "build:images:arm64v8"
-  only:
-    - *regex_version
-  before_script:
-    - *cmd_install_push_packages
-    - *cmd_docker_login_registry
-  script:
-    - "make load-arm64v8-image push-arm64v8-image"
+  extends: .push:images:cross
+  dependencies: ['build:images:arm64v8']
+  variables: {ARCH: 'arm64v8'}
 
 push:images:arm32v7:
-  stage: "push:images"
-  dependencies:
-    - "build:images:arm32v7"
-  only:
-    - *regex_version
-  before_script:
-    - *cmd_install_push_packages
-    - *cmd_docker_login_registry
-  script:
-    - "make load-arm32v7-image push-arm32v7-image"
+  extends: .push:images:cross
+  dependencies: ['build:images:arm32v7']
+  variables: {ARCH: 'arm32v7'}
 
 push:manifests:cross:
-  stage: "push:manifests"
-  dependencies:
-    - "push:images:amd64"
-    - "push:images:arm64v8"
-    - "push:images:arm32v7"
-  only:
-    - *regex_version
+  stage: 'push:manifests'
+  dependencies: ['push:images:amd64', 'push:images:arm64v8', 'push:images:arm32v7']
+  only: [*regex_version]
   variables:
-    DOCKER_CLI_EXPERIMENTAL: "enabled"
+    DOCKER_CLI_EXPERIMENTAL: 'enabled'
   before_script:
     - *cmd_install_push_packages
     - *cmd_docker_login_registry
   script:
-    - "make push-cross-manifest"
+    - 'make push-cross-manifest'
