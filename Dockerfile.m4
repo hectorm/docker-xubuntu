@@ -296,7 +296,11 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xdg-user-dirs \
 		xdg-utils \
 		xfonts-base \
+		xinput \
 		xserver-xorg-core-hwe-18.04 \
+		xserver-xorg-input-all-hwe-18.04 \
+		xserver-xorg-input-evdev-hwe-18.04 \
+		xserver-xorg-input-joystick-hwe-18.04 \
 		xserver-xorg-video-all-hwe-18.04 \
 		xterm \
 		xutils \
