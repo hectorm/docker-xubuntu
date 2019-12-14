@@ -30,7 +30,7 @@ required for VirtualGL will conflict with the host X server.
 * `UNPRIVILEGED_USER_GID`: unprivileged user GID (`1000` by default).
 * `UNPRIVILEGED_USER_NAME`: unprivileged user name (`guest` by default).
 * `UNPRIVILEGED_USER_PASSWORD`: unprivileged user password (`password` by default).
-* `UNPRIVILEGED_USER_GROUPS`: unprivileged user groups (`audio,input,video` by default).
+* `UNPRIVILEGED_USER_GROUPS`: comma-separated list of additional GIDs for the unprivileged user (none by default).
 * `UNPRIVILEGED_USER_SHELL`: unprivileged user shell (`/bin/bash` by default).
 * `ENABLE_SSHD`: enable SSH server in the container (`false` by default).
 * `ENABLE_VIRTUALGL`: enable VirtualGL support in the container (`false` by default).

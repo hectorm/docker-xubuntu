@@ -2,6 +2,15 @@
 
 set -eu
 
+# Create additional groups
+_IFS=${IFS}; IFS=,
+for gid in ${UNPRIVILEGED_USER_GROUPS?}; do
+	if ! getent group "${gid:?}" >/dev/null 2>&1; then
+		groupadd -g "${gid:?}" "g_${gid:?}"
+	fi
+done
+IFS=$_IFS
+
 # Create unprivileged user and group
 groupadd \
 	--gid "${UNPRIVILEGED_USER_GID:?}" \
@@ -9,7 +18,7 @@ groupadd \
 useradd \
 	--uid "${UNPRIVILEGED_USER_UID:?}" \
 	--gid "${UNPRIVILEGED_USER_GID:?}" \
-	--groups "${UNPRIVILEGED_USER_GROUPS:?}" \
+	--groups "${UNPRIVILEGED_USER_GROUPS?}" \
 	--shell "${UNPRIVILEGED_USER_SHELL:?}" \
 	--create-home \
 	"${UNPRIVILEGED_USER_NAME:?}"

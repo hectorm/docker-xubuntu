@@ -400,7 +400,7 @@ ENV UNPRIVILEGED_USER_UID=1000
 ENV UNPRIVILEGED_USER_GID=1000
 ENV UNPRIVILEGED_USER_NAME=guest
 ENV UNPRIVILEGED_USER_PASSWORD=password
-ENV UNPRIVILEGED_USER_GROUPS=audio,input,video
+ENV UNPRIVILEGED_USER_GROUPS=
 ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV RDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV RDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
@@ -433,6 +433,9 @@ RUN ln -sf /dev/stdout /var/log/xdummy.log
 RUN ln -sf /dev/stdout /var/log/xrdp.log
 RUN ln -sf /dev/stdout /var/log/xrdp-sesman.log
 
+# Create /run/sshd/ directory
+RUN mkdir /run/sshd/
+
 # Create /etc/skel/.xsession file
 RUN printf '%s\n' 'exec xfce4-session' > /etc/skel/.xsession
 
@@ -451,9 +454,6 @@ RUN printf '%s\n' \
 
 # Create /etc/skel/.Xauthority file
 RUN touch /etc/skel/.Xauthority
-
-# Create /run/sshd directory
-RUN mkdir /run/sshd/
 
 # Create socket directory for X server
 RUN mkdir /tmp/.X11-unix/ \
