@@ -149,7 +149,7 @@ RUN dpkg -i ./virtualgl32_*.deb
 ]])m4_dnl
 
 # Build XRDP
-ARG XRDP_TREEISH=v0.9.11
+ARG XRDP_TREEISH=v0.9.12
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
 RUN mkdir /tmp/xrdp/
 WORKDIR /tmp/xrdp/
