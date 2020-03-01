@@ -468,9 +468,9 @@ RUN mkdir /tmp/.X11-unix/ \
 RUN vglserver_config -config +s +f -t
 
 # Copy config
-COPY --chown=root:root config/ssh/sshd_config /etc/ssh/sshd_config
-COPY --chown=root:root config/xrdp/xrdp.ini /etc/xrdp/xrdp.ini
-COPY --chown=root:root config/xrdp/sesman.ini /etc/xrdp/sesman.ini
+COPY --chown=root:root ./config/ssh/sshd_config /etc/ssh/sshd_config
+COPY --chown=root:root ./config/xrdp/xrdp.ini /etc/xrdp/xrdp.ini
+COPY --chown=root:root ./config/xrdp/sesman.ini /etc/xrdp/sesman.ini
 
 # Copy services
 COPY --chown=root:root scripts/service/ /etc/sv/
@@ -479,7 +479,7 @@ RUN ln -sv /etc/sv/xrdp /etc/service/
 RUN ln -sv /etc/sv/xrdp-sesman /etc/service/
 
 # Copy scripts
-COPY --chown=root:root scripts/bin/ /usr/local/bin/
+COPY --chown=root:root ./scripts/bin/ /usr/local/bin/
 
 # Expose SSH port
 EXPOSE 3322/tcp
