@@ -356,10 +356,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xz-utils \
 		zenity \
 		zip \
-	&& rm -rf \
-		/tmp/* /var/tmp/* \
-		/var/lib/apt/lists/* \
-		/etc/ssh/ssh_host_*
+	&& rm -rf /var/lib/apt/lists/*
 
 # Copy Tini build
 m4_define([[TINI_IMAGE_TAG]], m4_ifdef([[CROSS_ARCH]], [[latest-CROSS_ARCH]], [[latest]]))m4_dnl
@@ -424,6 +421,9 @@ RUN printf '%s\n' "${TZ:?}" > /etc/timezone
 # Setup D-Bus
 RUN mkdir /run/dbus/ && chown messagebus:messagebus /run/dbus/
 RUN dbus-uuidgen > /etc/machine-id && ln -sf /etc/machine-id /var/lib/dbus/machine-id
+
+# Remove default keys and certificates
+RUN rm -f "${RDP_TLS_KEY_PATH:?}" "${RDP_TLS_CERT_PATH:?}" /etc/ssh/ssh_host_*
 
 # Create /etc/skel/.xsession file
 RUN printf '%s\n' 'exec xfce4-session' > /etc/skel/.xsession
