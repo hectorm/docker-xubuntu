@@ -80,10 +80,5 @@ if [ ! -f "${RDP_TLS_KEY_PATH:?}" ] || [ ! -f "${RDP_TLS_CERT_PATH:?}" ]; then
 	) >/dev/null
 fi
 
-# Remove dbus pidfile
-if [ -e /run/dbus/pid ]; then
-	rm -f /run/dbus/pid
-fi
-
-# Start all services
+# Start runit
 exec tini -- runsvdir -P /etc/service/

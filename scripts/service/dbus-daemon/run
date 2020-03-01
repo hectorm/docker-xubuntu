@@ -1,4 +1,8 @@
 #!/bin/sh
 
+if [ -e /run/dbus/pid ]; then
+	rm -f /run/dbus/pid
+fi
+
 exec 2>&1
 exec /usr/bin/chpst -u messagebus /usr/bin/dbus-daemon --system --nofork
