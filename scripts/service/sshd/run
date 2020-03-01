@@ -1,4 +1,8 @@
 #!/bin/sh
 
+if [ ! -e /run/sshd/ ]; then
+	mkdir /run/sshd/
+fi
+
 exec 2>&1
 exec /usr/sbin/sshd -D

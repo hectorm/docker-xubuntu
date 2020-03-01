@@ -44,11 +44,6 @@ unset UNPRIVILEGED_USER_PASSWORD
 # Dump environment variables
 export-env > /etc/profile.d/env.sh
 
-# Enable sshd service if ENABLE_SSHD is true
-if [ "${ENABLE_SSHD:?}" = 'true' ]; then
-	ln -s /etc/sv/sshd /etc/service/
-fi
-
 # Enable xdummy service if ENABLE_VIRTUALGL is true
 if [ "${ENABLE_VIRTUALGL:?}" = 'true' ]; then
 	ln -s /etc/sv/xdummy /etc/service/

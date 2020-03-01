@@ -404,7 +404,6 @@ ENV UNPRIVILEGED_USER_GROUPS=
 ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV RDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV RDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
-ENV ENABLE_SSHD=false
 ENV ENABLE_VIRTUALGL=false
 ENV PATH=/opt/VirtualGL/bin:${PATH}
 ENV VGL_DISPLAY=:0
@@ -427,14 +426,6 @@ RUN printf '%s\n' "${TZ:?}" > /etc/timezone
 # Setup D-Bus
 RUN mkdir /run/dbus/ && chown messagebus:messagebus /run/dbus/
 RUN dbus-uuidgen > /etc/machine-id && ln -sf /etc/machine-id /var/lib/dbus/machine-id
-
-# Forward logs to Docker log collector
-RUN ln -sf /dev/stdout /var/log/xdummy.log
-RUN ln -sf /dev/stdout /var/log/xrdp.log
-RUN ln -sf /dev/stdout /var/log/xrdp-sesman.log
-
-# Create /run/sshd/ directory
-RUN mkdir /run/sshd/
 
 # Create /etc/skel/.xsession file
 RUN printf '%s\n' 'exec xfce4-session' > /etc/skel/.xsession
@@ -463,6 +454,11 @@ RUN mkdir /tmp/.X11-unix/ \
 # Configure server for use with VirtualGL
 RUN vglserver_config -config +s +f -t
 
+# Forward logs to Docker log collector
+RUN ln -sf /dev/stdout /var/log/xdummy.log
+RUN ln -sf /dev/stdout /var/log/xrdp.log
+RUN ln -sf /dev/stdout /var/log/xrdp-sesman.log
+
 # Copy config
 COPY --chown=root:root ./config/ssh/sshd_config /etc/ssh/sshd_config
 COPY --chown=root:root ./config/xrdp/xrdp.ini /etc/xrdp/xrdp.ini
@@ -470,6 +466,7 @@ COPY --chown=root:root ./config/xrdp/sesman.ini /etc/xrdp/sesman.ini
 
 # Copy services
 COPY --chown=root:root scripts/service/ /etc/sv/
+RUN ln -sv /etc/sv/sshd /etc/service/
 RUN ln -sv /etc/sv/dbus-daemon /etc/service/
 RUN ln -sv /etc/sv/xrdp /etc/service/
 RUN ln -sv /etc/sv/xrdp-sesman /etc/service/

@@ -41,7 +41,6 @@ printf -- '%s\n' "Creating \"${CONTAINER_NAME:?}\" container..."
 	--publish 3389:3389/tcp \
 	--shm-size 2g \
 	--privileged \
-	--env ENABLE_SSHD=true \
 	--env ENABLE_VIRTUALGL=true \
 	"${IMAGE_NAME:?}" "$@" >/dev/null
 
