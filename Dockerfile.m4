@@ -47,6 +47,8 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libsystemd-dev \
 		libtool \
 		libx11-dev \
+		libx11-xcb-dev \
+		libxcb-glx0-dev \
 		libxcb-keysyms1-dev \
 		libxcb1-dev \
 		libxext-dev \
@@ -58,8 +60,6 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		nasm \
 		ocl-icd-opencl-dev \
 		pkg-config \
-		python \
-		python-libxml2 \
 		texinfo \
 		xserver-xorg-dev-hwe-18.04 \
 		xsltproc \
@@ -256,6 +256,8 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libssl1.1 \
 		libsystemd0 \
 		libx11-6 \
+		libx11-xcb1 \
+		libxcb-glx0 \
 		libxcb-keysyms1 \
 		libxcb1 \
 		libxext6 \
@@ -287,7 +289,6 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		pulseaudio-utils \
 		runit \
 		sudo \
-		systemd \
 		tzdata \
 		unzip \
 		usbutils \
@@ -328,8 +329,6 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		gstreamer1.0-plugins-good \
 		gstreamer1.0-plugins-ugly \
 		gtk2-engines-pixbuf \
-		gtk2-engines-xfce \
-		gtk3-engines-xfce \
 		indicator-application \
 		indicator-datetime \
 		indicator-keyboard \
