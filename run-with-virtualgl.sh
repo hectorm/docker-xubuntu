@@ -32,16 +32,16 @@ if containerExists "${CONTAINER_NAME:?}"; then
 fi
 
 printf -- '%s\n' "Creating \"${CONTAINER_NAME:?}\" container..."
-"${DOCKER:?}" run --detach \
+"${DOCKER:?}" run \
 	--name "${CONTAINER_NAME:?}" \
 	--hostname "${CONTAINER_NAME:?}" \
-	--restart on-failure:3 \
-	--log-opt max-size=32m \
+	--detach --tty \
+	--privileged \
+	--shm-size 2g \
 	--publish 3322:3322/tcp \
 	--publish 3389:3389/tcp \
-	--shm-size 2g \
-	--privileged \
 	--env ENABLE_VIRTUALGL=true \
+	--device /dev/dri:/dev/dri \
 	"${IMAGE_NAME:?}" "$@" >/dev/null
 
 printf -- '%s\n\n' 'Done!'

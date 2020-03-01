@@ -8,15 +8,17 @@ A Docker image based on Ubuntu 18.04 with the Xfce desktop environment,
 ## Start an instance
 
 ```sh
-docker run --detach \
+docker run \
   --name xubuntu \
-  --publish 3389:3389/tcp \
+  --detach --tty \
   --shm-size 2g \
-  --device /dev/dri \
+  --publish 3322:3322/tcp \
+  --publish 3389:3389/tcp \
+  --device /dev/dri:/dev/dri \
   hectormolinero/xubuntu:latest
 ```
 
-> You will be able to connect to the container via RDP through 3389/tcp port.
+> You will be able to connect to the container via SSH through 3322/tcp port and RDP through 3389/tcp port.
 
 > **Important:** some software (like Firefox) need the shared memory to be increased, if you
 encounter any problem related to this you may use the `--shm-size` option.
