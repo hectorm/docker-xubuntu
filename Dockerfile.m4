@@ -430,7 +430,7 @@ RUN printf '%s\n' "${TZ:?}" > /etc/timezone
 
 # Setup D-Bus
 RUN mkdir /run/dbus/ && chown messagebus:messagebus /run/dbus/
-RUN dbus-uuidgen > /etc/machine-id && ln -sf /var/lib/dbus/machine-id /etc/machine-id
+RUN dbus-uuidgen > /etc/machine-id && ln -sf /etc/machine-id /var/lib/dbus/machine-id
 
 # Forward logs to Docker log collector
 RUN ln -sf /dev/stdout /var/log/xdummy.log
