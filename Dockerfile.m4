@@ -9,8 +9,6 @@ m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static
 
 # Install system packages
 RUN export DEBIAN_FRONTEND=noninteractive \
-	# Remove Canonical's "partner" repository
-	&& sed -i '/archive\.canonical\.com/d;' /etc/apt/sources.list \
 	# Uncomment source packages repositories
 	&& sed -i 's/^#\s*\(deb-src\s\)/\1/g' /etc/apt/sources.list \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
