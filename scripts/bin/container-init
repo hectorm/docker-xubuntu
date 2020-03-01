@@ -86,4 +86,4 @@ if [ -e /run/dbus/pid ]; then
 fi
 
 # Start all services
-exec runsvdir -P /etc/service/
+exec tini -- runsvdir -P /etc/service/
