@@ -482,6 +482,5 @@ EXPOSE 3322/tcp
 # Expose RDP port
 EXPOSE 3389/tcp
 
-WORKDIR /
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/usr/local/bin/container-foreground-cmd"]
