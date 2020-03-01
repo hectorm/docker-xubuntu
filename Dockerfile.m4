@@ -21,8 +21,6 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends \
 		autoconf \
 		automake \
-		bash \
-		bash-completion \
 		bison \
 		build-essential \
 		ca-certificates \
@@ -215,39 +213,19 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 ]])m4_dnl
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends \
-		apt-transport-https \
-		apt-utils \
 		at-spi2-core \
-		bash \
-		bash-completion \
-		binutils \
 		ca-certificates \
-		curl \
 		dbus \
 		dbus-x11 \
-		desktop-file-utils \
-		dialog \
-		exo-utils \
-		file \
-		fonts-dejavu \
-		fonts-liberation \
-		fonts-noto \
-		fonts-noto-color-emoji \
-		fuse \
-		git \
-		gnupg \
-		htop \
-		iproute2 \
-		iputils-ping \
-		less \
 		libegl1 \
 		libepoxy0 \
-		libexo-1-0 \
 		libfdk-aac1 \
+		libfuse2 \
 		libgbm1 \
+		libgl1 \
 		libgl1-mesa-dri \
 		libgl1-mesa-glx \
-		libglu1-mesa \
+		libglu1 \
 		libmp3lame0 \
 		libopus0 \
 		libpam0g \
@@ -267,88 +245,100 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libxtst6 \
 		libxv1 \
 		locales \
-		lsscsi \
-		menu \
-		menu-xdg \
 		mesa-opencl-icd \
-		mesa-utils \
-		mesa-utils-extra \
-		mime-support \
-		nano \
-		net-tools \
-		netcat-openbsd \
 		ocl-icd-libopencl1 \
 		openssh-server \
 		openssl \
-		p7zip-full \
-		pciutils \
 		policykit-1 \
-		procps \
-		psmisc \
 		pulseaudio \
 		pulseaudio-utils \
 		runit \
-		sudo \
 		tzdata \
-		unzip \
-		usbutils \
-		wget \
-		xauth \
-		xdg-user-dirs \
-		xdg-utils \
-		xfonts-base \
-		xinput \
 		xserver-xorg-core-hwe-18.04 \
 		xserver-xorg-input-all-hwe-18.04 \
 		xserver-xorg-input-evdev-hwe-18.04 \
 		xserver-xorg-input-joystick-hwe-18.04 \
 		xserver-xorg-video-all-hwe-18.04 \
-		xterm \
-		xutils \
-		xz-utils \
-		zenity \
-		zip \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends \
 		libegl1:i386 \
+		libgl1:i386 \
 		libgl1-mesa-dri:i386 \
 		libgl1-mesa-glx:i386 \
 		libglu1:i386 \
-		libxtst6:i386 \
-		libxv1:i386 \
-		ocl-icd-libopencl1:i386 \
 ]])m4_dnl
 	&& apt-get install -y --no-install-recommends \
 		adwaita-qt \
+		apt-transport-https \
+		apt-utils \
 		atril \
+		bash \
+		bash-completion \
+		binutils \
+		curl \
+		desktop-file-utils \
+		dialog \
 		engrampa \
+		exo-utils \
 		ffmpegthumbnailer \
+		file \
 		firefox \
+		fonts-dejavu \
+		fonts-liberation \
+		fonts-noto \
+		fonts-noto-color-emoji \
+		fuse \
+		git \
 		gnome-keyring \
+		gnupg \
 		gstreamer1.0-plugins-base \
 		gstreamer1.0-plugins-good \
 		gstreamer1.0-plugins-ugly \
 		gtk2-engines-pixbuf \
+		htop \
 		indicator-application \
 		indicator-datetime \
 		indicator-keyboard \
 		indicator-messages \
 		indicator-session \
 		indicator-sound \
+		iproute2 \
+		iputils-ping \
+		less \
 		libavcodec-extra \
 		libcanberra-gtk-module \
 		libcanberra-gtk3-module \
 		libgtk-3-bin \
+		lsscsi \
+		menu \
+		menu-xdg \
 		menulibre \
+		mesa-utils \
+		mesa-utils-extra \
+		mime-support \
 		mousepad \
 		mugshot \
+		nano \
+		net-tools \
+		netcat-openbsd \
 		openjdk-8-jre \
+		p7zip-full \
 		pavucontrol \
+		pciutils \
+		procps \
+		psmisc \
 		ristretto \
+		sudo \
 		thunar-archive-plugin \
 		thunar-volman \
 		tumbler \
+		unzip \
+		usbutils \
 		vlc \
+		wget \
+		xauth \
+		xdg-user-dirs \
+		xdg-utils \
 		xfce4 \
 		xfce4-indicator-plugin \
 		xfce4-notifyd \
@@ -359,8 +349,15 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xfce4-terminal \
 		xfce4-whiskermenu-plugin \
 		xfce4-xkb-plugin \
+		xfonts-base \
 		xfpanel-switch \
+		xinput \
+		xterm \
 		xubuntu-default-settings \
+		xutils \
+		xz-utils \
+		zenity \
+		zip \
 	&& rm -rf \
 		/tmp/* /var/tmp/* \
 		/var/lib/apt/lists/* \
