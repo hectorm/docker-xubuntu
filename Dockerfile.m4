@@ -457,13 +457,8 @@ RUN ln -sf /dev/stdout /var/log/xdummy.log
 RUN ln -sf /dev/stdout /var/log/xrdp.log
 RUN ln -sf /dev/stdout /var/log/xrdp-sesman.log
 
-# Copy config
-COPY --chown=root:root ./config/ssh/sshd_config /etc/ssh/sshd_config
-COPY --chown=root:root ./config/xrdp/xrdp.ini /etc/xrdp/xrdp.ini
-COPY --chown=root:root ./config/xrdp/sesman.ini /etc/xrdp/sesman.ini
-
-# Copy services
-COPY --chown=root:root scripts/service/ /etc/sv/
+# Copy and enable services
+COPY --chown=root:root ./scripts/service/ /etc/sv/
 RUN ln -sv /etc/sv/sshd /etc/service/
 RUN ln -sv /etc/sv/dbus-daemon /etc/service/
 RUN ln -sv /etc/sv/xrdp /etc/service/
@@ -471,6 +466,11 @@ RUN ln -sv /etc/sv/xrdp-sesman /etc/service/
 
 # Copy scripts
 COPY --chown=root:root ./scripts/bin/ /usr/local/bin/
+
+# Copy config
+COPY --chown=root:root ./config/ssh/sshd_config /etc/ssh/sshd_config
+COPY --chown=root:root ./config/xrdp/xrdp.ini /etc/xrdp/xrdp.ini
+COPY --chown=root:root ./config/xrdp/sesman.ini /etc/xrdp/sesman.ini
 
 # Expose SSH port
 EXPOSE 3322/tcp
