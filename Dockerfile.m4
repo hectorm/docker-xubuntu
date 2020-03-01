@@ -264,6 +264,9 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libgl1-mesa-dri:i386 \
 		libgl1-mesa-glx:i386 \
 		libglu1:i386 \
+		libxtst6:i386 \
+		libxv1:i386 \
+		ocl-icd-libopencl1:i386 \
 ]])m4_dnl
 	&& apt-get install -y --no-install-recommends \
 		adwaita-qt \
