@@ -8,7 +8,7 @@ UsePAM                          yes
 X11Forwarding                   yes
 X11UseLocalhost                 no
 X11DisplayOffset                10
-AllowTcpForwarding              yes
+AllowTcpForwarding              no
 PermitRootLogin                 no
 PermitEmptyPasswords            no
 PermitUserEnvironment           no
@@ -16,6 +16,7 @@ PubkeyAuthentication            yes
 PasswordAuthentication          yes
 ChallengeResponseAuthentication no
 GSSAPIAuthentication            no
+Subsystem                       sftp internal-sftp
 LoginGraceTime                  30
 TCPKeepAlive                    yes
 ClientAliveInterval             60
