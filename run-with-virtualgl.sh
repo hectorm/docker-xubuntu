@@ -35,7 +35,7 @@ printf -- '%s\n' "Creating \"${CONTAINER_NAME:?}\" container..."
 "${DOCKER:?}" run \
 	--name "${CONTAINER_NAME:?}" \
 	--hostname "${CONTAINER_NAME:?}" \
-	--detach --tty \
+	--detach \
 	--privileged \
 	--shm-size 2g \
 	--publish 3322:3322/tcp \

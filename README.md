@@ -10,7 +10,7 @@ A Docker image based on Ubuntu 18.04 with the Xfce desktop environment,
 ```sh
 docker run \
   --name xubuntu \
-  --detach --tty \
+  --detach \
   --shm-size 2g \
   --publish 3322:3322/tcp \
   --publish 3389:3389/tcp \
