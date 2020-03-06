@@ -23,9 +23,6 @@ docker run \
 > **Important:** some software (like Firefox) need the shared memory to be increased, if you
 encounter any problem related to this you may use the `--shm-size` option.
 
-> **Important:** enabling VirtualGL support requires the `--privileged` option and the X server
-required for VirtualGL will conflict with the host X server.
-
 ## Environment variables
 
 * `UNPRIVILEGED_USER_UID`: unprivileged user UID (`1000` by default).
@@ -34,7 +31,7 @@ required for VirtualGL will conflict with the host X server.
 * `UNPRIVILEGED_USER_PASSWORD`: unprivileged user password (`password` by default).
 * `UNPRIVILEGED_USER_GROUPS`: comma-separated list of additional GIDs for the unprivileged user (none by default).
 * `UNPRIVILEGED_USER_SHELL`: unprivileged user shell (`/bin/bash` by default).
-* `ENABLE_VIRTUALGL`: enable VirtualGL support in the container (`false` by default).
+* `ENABLE_XDUMMY`: enable an X dummy server (`false` by default and requires the `--privileged` option).
 
 ## License
 

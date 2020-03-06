@@ -44,8 +44,8 @@ unset UNPRIVILEGED_USER_PASSWORD
 # Dump environment variables
 export-env > /etc/profile.d/env.sh
 
-# Enable xdummy service if ENABLE_VIRTUALGL is true
-if [ "${ENABLE_VIRTUALGL:?}" = 'true' ]; then
+# Enable xdummy service if ENABLE_XDUMMY is true
+if [ "${ENABLE_XDUMMY:?}" = 'true' ]; then
 	ln -s /etc/sv/xdummy /etc/service/
 fi
 

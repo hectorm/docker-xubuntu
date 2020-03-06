@@ -404,7 +404,7 @@ ENV UNPRIVILEGED_USER_GROUPS=
 ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV RDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV RDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
-ENV ENABLE_VIRTUALGL=false
+ENV ENABLE_XDUMMY=false
 ENV PATH=/opt/VirtualGL/bin:${PATH}
 ENV VGL_DISPLAY=:0
 ## Workaround for AMDGPU X_GLXCreatePbuffer issue:
@@ -435,6 +435,7 @@ RUN printf '%s\n' 'exec xfce4-session' > /etc/skel/.xsession
 
 # Create /etc/skel/.xsessionrc file
 RUN printf '%s\n' \
+		'export VGL_DISPLAY=${DISPLAY:?}' \
 		'export XDG_CACHE_HOME=${HOME:?}/.cache' \
 		'export XDG_CONFIG_DIRS=/etc/xdg/xdg-xubuntu:/etc/xdg' \
 		'export XDG_CONFIG_HOME=${HOME:?}/.config' \
