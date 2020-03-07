@@ -63,7 +63,7 @@ if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
 	ssh-keygen -t rsa -b 4096 -f /etc/ssh/ssh_host_rsa_key -N '' >/dev/null
 fi
 
-# Generate self-signed certificate
+# Generate RDP certificate if it does not exist
 if [ ! -f "${RDP_TLS_KEY_PATH:?}" ] || [ ! -f "${RDP_TLS_CERT_PATH:?}" ]; then
 	KEY_FILE=${RDP_TLS_KEY_PATH:?}
 	CRT_FILE=${RDP_TLS_CERT_PATH:?}
