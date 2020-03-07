@@ -38,7 +38,11 @@ chmod -R 700 /run/user/"${UNPRIVILEGED_USER_UID:?}"/
 chown -R "${UNPRIVILEGED_USER_NAME:?}:" /run/user/"${UNPRIVILEGED_USER_UID:?}"/
 
 # Set unprivileged user password
-printf '%s' "${UNPRIVILEGED_USER_NAME:?}:${UNPRIVILEGED_USER_PASSWORD:?}" | chpasswd
+if [ -n "${UNPRIVILEGED_USER_PASSWORD?}" ]; then
+	printf '%s' "${UNPRIVILEGED_USER_NAME:?}:${UNPRIVILEGED_USER_PASSWORD:?}" | chpasswd
+else
+	passwd -d "${UNPRIVILEGED_USER_NAME:?}"
+fi
 unset UNPRIVILEGED_USER_PASSWORD
 
 # Dump environment variables
