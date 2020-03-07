@@ -445,6 +445,7 @@ RUN printf '%s\n' \
 		'export XDG_MENU_PREFIX=xfce-' \
 		'export XDG_RUNTIME_DIR=/run/user/$(id -u)' \
 		'export XDG_SESSION_DESKTOP=xubuntu' \
+		'export XDG_SESSION_TYPE=x11' \
 		> /etc/skel/.xsessionrc
 
 # Create /etc/skel/.Xauthority file
