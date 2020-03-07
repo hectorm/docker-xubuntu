@@ -7,8 +7,9 @@ UseDNS                          no
 UsePAM                          yes
 X11Forwarding                   yes
 X11UseLocalhost                 no
-X11DisplayOffset                10
-AllowTcpForwarding              no
+X11DisplayOffset                100
+AllowTcpForwarding              yes
+AcceptEnv                       PULSE_SERVER
 PermitRootLogin                 no
 PermitEmptyPasswords            no
 PermitUserEnvironment           no
