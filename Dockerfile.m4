@@ -312,6 +312,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libcanberra-gtk-module \
 		libcanberra-gtk3-module \
 		libgtk-3-bin \
+		lsof \
 		lsscsi \
 		menu \
 		menu-xdg \
@@ -347,6 +348,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xfce4-notifyd \
 		xfce4-power-manager-plugins \
 		xfce4-pulseaudio-plugin \
+		xfce4-screenshooter \
 		xfce4-statusnotifier-plugin \
 		xfce4-taskmanager \
 		xfce4-terminal \
