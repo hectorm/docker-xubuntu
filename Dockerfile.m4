@@ -289,6 +289,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		fonts-noto \
 		fonts-noto-color-emoji \
 		fonts-ubuntu \
+		fuse \
 		git \
 		gnome-keyring \
 		gnupg \
