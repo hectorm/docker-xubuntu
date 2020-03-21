@@ -295,11 +295,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		gtk2-engines-pixbuf \
 		htop \
 		indicator-application \
-		indicator-datetime \
-		indicator-keyboard \
 		indicator-messages \
-		indicator-session \
-		indicator-sound \
 		iproute2 \
 		iputils-ping \
 		libavcodec-extra \
