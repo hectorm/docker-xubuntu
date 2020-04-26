@@ -68,9 +68,9 @@ if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
 fi
 
 # Generate RDP certificate if it does not exist
-if [ ! -f "${RDP_TLS_KEY_PATH:?}" ] || [ ! -f "${RDP_TLS_CERT_PATH:?}" ]; then
-	KEY_FILE=${RDP_TLS_KEY_PATH:?}
-	CRT_FILE=${RDP_TLS_CERT_PATH:?}
+if [ ! -f "${XRDP_TLS_KEY_PATH:?}" ] || [ ! -f "${XRDP_TLS_CERT_PATH:?}" ]; then
+	KEY_FILE=${XRDP_TLS_KEY_PATH:?}
+	CRT_FILE=${XRDP_TLS_CERT_PATH:?}
 	CSR_FILE=$(mktemp -u)
 
 	(umask 077 \

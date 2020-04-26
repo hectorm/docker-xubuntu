@@ -393,10 +393,12 @@ ENV UNPRIVILEGED_USER_NAME=guest
 ENV UNPRIVILEGED_USER_PASSWORD=password
 ENV UNPRIVILEGED_USER_GROUPS=
 ENV UNPRIVILEGED_USER_SHELL=/bin/bash
-ENV RDP_TLS_KEY_PATH=/etc/xrdp/key.pem
-ENV RDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
+ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
+ENV XRDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
 ENV ENABLE_XDUMMY=false
-ENV PATH=/opt/VirtualGL/bin:${PATH}
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH=${PATH}:/usr/games:/usr/local/games
+ENV PATH=${PATH}:/opt/VirtualGL/bin
 ENV VGL_DISPLAY=:0
 ## Workaround for AMDGPU X_GLXCreatePbuffer issue:
 ## https://github.com/VirtualGL/virtualgl/issues/85#issuecomment-480291529
@@ -419,7 +421,7 @@ RUN mkdir /run/dbus/ && chown messagebus:messagebus /run/dbus/
 RUN dbus-uuidgen > /etc/machine-id && ln -sf /etc/machine-id /var/lib/dbus/machine-id
 
 # Remove default keys and certificates
-RUN rm -f "${RDP_TLS_KEY_PATH:?}" "${RDP_TLS_CERT_PATH:?}" /etc/ssh/ssh_host_*
+RUN rm -f "${XRDP_TLS_KEY_PATH:?}" "${XRDP_TLS_CERT_PATH:?}" /etc/ssh/ssh_host_*
 
 # Create /etc/skel/.xsession file
 RUN printf '%s\n' 'exec xfce4-session' > /etc/skel/.xsession
