@@ -22,6 +22,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		ca-certificates \
 		checkinstall \
 		cmake \
+		dpkg-dev \
 		flex \
 		git \
 		intltool \
@@ -161,7 +162,7 @@ RUN ./configure \
 		--enable-mp3lame \
 		--enable-pixman
 RUN make -j"$(nproc)"
-RUN checkinstall --default --pkgname=xrdp --pkgversion=999 --pkgrelease=0
+RUN checkinstall --default --pkgname=xrdp --pkgversion=9:999 --pkgrelease=0
 
 # Build xorgxrdp
 ARG XORGXRDP_TREEISH=v0.2.13
@@ -174,15 +175,16 @@ RUN git submodule update --init --recursive
 RUN ./bootstrap
 RUN ./configure --enable-glamor
 RUN make -j"$(nproc)"
-RUN checkinstall --default --pkgname=xorgxrdp --pkgversion=999 --pkgrelease=0
+RUN checkinstall --default --pkgname=xorgxrdp --pkgversion=9:999 --pkgrelease=0
 
 # Build XRDP PulseAudio module
 ARG XRDP_PULSEAUDIO_TREEISH=v0.4
 ARG XRDP_PULSEAUDIO_REMOTE=https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
 WORKDIR /tmp/
 RUN apt-get update
-RUN apt-get build-dep -y pulseaudio
-RUN apt-get source pulseaudio && mv ./pulseaudio-*/ ./pulseaudio/
+RUN DEBIAN_FRONTEND=noninteractive apt-get build-dep -y pulseaudio
+RUN apt-get source pulseaudio="$(apt-cache policy pulseaudio | awk '/Candidate:/{printf($2)}')"
+RUN mv ./pulseaudio-*/ ./pulseaudio/
 WORKDIR /tmp/pulseaudio/
 RUN ./configure
 RUN mkdir /tmp/xrdp-pulseaudio/
@@ -193,7 +195,7 @@ RUN git submodule update --init --recursive
 RUN ./bootstrap
 RUN ./configure PULSE_DIR=/tmp/pulseaudio/
 RUN make -j"$(nproc)"
-RUN checkinstall --default --pkgname=xrdp-pulseaudio --pkgversion=999 --pkgrelease=0
+RUN checkinstall --default --pkgname=xrdp-pulseaudio --pkgversion=9:999 --pkgrelease=0
 
 ##################################################
 ## "xubuntu" stage
@@ -360,31 +362,31 @@ COPY --from=docker.io/hectormolinero/tini:TINI_IMAGE_TAG --chown=root:root /usr/
 
 # Install libjpeg-turbo from package
 COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build/libjpeg-turbo_*.deb /tmp/libjpeg-turbo.deb
-RUN dpkg -i /tmp/libjpeg-turbo.deb && rm -f /tmp/libjpeg-turbo.deb
+RUN dpkg -i /tmp/libjpeg-turbo.deb
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build32/libjpeg-turbo32_*.deb /tmp/libjpeg-turbo32.deb
-RUN dpkg -i /tmp/libjpeg-turbo32.deb && rm -f /tmp/libjpeg-turbo32.deb
+RUN dpkg -i /tmp/libjpeg-turbo32.deb
 ]])m4_dnl
 
 # Install VirtualGL from package
 COPY --from=build --chown=root:root /tmp/virtualgl/build/virtualgl_*.deb /tmp/virtualgl.deb
-RUN dpkg -i /tmp/virtualgl.deb && rm -f /tmp/virtualgl.deb
+RUN dpkg -i /tmp/virtualgl.deb
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 COPY --from=build --chown=root:root /tmp/virtualgl/build32/virtualgl32_*.deb /tmp/virtualgl32.deb
-RUN dpkg -i /tmp/virtualgl32.deb && rm -f /tmp/virtualgl32.deb
+RUN dpkg -i /tmp/virtualgl32.deb
 ]])m4_dnl
 
 # Install XRDP from package
 COPY --from=build --chown=root:root /tmp/xrdp/xrdp_*.deb /tmp/xrdp.deb
-RUN dpkg -i /tmp/xrdp.deb && rm -f /tmp/xrdp.deb
+RUN dpkg -i /tmp/xrdp.deb
 
 # Install xorgxrdp from package
 COPY --from=build --chown=root:root /tmp/xorgxrdp/xorgxrdp_*.deb /tmp/xorgxrdp.deb
-RUN dpkg -i /tmp/xorgxrdp.deb && rm -f /tmp/xorgxrdp.deb
+RUN dpkg -i /tmp/xorgxrdp.deb
 
 # Install XRDP PulseAudio module from package
 COPY --from=build --chown=root:root /tmp/xrdp-pulseaudio/xrdp-pulseaudio_*.deb /tmp/xrdp-pulseaudio.deb
-RUN dpkg -i /tmp/xrdp-pulseaudio.deb && rm -f /tmp/xrdp-pulseaudio.deb
+RUN dpkg -i /tmp/xrdp-pulseaudio.deb
 
 # Environment
 ENV UNPRIVILEGED_USER_UID=1000
@@ -396,9 +398,6 @@ ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV XRDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
 ENV ENABLE_XDUMMY=false
-ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV PATH=${PATH}:/usr/games:/usr/local/games
-ENV PATH=${PATH}:/opt/VirtualGL/bin
 ENV VGL_DISPLAY=:0
 ## Workaround for AMDGPU X_GLXCreatePbuffer issue:
 ## https://github.com/VirtualGL/virtualgl/issues/85#issuecomment-480291529
@@ -407,47 +406,31 @@ ENV VGL_FORCEALPHA=1
 ENV QT_STYLE_OVERRIDE=Adwaita
 
 # Setup locale
-RUN printf '%s\n' 'en_US.UTF-8 UTF-8' > /etc/locale.gen
-RUN localedef -c -i en_US -f UTF-8 en_US.UTF-8 ||:
 ENV LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+RUN printf '%s\n' "${LANG:?} UTF-8" > /etc/locale.gen
+RUN localedef -c -i "${LANG%%.*}" -f UTF-8 "${LANG:?}" ||:
 
 # Setup timezone
 ENV TZ=UTC
-RUN ln -snf "/usr/share/zoneinfo/${TZ:?}" /etc/localtime
 RUN printf '%s\n' "${TZ:?}" > /etc/timezone
+RUN ln -snf "/usr/share/zoneinfo/${TZ:?}" /etc/localtime
+
+# Setup PATH
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH=${PATH}:/usr/games:/usr/local/games
+ENV PATH=${PATH}:/opt/VirtualGL/bin
 
 # Setup D-Bus
 RUN mkdir /run/dbus/ && chown messagebus:messagebus /run/dbus/
-RUN dbus-uuidgen > /etc/machine-id && ln -sf /etc/machine-id /var/lib/dbus/machine-id
+RUN dbus-uuidgen > /etc/machine-id
+RUN ln -sf /etc/machine-id /var/lib/dbus/machine-id
 
 # Remove default keys and certificates
-RUN rm -f "${XRDP_TLS_KEY_PATH:?}" "${XRDP_TLS_CERT_PATH:?}" /etc/ssh/ssh_host_*
-
-# Create /etc/skel/.xsession file
-RUN printf '%s\n' 'exec xfce4-session' > /etc/skel/.xsession
-
-# Create /etc/skel/.xsessionrc file
-RUN printf '%s\n' \
-		'export VGL_DISPLAY=${DISPLAY:?}' \
-		'export XDG_CACHE_HOME=${HOME:?}/.cache' \
-		'export XDG_CONFIG_DIRS=/etc/xdg/xdg-xubuntu:/etc/xdg' \
-		'export XDG_CONFIG_HOME=${HOME:?}/.config' \
-		'export XDG_CURRENT_DESKTOP=XFCE' \
-		'export XDG_DATA_DIRS=/usr/share/xubuntu:/usr/share/xfce4:/usr/local/share:/usr/share' \
-		'export XDG_DATA_HOME=${HOME:?}/.local/share' \
-		'export XDG_MENU_PREFIX=xfce-' \
-		'export XDG_RUNTIME_DIR=/run/user/$(id -u)' \
-		'export XDG_SESSION_DESKTOP=xubuntu' \
-		'export XDG_SESSION_TYPE=x11' \
-		> /etc/skel/.xsessionrc
-
-# Create /etc/skel/.Xauthority file
-RUN touch /etc/skel/.Xauthority
+RUN rm -f /etc/ssh/ssh_host_*
+RUN rm -f "${XRDP_TLS_KEY_PATH:?}" "${XRDP_TLS_CERT_PATH:?}"
 
 # Create socket directory for X server
-RUN mkdir /tmp/.X11-unix/ \
-	&& chmod 1777 /tmp/.X11-unix/ \
-	&& chown root:root /tmp/.X11-unix/
+RUN mkdir /tmp/.X11-unix/ && chmod 1777 /tmp/.X11-unix/
 
 # Configure server for use with VirtualGL
 RUN vglserver_config -config +s +f -t
@@ -468,9 +451,10 @@ RUN ln -sv /etc/sv/xrdp-sesman /etc/service/
 COPY --chown=root:root ./scripts/bin/ /usr/local/bin/
 
 # Copy config
-COPY --chown=root:root ./config/ssh/sshd_config /etc/ssh/sshd_config
-COPY --chown=root:root ./config/xrdp/xrdp.ini /etc/xrdp/xrdp.ini
-COPY --chown=root:root ./config/xrdp/sesman.ini /etc/xrdp/sesman.ini
+COPY --chown=root:root ./config/ssh/ /etc/ssh/
+COPY --chown=root:root ./config/xrdp/ /etc/xrdp/
+COPY --chown=root:root ./config/skel/ /etc/skel/
+COPY --chown=root:root ./config/pulse/ /etc/pulse/
 
 # Expose SSH port
 EXPOSE 3322/tcp
