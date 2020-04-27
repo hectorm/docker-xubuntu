@@ -43,10 +43,6 @@ if [ -n "${UNPRIVILEGED_USER_PASSWORD?}" ]; then
 else
 	passwd -d "${UNPRIVILEGED_USER_NAME:?}"
 fi
-unset UNPRIVILEGED_USER_PASSWORD
-
-# Dump environment variables
-export-env > /etc/profile.d/env.sh
 
 # Enable xdummy service if ENABLE_XDUMMY is true
 if [ "${ENABLE_XDUMMY:?}" = 'true' ]; then
@@ -68,9 +64,9 @@ if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
 fi
 
 # Generate RDP certificate if it does not exist
-if [ ! -f "${XRDP_TLS_KEY_PATH:?}" ] || [ ! -f "${XRDP_TLS_CERT_PATH:?}" ]; then
+if [ ! -f "${XRDP_TLS_KEY_PATH:?}" ] || [ ! -f "${XRDP_TLS_CRT_PATH:?}" ]; then
 	KEY_FILE=${XRDP_TLS_KEY_PATH:?}
-	CRT_FILE=${XRDP_TLS_CERT_PATH:?}
+	CRT_FILE=${XRDP_TLS_CRT_PATH:?}
 	CSR_FILE=$(mktemp -u)
 
 	(umask 077 \
@@ -83,6 +79,9 @@ if [ ! -f "${XRDP_TLS_KEY_PATH:?}" ] || [ ! -f "${XRDP_TLS_CERT_PATH:?}" ]; then
 		&& rm -f "${CSR_FILE:?}" \
 	) >/dev/null
 fi
+
+# Dump environment variables
+env | grep -Ev '^(PWD|HOME|USER|USERNAME|SHELL|TERM|SHLVL)=' | sort > /etc/environment
 
 # Start runit
 exec tini -- runsvdir -P /etc/service/

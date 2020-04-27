@@ -396,7 +396,7 @@ ENV UNPRIVILEGED_USER_PASSWORD=password
 ENV UNPRIVILEGED_USER_GROUPS=
 ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
-ENV XRDP_TLS_CERT_PATH=/etc/xrdp/cert.pem
+ENV XRDP_TLS_CRT_PATH=/etc/xrdp/cert.pem
 ENV ENABLE_XDUMMY=false
 ENV VGL_DISPLAY=:0
 ## Workaround for AMDGPU X_GLXCreatePbuffer issue:
@@ -425,15 +425,18 @@ RUN mkdir /run/dbus/ && chown messagebus:messagebus /run/dbus/
 RUN dbus-uuidgen > /etc/machine-id
 RUN ln -sf /etc/machine-id /var/lib/dbus/machine-id
 
-# Remove default keys and certificates
-RUN rm -f /etc/ssh/ssh_host_*
-RUN rm -f "${XRDP_TLS_KEY_PATH:?}" "${XRDP_TLS_CERT_PATH:?}"
-
 # Create socket directory for X server
 RUN mkdir /tmp/.X11-unix/ && chmod 1777 /tmp/.X11-unix/
 
+# Make sesman read environment variables
+RUN printf '%s\n' 'session required pam_env.so readenv=1' >> /etc/pam.d/xrdp-sesman
+
 # Configure server for use with VirtualGL
 RUN vglserver_config -config +s +f -t
+
+# Remove default keys and certificates
+RUN rm -f /etc/ssh/ssh_host_*
+RUN rm -f "${XRDP_TLS_KEY_PATH:?}" "${XRDP_TLS_CRT_PATH:?}"
 
 # Forward logs to Docker log collector
 RUN ln -sf /dev/stdout /var/log/xdummy.log
