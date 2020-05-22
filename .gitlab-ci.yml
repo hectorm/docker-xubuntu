@@ -29,7 +29,7 @@ build:images:native:
   before_script:
     - *cmd_install_build_packages
   script:
-    - 'make build-native-image save-native-image'
+    - 'make IMAGE_BUILD_OPTS="--pull" build-native-image save-native-image'
   artifacts:
     expire_in: '1 day'
     paths:
@@ -42,7 +42,7 @@ build:images:native:
     - *cmd_install_build_packages
   script:
     - 'make binfmt-register'
-    - 'make "build-${ARCH:?}-image" "save-${ARCH:?}-image"'
+    - 'make IMAGE_BUILD_OPTS="--pull" "build-${ARCH:?}-image" "save-${ARCH:?}-image"'
   artifacts:
     expire_in: '1 week'
     paths:
