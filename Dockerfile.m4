@@ -4,7 +4,7 @@ m4_changequote([[, ]])
 ## "build" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:18.04]], [[FROM docker.io/ubuntu:18.04]]) AS build
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:20.04]], [[FROM docker.io/ubuntu:20.04]]) AS build
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
@@ -56,7 +56,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		ocl-icd-opencl-dev \
 		pkg-config \
 		texinfo \
-		xserver-xorg-dev-hwe-18.04 \
+		xserver-xorg-dev \
 		xsltproc \
 		xutils-dev \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
@@ -71,7 +71,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
 
 # Build libjpeg-turbo
-ARG LIBJPEG_TURBO_TREEISH=2.0.4
+ARG LIBJPEG_TURBO_TREEISH=2.0.5
 ARG LIBJPEG_TURBO_REMOTE=https://github.com/libjpeg-turbo/libjpeg-turbo.git
 RUN mkdir /tmp/libjpeg-turbo/
 WORKDIR /tmp/libjpeg-turbo/
@@ -107,7 +107,7 @@ RUN dpkg -i ./libjpeg-turbo32_*.deb
 ]])m4_dnl
 
 # Build VirtualGL
-ARG VIRTUALGL_TREEISH=2.6.3
+ARG VIRTUALGL_TREEISH=2.6.4
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
 RUN mkdir /tmp/virtualgl/
 WORKDIR /tmp/virtualgl/
@@ -201,7 +201,7 @@ RUN checkinstall --default --pkgname=xrdp-pulseaudio --pkgversion=9:999 --pkgrel
 ## "xubuntu" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:18.04]], [[FROM docker.io/ubuntu:18.04]]) AS xubuntu
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:20.04]], [[FROM docker.io/ubuntu:20.04]]) AS xubuntu
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
@@ -254,13 +254,13 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		pulseaudio \
 		pulseaudio-utils \
 		runit \
+		tini \
 		tzdata \
-		vulkan-utils \
-		xserver-xorg-core-hwe-18.04 \
-		xserver-xorg-input-all-hwe-18.04 \
-		xserver-xorg-input-evdev-hwe-18.04 \
-		xserver-xorg-input-joystick-hwe-18.04 \
-		xserver-xorg-video-all-hwe-18.04 \
+		xserver-xorg-core \
+		xserver-xorg-input-all \
+		xserver-xorg-input-evdev \
+		xserver-xorg-input-joystick \
+		xserver-xorg-video-all \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libegl1:i386 \
 		libgl1:i386 \
@@ -328,6 +328,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		procps \
 		psmisc \
 		ristretto \
+		strace \
 		sudo \
 		thunar-archive-plugin \
 		tumbler \
@@ -355,10 +356,6 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		zenity \
 		zip \
 	&& rm -rf /var/lib/apt/lists/*
-
-# Copy Tini build
-m4_define([[TINI_IMAGE_TAG]], m4_ifdef([[CROSS_ARCH]], [[latest-CROSS_ARCH]], [[latest]]))m4_dnl
-COPY --from=docker.io/hectormolinero/tini:TINI_IMAGE_TAG --chown=root:root /usr/bin/tini /usr/bin/tini
 
 # Install libjpeg-turbo from package
 COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build/libjpeg-turbo_*.deb /tmp/libjpeg-turbo.deb
@@ -407,13 +404,13 @@ ENV QT_STYLE_OVERRIDE=Adwaita
 
 # Setup locale
 ENV LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
-RUN printf '%s\n' "${LANG:?} UTF-8" > /etc/locale.gen
-RUN localedef -c -i "${LANG%%.*}" -f UTF-8 "${LANG:?}" ||:
+RUN printf '%s\n' "${LANG:?} UTF-8" > /etc/locale.gen \
+	&& localedef -c -i "${LANG%%.*}" -f UTF-8 "${LANG:?}" ||:
 
 # Setup timezone
 ENV TZ=UTC
-RUN printf '%s\n' "${TZ:?}" > /etc/timezone
-RUN ln -snf "/usr/share/zoneinfo/${TZ:?}" /etc/localtime
+RUN printf '%s\n' "${TZ:?}" > /etc/timezone \
+	&& ln -snf "/usr/share/zoneinfo/${TZ:?}" /etc/localtime
 
 # Setup PATH
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
