@@ -21,10 +21,10 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		build-essential \
 		ca-certificates \
 		checkinstall \
-		cmake \
 		dpkg-dev \
 		flex \
 		git \
+		devscripts \
 		intltool \
 		libegl1-mesa-dev \
 		libepoxy-dev \
@@ -68,7 +68,20 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libxv-dev:i386 \
 		ocl-icd-opencl-dev:i386 \
 ]])m4_dnl
-	&& rm -rf /var/lib/apt/lists/*
+	&& apt-get clean
+
+# Build CMake with "_FILE_OFFSET_BITS=64"
+# (as a workaround for: https://gitlab.kitware.com/cmake/cmake/-/issues/20568)
+WORKDIR /tmp/
+RUN DEBIAN_FRONTEND=noninteractive apt-get build-dep -y cmake
+RUN apt-get source cmake && mv ./cmake-*/ ./cmake/
+WORKDIR /tmp/cmake/
+RUN DEB_BUILD_PROFILES='stage1' \
+	DEB_BUILD_OPTIONS='parallel=auto nocheck' \
+	DEB_CFLAGS_SET='-D _FILE_OFFSET_BITS=64' \
+	DEB_CXXFLAGS_SET='-D _FILE_OFFSET_BITS=64' \
+	debuild -b -uc -us
+RUN dpkg -i /tmp/cmake_*.deb /tmp/cmake-data_*.deb
 
 # Build libjpeg-turbo
 ARG LIBJPEG_TURBO_TREEISH=2.0.5
@@ -181,10 +194,8 @@ RUN checkinstall --default --pkgname=xorgxrdp --pkgversion=9:999 --pkgrelease=0
 ARG XRDP_PULSEAUDIO_TREEISH=v0.4
 ARG XRDP_PULSEAUDIO_REMOTE=https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
 WORKDIR /tmp/
-RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get build-dep -y pulseaudio
-RUN apt-get source pulseaudio="$(apt-cache policy pulseaudio | awk '/Candidate:/{printf($2)}')"
-RUN mv ./pulseaudio-*/ ./pulseaudio/
+RUN apt-get source pulseaudio && mv ./pulseaudio-*/ ./pulseaudio/
 WORKDIR /tmp/pulseaudio/
 RUN ./configure
 RUN mkdir /tmp/xrdp-pulseaudio/
