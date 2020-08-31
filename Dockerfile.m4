@@ -156,7 +156,7 @@ RUN make deb
 RUN dpkg -i ./virtualgl32_*.deb
 ]])m4_dnl
 
-# Build XRDP
+# Build xrdp
 ARG XRDP_TREEISH=v0.9.14
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
 RUN mkdir /tmp/xrdp/
@@ -190,7 +190,7 @@ RUN ./configure --enable-glamor
 RUN make -j"$(nproc)"
 RUN checkinstall --default --pkgname=xorgxrdp --pkgversion=9:999 --pkgrelease=0
 
-# Build XRDP PulseAudio module
+# Build xrdp PulseAudio module
 ARG XRDP_PULSEAUDIO_TREEISH=v0.4
 ARG XRDP_PULSEAUDIO_REMOTE=https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
 WORKDIR /tmp/
@@ -384,7 +384,7 @@ COPY --from=build --chown=root:root /tmp/virtualgl/build32/virtualgl32_*.deb /tm
 RUN dpkg -i /tmp/virtualgl32.deb
 ]])m4_dnl
 
-# Install XRDP from package
+# Install xrdp from package
 COPY --from=build --chown=root:root /tmp/xrdp/xrdp_*.deb /tmp/xrdp.deb
 RUN dpkg -i /tmp/xrdp.deb
 
@@ -392,7 +392,7 @@ RUN dpkg -i /tmp/xrdp.deb
 COPY --from=build --chown=root:root /tmp/xorgxrdp/xorgxrdp_*.deb /tmp/xorgxrdp.deb
 RUN dpkg -i /tmp/xorgxrdp.deb
 
-# Install XRDP PulseAudio module from package
+# Install xrdp PulseAudio module from package
 COPY --from=build --chown=root:root /tmp/xrdp-pulseaudio/xrdp-pulseaudio_*.deb /tmp/xrdp-pulseaudio.deb
 RUN dpkg -i /tmp/xrdp-pulseaudio.deb
 
