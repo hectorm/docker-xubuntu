@@ -21,10 +21,10 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		build-essential \
 		ca-certificates \
 		checkinstall \
+		devscripts \
 		dpkg-dev \
 		flex \
 		git \
-		devscripts \
 		intltool \
 		libegl1-mesa-dev \
 		libepoxy-dev \
