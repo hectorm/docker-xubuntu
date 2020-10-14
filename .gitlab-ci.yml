@@ -16,8 +16,8 @@ default:
       alias: 'dockerd'
 
 .cmds:
-  - &cmd_install_build_packages 'apk add --no-cache coreutils git m4 make xz'
-  - &cmd_install_push_packages  'apk add --no-cache coreutils git make xz'
+  - &cmd_install_build_packages 'apk add --no-cache coreutils git m4 make zstd'
+  - &cmd_install_push_packages  'apk add --no-cache coreutils git make zstd'
   - &cmd_docker_login_registry  'docker login -u "${CI_REGISTRY_USER:?}" -p "${CI_REGISTRY_PASSWORD:?}" "${CI_REGISTRY:?}"'
 
 .regexes:
