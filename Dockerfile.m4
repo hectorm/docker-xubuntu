@@ -106,13 +106,15 @@ RUN dpkg -i ./libjpeg-turbo_*.deb
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 RUN mkdir /tmp/libjpeg-turbo/build32/
 WORKDIR /tmp/libjpeg-turbo/build32/
-RUN CFLAGS='-m32' CXXFLAGS='-m32' LDFLAGS='-m32' \
-	cmake ./ \
+RUN cmake ./ \
 		-G 'Unix Makefiles' \
 		-D PKGNAME=libjpeg-turbo \
 		-D CMAKE_BUILD_TYPE=Release \
 		-D CMAKE_INSTALL_PREFIX=/opt/libjpeg-turbo \
 		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
+		-D CMAKE_C_FLAGS='-m32' \
+		-D CMAKE_CXX_FLAGS='-m32' \
+		-D CMAKE_EXE_LINKER_FLAGS='-m32' \
 		../
 RUN make -j"$(nproc)"
 RUN make deb
@@ -143,13 +145,15 @@ RUN dpkg -i ./virtualgl_*.deb
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 RUN mkdir /tmp/virtualgl/build32/
 WORKDIR /tmp/virtualgl/build32/
-RUN CFLAGS='-m32' CXXFLAGS='-m32' LDFLAGS='-m32' \
-	cmake ./ \
+RUN cmake ./ \
 		-G 'Unix Makefiles' \
 		-D PKGNAME=virtualgl \
 		-D CMAKE_BUILD_TYPE=Release \
 		-D CMAKE_INSTALL_PREFIX=/opt/VirtualGL \
 		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
+		-D CMAKE_C_FLAGS='-m32' \
+		-D CMAKE_CXX_FLAGS='-m32' \
+		-D CMAKE_EXE_LINKER_FLAGS='-m32' \
 		../
 RUN make -j"$(nproc)"
 RUN make deb
