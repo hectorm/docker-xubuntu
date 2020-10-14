@@ -438,9 +438,6 @@ RUN mkdir /run/dbus/ && chown messagebus:messagebus /run/dbus/
 RUN dbus-uuidgen > /etc/machine-id
 RUN ln -sf /etc/machine-id /var/lib/dbus/machine-id
 
-# Create socket directory for X server
-RUN mkdir /tmp/.X11-unix/ && chmod 1777 /tmp/.X11-unix/
-
 # Make sesman read environment variables
 RUN printf '%s\n' 'session required pam_env.so readenv=1' >> /etc/pam.d/xrdp-sesman
 
