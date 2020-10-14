@@ -14,7 +14,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 	&& dpkg --add-architecture i386 \
 ]])m4_dnl
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends \
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		autoconf \
 		automake \
 		bison \
@@ -226,7 +226,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 	&& dpkg --add-architecture i386 \
 ]])m4_dnl
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends \
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		at-spi2-core \
 		ca-certificates \
 		dbus \
