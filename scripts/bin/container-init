@@ -2,6 +2,9 @@
 
 set -eu
 
+# Remove leftover files
+find /tmp/ -mindepth 1 -delete
+
 # Create additional groups
 _IFS=${IFS}; IFS=,
 for gid in ${UNPRIVILEGED_USER_GROUPS?}; do
