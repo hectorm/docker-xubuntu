@@ -374,32 +374,32 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install libjpeg-turbo from package
-COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build/libjpeg-turbo_*.deb /tmp/libjpeg-turbo.deb
-RUN dpkg -i /tmp/libjpeg-turbo.deb
+COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build/libjpeg-turbo_*.deb /opt/pkg/libjpeg-turbo.deb
+RUN dpkg -i /opt/pkg/libjpeg-turbo.deb
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
-COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build32/libjpeg-turbo32_*.deb /tmp/libjpeg-turbo32.deb
-RUN dpkg -i /tmp/libjpeg-turbo32.deb
+COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build32/libjpeg-turbo32_*.deb /opt/pkg/libjpeg-turbo32.deb
+RUN dpkg -i /opt/pkg/libjpeg-turbo32.deb
 ]])m4_dnl
 
 # Install VirtualGL from package
-COPY --from=build --chown=root:root /tmp/virtualgl/build/virtualgl_*.deb /tmp/virtualgl.deb
-RUN dpkg -i /tmp/virtualgl.deb
+COPY --from=build --chown=root:root /tmp/virtualgl/build/virtualgl_*.deb /opt/pkg/virtualgl.deb
+RUN dpkg -i /opt/pkg/virtualgl.deb
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
-COPY --from=build --chown=root:root /tmp/virtualgl/build32/virtualgl32_*.deb /tmp/virtualgl32.deb
-RUN dpkg -i /tmp/virtualgl32.deb
+COPY --from=build --chown=root:root /tmp/virtualgl/build32/virtualgl32_*.deb /opt/pkg/virtualgl32.deb
+RUN dpkg -i /opt/pkg/virtualgl32.deb
 ]])m4_dnl
 
 # Install xrdp from package
-COPY --from=build --chown=root:root /tmp/xrdp/xrdp_*.deb /tmp/xrdp.deb
-RUN dpkg -i /tmp/xrdp.deb
+COPY --from=build --chown=root:root /tmp/xrdp/xrdp_*.deb /opt/pkg/xrdp.deb
+RUN dpkg -i /opt/pkg/xrdp.deb
 
 # Install xorgxrdp from package
-COPY --from=build --chown=root:root /tmp/xorgxrdp/xorgxrdp_*.deb /tmp/xorgxrdp.deb
-RUN dpkg -i /tmp/xorgxrdp.deb
+COPY --from=build --chown=root:root /tmp/xorgxrdp/xorgxrdp_*.deb /opt/pkg/xorgxrdp.deb
+RUN dpkg -i /opt/pkg/xorgxrdp.deb
 
 # Install xrdp PulseAudio module from package
-COPY --from=build --chown=root:root /tmp/xrdp-pulseaudio/xrdp-pulseaudio_*.deb /tmp/xrdp-pulseaudio.deb
-RUN dpkg -i /tmp/xrdp-pulseaudio.deb
+COPY --from=build --chown=root:root /tmp/xrdp-pulseaudio/xrdp-pulseaudio_*.deb /opt/pkg/xrdp-pulseaudio.deb
+RUN dpkg -i /opt/pkg/xrdp-pulseaudio.deb
 
 # Environment
 ENV UNPRIVILEGED_USER_UID=1000
