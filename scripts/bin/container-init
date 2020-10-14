@@ -1,12 +1,9 @@
 #!/bin/sh
 
-# Clean up /tmp, just in case there is some leftover files from previous run and `--tmpfs` is not specified.
-# Without this cleanup or `--tmpfs`, the container will no longer start after 10 startups.
-rm -rf /tmp
-mkdir /tmp
-chmod a+rw /tmp
-
 set -eu
+
+# Remove leftover files
+find /tmp/ -mindepth 1 -delete
 
 # Create additional groups
 _IFS=${IFS}; IFS=,
