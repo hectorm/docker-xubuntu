@@ -24,6 +24,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		devscripts \
 		dpkg-dev \
 		flex \
+		cmake \
 		git \
 		intltool \
 		libegl1-mesa-dev \
@@ -69,19 +70,6 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		ocl-icd-opencl-dev:i386 \
 ]])m4_dnl
 	&& apt-get clean
-
-# Build CMake with "_FILE_OFFSET_BITS=64"
-# (as a workaround for: https://gitlab.kitware.com/cmake/cmake/-/issues/20568)
-WORKDIR /tmp/
-RUN DEBIAN_FRONTEND=noninteractive apt-get build-dep -y cmake
-RUN apt-get source cmake && mv ./cmake-*/ ./cmake/
-WORKDIR /tmp/cmake/
-RUN DEB_BUILD_PROFILES='stage1' \
-	DEB_BUILD_OPTIONS='parallel=auto nocheck' \
-	DEB_CFLAGS_SET='-D _FILE_OFFSET_BITS=64' \
-	DEB_CXXFLAGS_SET='-D _FILE_OFFSET_BITS=64' \
-	debuild -b -uc -us
-RUN dpkg -i /tmp/cmake_*.deb /tmp/cmake-data_*.deb
 
 # Build libjpeg-turbo
 ARG LIBJPEG_TURBO_TREEISH=2.0.5

@@ -56,10 +56,6 @@ build:images:arm64v8:
   extends: '.build:images:cross'
   variables: {ARCH: 'arm64v8'}
 
-build:images:arm32v7:
-  extends: '.build:images:cross'
-  variables: {ARCH: 'arm32v7'}
-
 .push:images:cross:
   stage: 'push:images'
   only: [*regex_version]
@@ -79,14 +75,9 @@ push:images:arm64v8:
   dependencies: ['build:images:arm64v8']
   variables: {ARCH: 'arm64v8'}
 
-push:images:arm32v7:
-  extends: '.push:images:cross'
-  dependencies: ['build:images:arm32v7']
-  variables: {ARCH: 'arm32v7'}
-
 push:manifests:cross:
   stage: 'push:manifests'
-  dependencies: ['push:images:amd64', 'push:images:arm64v8', 'push:images:arm32v7']
+  dependencies: ['push:images:amd64', 'push:images:arm64v8']
   only: [*regex_version]
   variables:
     DOCKER_CLI_EXPERIMENTAL: 'enabled'
