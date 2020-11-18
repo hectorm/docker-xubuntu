@@ -282,6 +282,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		adwaita-qt \
 		apt-transport-https \
 		apt-utils \
+		audacity \
 		bash \
 		bash-completion \
 		binutils \
