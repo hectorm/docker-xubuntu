@@ -325,7 +325,6 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		nano \
 		net-tools \
 		netcat-openbsd \
-		openjdk-8-jre \
 		parole \
 		pavucontrol \
 		pciutils \
