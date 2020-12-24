@@ -27,6 +27,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		cmake \
 		git \
 		intltool \
+		libegl1-mesa \
 		libegl1-mesa-dev \
 		libepoxy-dev \
 		libfdk-aac-dev \
@@ -62,9 +63,12 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xutils-dev \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		g++-multilib \
+		libegl1-mesa:i386 \
 		libegl1-mesa-dev:i386 \
 		libgl1-mesa-dev:i386 \
 		libglu1-mesa-dev:i386 \
+		libx11-xcb-dev:i386 \
+		libxcb-glx0-dev:i386 \
 		libxtst-dev:i386 \
 		libxv-dev:i386 \
 		ocl-icd-opencl-dev:i386 \
@@ -220,6 +224,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		dbus \
 		dbus-x11 \
 		libegl1 \
+		libegl1-mesa \
 		libepoxy0 \
 		libfdk-aac1 \
 		libfuse2 \
@@ -267,10 +272,13 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xserver-xorg-video-all \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		libegl1:i386 \
+		libegl1-mesa:i386 \
 		libgl1:i386 \
 		libgl1-mesa-dri:i386 \
 		libgl1-mesa-glx:i386 \
 		libglu1:i386 \
+		libx11-xcb1:i386 \
+		libxcb-glx0:i386 \
 		libxtst6:i386 \
 		libxv1:i386 \
 		mesa-opencl-icd:i386 \
