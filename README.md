@@ -23,6 +23,23 @@ docker run \
 > **Important:** some software (like Firefox) need the shared memory to be increased, if you
 encounter any problem related to this you may use the `--shm-size` option.
 
+### Using `docker-compose`
+
+```yaml
+version: '3.8'
+services:
+  xubuntu:
+    image: hectormolinero/xubuntu:latest
+    ports:
+      - 3322:3322/tcp
+      - 3389:3389/tcp
+    devices:
+      - /dev/dri:/dev/dri
+    shm_size: 2gb
+    tmpfs:
+      - /tmp
+```
+
 ## Environment variables
 
 * `UNPRIVILEGED_USER_UID`: unprivileged user UID (`1000` by default).
