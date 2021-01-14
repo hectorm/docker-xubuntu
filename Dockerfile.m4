@@ -62,6 +62,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xsltproc \
 		xutils-dev \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		g++-multilib \
 		libegl1-mesa:i386 \
 		libegl1-mesa-dev:i386 \
@@ -271,6 +272,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xserver-xorg-input-joystick \
 		xserver-xorg-video-all \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libegl1:i386 \
 		libegl1-mesa:i386 \
 		libgl1:i386 \
@@ -287,6 +289,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		mesa-vulkan-drivers:i386 \
 		ocl-icd-libopencl1:i386 \
 ]])m4_dnl
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		adwaita-qt \
 		apt-transport-https \
 		apt-utils \
