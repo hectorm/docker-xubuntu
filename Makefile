@@ -96,7 +96,7 @@ $(IMAGE_ARM64V8_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 ##################################################
 
 define save_image
-	'$(DOCKER)' save '$(1)' | zstd -T0 -1 > '$(2)'
+	'$(DOCKER)' save '$(1)' | zstd -T0 -19 > '$(2)'
 endef
 
 .PHONY: save-native-image
