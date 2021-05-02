@@ -412,9 +412,6 @@ ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV XRDP_TLS_CRT_PATH=/etc/xrdp/cert.pem
 ENV ENABLE_XDUMMY=false
 ENV VGL_DISPLAY=:0
-## Workaround for AMDGPU X_GLXCreatePbuffer issue:
-## https://github.com/VirtualGL/virtualgl/issues/85#issuecomment-480291529
-ENV VGL_FORCEALPHA=1
 ## Use Adwaita theme in QT applications
 ENV QT_STYLE_OVERRIDE=Adwaita
 
