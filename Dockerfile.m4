@@ -272,7 +272,6 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xserver-xorg-input-libinput \
 		xserver-xorg-video-amdgpu \
 		xserver-xorg-video-dummy \
-		xserver-xorg-video-intel \
 		xserver-xorg-video-nouveau \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
