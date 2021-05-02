@@ -267,10 +267,13 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		tini \
 		tzdata \
 		xserver-xorg-core \
-		xserver-xorg-input-all \
 		xserver-xorg-input-evdev \
 		xserver-xorg-input-joystick \
-		xserver-xorg-video-all \
+		xserver-xorg-input-libinput \
+		xserver-xorg-video-amdgpu \
+		xserver-xorg-video-dummy \
+		xserver-xorg-video-intel \
+		xserver-xorg-video-nouveau \
 m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libegl1:i386 \
