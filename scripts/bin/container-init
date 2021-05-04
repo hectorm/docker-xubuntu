@@ -5,6 +5,14 @@ set -eu
 # Remove leftover files
 find /tmp/ -mindepth 1 -delete
 
+# Add GPU devices groups to additional groups
+for dev in /dev/dri/*; do
+	[ -c "${dev:?}" ] || continue
+	gid=$(stat -c '%g' "${dev:?}")
+	uug=${UNPRIVILEGED_USER_GROUPS?}
+	UNPRIVILEGED_USER_GROUPS="${uug:+${uug:?},}${gid:?}"
+done
+
 # Create additional groups
 _IFS=${IFS}; IFS=,
 for gid in ${UNPRIVILEGED_USER_GROUPS?}; do
