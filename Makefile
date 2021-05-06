@@ -50,7 +50,8 @@ $(IMAGE_NATIVE_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 	mkdir -p '$(DISTDIR)'
 	'$(M4)' \
 		--prefix-builtins \
-		-D ENABLE_32BIT=1 \
+		-D ENABLE_32BIT_SUPPORT=1 \
+		-D INSTALL_NVIDIA_DRIVER=1 \
 		'$(DOCKERFILE_TEMPLATE)' | cat --squeeze-blank > '$@'
 	'$(DOCKER)' build $(IMAGE_BUILD_OPTS) \
 		--tag '$(IMAGE_NAME):$(IMAGE_VERSION)' \
@@ -69,7 +70,8 @@ $(IMAGE_AMD64_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 		--prefix-builtins \
 		-D CROSS_ARCH=amd64 \
 		-D CROSS_QEMU=/usr/bin/qemu-x86_64-static \
-		-D ENABLE_32BIT=1 \
+		-D ENABLE_32BIT_SUPPORT=1 \
+		-D INSTALL_NVIDIA_DRIVER=1 \
 		'$(DOCKERFILE_TEMPLATE)' | cat --squeeze-blank > '$@'
 	'$(DOCKER)' build $(IMAGE_BUILD_OPTS) \
 		--tag '$(IMAGE_NAME):$(IMAGE_VERSION)-amd64' \

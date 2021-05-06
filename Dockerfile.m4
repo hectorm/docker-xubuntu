@@ -10,7 +10,7 @@ m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static
 # Install system packages
 RUN export DEBIAN_FRONTEND=noninteractive \
 	&& sed -i 's/^#\s*\(deb-src\s\)/\1/g' /etc/apt/sources.list \
-m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& dpkg --add-architecture i386 \
 ]])m4_dnl
 	&& apt-get update \
@@ -61,7 +61,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xserver-xorg-dev \
 		xsltproc \
 		xutils-dev \
-m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		g++-multilib \
 		libegl1-mesa:i386 \
@@ -96,7 +96,7 @@ RUN cmake ./ \
 RUN make -j"$(nproc)"
 RUN make deb
 RUN dpkg -i ./libjpeg-turbo_*.deb
-m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 RUN mkdir /tmp/libjpeg-turbo/build32/
 WORKDIR /tmp/libjpeg-turbo/build32/
 RUN cmake ./ \
@@ -135,7 +135,7 @@ RUN cmake ./ \
 RUN make -j"$(nproc)"
 RUN make deb
 RUN dpkg -i ./virtualgl_*.deb
-m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 RUN mkdir /tmp/virtualgl/build32/
 WORKDIR /tmp/virtualgl/build32/
 RUN cmake ./ \
@@ -215,7 +215,7 @@ m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static
 
 # Install system packages
 RUN export DEBIAN_FRONTEND=noninteractive \
-m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& dpkg --add-architecture i386 \
 ]])m4_dnl
 	&& apt-get update \
@@ -273,7 +273,12 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 		xserver-xorg-video-amdgpu \
 		xserver-xorg-video-dummy \
 		xserver-xorg-video-nouveau \
-m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+m4_ifelse(INSTALL_NVIDIA_DRIVER, 1, [[m4_dnl
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+		nvidia-driver-460 \
+		xserver-xorg-video-nvidia-460 \
+]])m4_dnl
+m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libegl1:i386 \
 		libegl1-mesa:i386 \
@@ -378,7 +383,7 @@ m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
 # Install libjpeg-turbo from package
 COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build/libjpeg-turbo_*.deb /opt/pkg/libjpeg-turbo.deb
 RUN dpkg -i /opt/pkg/libjpeg-turbo.deb
-m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build32/libjpeg-turbo32_*.deb /opt/pkg/libjpeg-turbo32.deb
 RUN dpkg -i /opt/pkg/libjpeg-turbo32.deb
 ]])m4_dnl
@@ -386,7 +391,7 @@ RUN dpkg -i /opt/pkg/libjpeg-turbo32.deb
 # Install VirtualGL from package
 COPY --from=build --chown=root:root /tmp/virtualgl/build/virtualgl_*.deb /opt/pkg/virtualgl.deb
 RUN dpkg -i /opt/pkg/virtualgl.deb
-m4_ifelse(ENABLE_32BIT, 1, [[m4_dnl
+m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 COPY --from=build --chown=root:root /tmp/virtualgl/build32/virtualgl32_*.deb /opt/pkg/virtualgl32.deb
 RUN dpkg -i /opt/pkg/virtualgl32.deb
 ]])m4_dnl
