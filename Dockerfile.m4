@@ -418,7 +418,7 @@ ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV XRDP_TLS_CRT_PATH=/etc/xrdp/cert.pem
 ENV ENABLE_XDUMMY=false
-ENV VGL_DISPLAY=:0
+ENV VGL_DISPLAY=:0.0
 ## Use Adwaita theme in QT applications
 ENV QT_STYLE_OVERRIDE=Adwaita
 
@@ -469,6 +469,7 @@ COPY --chown=root:root ./scripts/bin/ /usr/local/bin/
 
 # Copy config
 COPY --chown=root:root ./config/ssh/ /etc/ssh/
+COPY --chown=root:root ./config/X11/ /etc/X11/
 COPY --chown=root:root ./config/xrdp/ /etc/xrdp/
 COPY --chown=root:root ./config/skel/ /etc/skel/
 COPY --chown=root:root ./config/pulse/ /etc/pulse/
