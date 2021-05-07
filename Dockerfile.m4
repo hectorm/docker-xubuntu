@@ -272,7 +272,9 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		xserver-xorg-input-libinput \
 		xserver-xorg-video-amdgpu \
 		xserver-xorg-video-dummy \
+		xserver-xorg-video-fbdev \
 		xserver-xorg-video-nouveau \
+		xserver-xorg-video-vesa \
 m4_ifelse(INSTALL_NVIDIA_DRIVER, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		nvidia-driver-460 \
