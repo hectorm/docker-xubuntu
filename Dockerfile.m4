@@ -285,6 +285,16 @@ m4_ifelse(INSTALL_NVIDIA_DRIVER, 1, [[m4_dnl
 		libnvidia-gl-460 \
 		libnvidia-ifr1-460 \
 		xserver-xorg-video-nvidia-460 \
+m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+		libnvidia-compute-460:i386 \
+		libnvidia-decode-460:i386 \
+		libnvidia-encode-460:i386 \
+		libnvidia-extra-460:i386 \
+		libnvidia-fbc1-460:i386 \
+		libnvidia-gl-460:i386 \
+		libnvidia-ifr1-460:i386 \
+]])m4_dnl
 ]])m4_dnl
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
