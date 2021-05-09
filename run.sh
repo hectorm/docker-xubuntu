@@ -45,7 +45,6 @@ printf -- '%s\n' "Creating \"${CONTAINER_NAME:?}\" container..."
 	--shm-size 2g \
 	--publish 3322:3322/tcp \
 	--publish 3389:3389/tcp \
-	--device /dev/dri:/dev/dri \
 	${CONTAINER_DEVICES} \
 	"${IMAGE_NAME:?}" "$@" >/dev/null
 
