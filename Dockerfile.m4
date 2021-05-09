@@ -277,7 +277,13 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		xserver-xorg-video-vesa \
 m4_ifelse(INSTALL_NVIDIA_DRIVER, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
-		nvidia-driver-460 \
+		libnvidia-compute-460 \
+		libnvidia-decode-460 \
+		libnvidia-encode-460 \
+		libnvidia-extra-460 \
+		libnvidia-fbc1-460 \
+		libnvidia-gl-460 \
+		libnvidia-ifr1-460 \
 		xserver-xorg-video-nvidia-460 \
 ]])m4_dnl
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
