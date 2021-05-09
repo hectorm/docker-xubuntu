@@ -60,6 +60,22 @@ if [ "${ENABLE_XDUMMY:?}" = 'true' ]; then
 	ln -s /etc/sv/xdummy /etc/service/
 fi
 
+# Define VGL_DISPLAY variable if it is not set
+if [ -z "${VGL_DISPLAY-}" ]; then
+	# Use the dummy X server if it is enabled
+	if [ "${ENABLE_XDUMMY:?}" = 'true' ]; then
+		export VGL_DISPLAY=:0.0
+	# Otherwise try to use the EGL backend
+	else
+		for card in /dev/dri/card*; do
+			if /opt/VirtualGL/bin/eglinfo -B "${card:?}" 2>/dev/null; then
+				export VGL_DISPLAY=${card:?}
+				break
+			fi
+		done
+	fi
+fi
+
 # Create RANDFILE if it does not exist
 RANDFILE=${RANDFILE-${HOME:?}/.rnd}
 if [ ! -f "${RANDFILE:?}" ] && [ -c /dev/urandom ]; then

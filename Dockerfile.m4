@@ -450,7 +450,6 @@ ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV XRDP_TLS_CRT_PATH=/etc/xrdp/cert.pem
 ENV ENABLE_XDUMMY=false
-ENV VGL_DISPLAY=:0.0
 ## Use Adwaita theme in QT applications
 ENV QT_STYLE_OVERRIDE=Adwaita
 

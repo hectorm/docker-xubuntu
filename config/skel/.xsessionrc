@@ -11,6 +11,6 @@ export XDG_RUNTIME_DIR=/run/user/${UNPRIVILEGED_USER_UID:?}
 export XDG_SESSION_DESKTOP=xubuntu
 export XDG_SESSION_TYPE=x11
 
-if [ "${ENABLE_XDUMMY:?}" != 'true' ]; then
+if [ -z "${VGL_DISPLAY-}" ] && [ -n "${DISPLAY-}" ]; then
 	export VGL_DISPLAY=${DISPLAY:?}
 fi
