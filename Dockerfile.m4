@@ -21,20 +21,22 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		build-essential \
 		ca-certificates \
 		checkinstall \
+		cmake \
 		devscripts \
 		dpkg-dev \
 		flex \
-		cmake \
 		git \
 		intltool \
-		libegl1-mesa \
-		libegl1-mesa-dev \
+		libegl-dev \
 		libepoxy-dev \
 		libfdk-aac-dev \
 		libfuse-dev \
 		libgbm-dev \
-		libgl1-mesa-dev \
+		libgl-dev \
+		libgles-dev \
 		libglu1-mesa-dev \
+		libglvnd-dev \
+		libglx-dev \
 		libmp3lame-dev \
 		libopus-dev \
 		libpam0g-dev \
@@ -64,10 +66,12 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		g++-multilib \
-		libegl1-mesa:i386 \
-		libegl1-mesa-dev:i386 \
-		libgl1-mesa-dev:i386 \
+		libegl-dev:i386 \
+		libgl-dev:i386 \
+		libgles-dev:i386 \
 		libglu1-mesa-dev:i386 \
+		libglvnd-dev:i386 \
+		libglx-dev:i386 \
 		libx11-xcb-dev:i386 \
 		libxcb-glx0-dev:i386 \
 		libxtst-dev:i386 \
@@ -225,15 +229,16 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		dbus \
 		dbus-x11 \
 		libegl1 \
-		libegl1-mesa \
 		libepoxy0 \
 		libfdk-aac1 \
 		libfuse2 \
 		libgbm1 \
 		libgl1 \
 		libgl1-mesa-dri \
-		libgl1-mesa-glx \
+		libgles2 \
 		libglu1 \
+		libglvnd0 \
+		libglx-mesa0 \
 		libmp3lame0 \
 		libopus0 \
 		libpam0g \
@@ -299,11 +304,12 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libegl1:i386 \
-		libegl1-mesa:i386 \
 		libgl1:i386 \
 		libgl1-mesa-dri:i386 \
-		libgl1-mesa-glx:i386 \
+		libgles2:i386 \
 		libglu1:i386 \
+		libglvnd0:i386 \
+		libglx-mesa0:i386 \
 		libx11-xcb1:i386 \
 		libxcb-glx0:i386 \
 		libxtst6:i386 \
