@@ -28,6 +28,8 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		git \
 		intltool \
 		libegl-dev \
+		libegl1-mesa \
+		libegl1-mesa-dev \
 		libepoxy-dev \
 		libfdk-aac-dev \
 		libfuse-dev \
@@ -67,6 +69,8 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		g++-multilib \
 		libegl-dev:i386 \
+		libegl1-mesa:i386 \
+		libegl1-mesa-dev:i386 \
 		libgl-dev:i386 \
 		libgles-dev:i386 \
 		libglu1-mesa-dev:i386 \
@@ -119,7 +123,7 @@ RUN dpkg -i ./libjpeg-turbo32_*.deb
 ]])m4_dnl
 
 # Build VirtualGL
-ARG VIRTUALGL_TREEISH=2.6.5
+ARG VIRTUALGL_TREEISH=552ef96bb5b2905a00d7abde4fc19062f91795b8
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
 RUN mkdir /tmp/virtualgl/
 WORKDIR /tmp/virtualgl/
@@ -135,6 +139,7 @@ RUN cmake ./ \
 		-D CMAKE_BUILD_TYPE=Release \
 		-D CMAKE_INSTALL_PREFIX=/opt/VirtualGL \
 		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
+		-D VGL_EGLBACKEND=1 \
 		../
 RUN make -j"$(nproc)"
 RUN make deb
@@ -151,6 +156,7 @@ RUN cmake ./ \
 		-D CMAKE_C_FLAGS='-m32' \
 		-D CMAKE_CXX_FLAGS='-m32' \
 		-D CMAKE_EXE_LINKER_FLAGS='-m32' \
+		-D VGL_EGLBACKEND=1 \
 		../
 RUN make -j"$(nproc)"
 RUN make deb
@@ -229,6 +235,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		dbus \
 		dbus-x11 \
 		libegl1 \
+		libegl1-mesa \
 		libepoxy0 \
 		libfdk-aac1 \
 		libfuse2 \
@@ -304,6 +311,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libegl1:i386 \
+		libegl1-mesa:i386 \
 		libgl1:i386 \
 		libgl1-mesa-dri:i386 \
 		libgles2:i386 \
