@@ -46,7 +46,7 @@ printf -- '%s\n' "Creating \"${CONTAINER_NAME:?}\" container..."
 	--publish 3322:3322/tcp \
 	--publish 3389:3389/tcp \
 	--env ENABLE_XDUMMY=true \
-	${CONTAINER_DEVICES} \
+	${CONTAINER_DEVICES?} \
 	"${IMAGE_NAME:?}" "$@" >/dev/null
 
 printf -- '%s\n\n' 'Done!'
