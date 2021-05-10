@@ -282,32 +282,9 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		xserver-xorg-input-evdev \
 		xserver-xorg-input-joystick \
 		xserver-xorg-input-libinput \
-		xserver-xorg-video-amdgpu \
 		xserver-xorg-video-dummy \
 		xserver-xorg-video-fbdev \
-		xserver-xorg-video-nouveau \
 		xserver-xorg-video-vesa \
-m4_ifelse(INSTALL_NVIDIA_DRIVER, 1, [[m4_dnl
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
-		libnvidia-compute-460 \
-		libnvidia-decode-460 \
-		libnvidia-encode-460 \
-		libnvidia-extra-460 \
-		libnvidia-fbc1-460 \
-		libnvidia-gl-460 \
-		libnvidia-ifr1-460 \
-		xserver-xorg-video-nvidia-460 \
-m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
-		libnvidia-compute-460:i386 \
-		libnvidia-decode-460:i386 \
-		libnvidia-encode-460:i386 \
-		libnvidia-extra-460:i386 \
-		libnvidia-fbc1-460:i386 \
-		libnvidia-gl-460:i386 \
-		libnvidia-ifr1-460:i386 \
-]])m4_dnl
-]])m4_dnl
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libegl1:i386 \
@@ -327,6 +304,49 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		mesa-vdpau-drivers:i386 \
 		mesa-vulkan-drivers:i386 \
 		ocl-icd-libopencl1:i386 \
+]])m4_dnl
+m4_ifelse(ENABLE_AMD_SUPPORT, 1, [[m4_dnl
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+		libdrm-amdgpu1 \
+		xserver-xorg-video-amdgpu \
+m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+		libdrm-amdgpu1:i386 \
+]])m4_dnl
+]])m4_dnl
+m4_ifelse(ENABLE_INTEL_SUPPORT, 1, [[m4_dnl
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+		intel-opencl-icd \
+		libdrm-intel1 \
+		xserver-xorg-video-intel \
+m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+		libdrm-intel1:i386 \
+]])m4_dnl
+]])m4_dnl
+m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+		libdrm-nouveau2 \
+		libnvidia-compute-460 \
+		libnvidia-decode-460 \
+		libnvidia-encode-460 \
+		libnvidia-extra-460 \
+		libnvidia-fbc1-460 \
+		libnvidia-gl-460 \
+		libnvidia-ifr1-460 \
+		xserver-xorg-video-nouveau \
+		xserver-xorg-video-nvidia-460 \
+m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
+	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+		libdrm-nouveau2:i386 \
+		libnvidia-compute-460:i386 \
+		libnvidia-decode-460:i386 \
+		libnvidia-encode-460:i386 \
+		libnvidia-extra-460:i386 \
+		libnvidia-fbc1-460:i386 \
+		libnvidia-gl-460:i386 \
+		libnvidia-ifr1-460:i386 \
+]])m4_dnl
 ]])m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		adwaita-qt \
