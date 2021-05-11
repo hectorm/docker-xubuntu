@@ -269,7 +269,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		mesa-va-drivers \
 		mesa-vdpau-drivers \
 		mesa-vulkan-drivers \
-		ocl-icd-libopencl1 \
+		ocl-icd-opencl-dev \
 		openssh-server \
 		openssl \
 		policykit-1 \
@@ -303,7 +303,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		mesa-va-drivers:i386 \
 		mesa-vdpau-drivers:i386 \
 		mesa-vulkan-drivers:i386 \
-		ocl-icd-libopencl1:i386 \
+		ocl-icd-opencl-dev:i386 \
 ]])m4_dnl
 m4_ifelse(ENABLE_AMD_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
