@@ -496,9 +496,6 @@ RUN ln -sf /etc/machine-id /var/lib/dbus/machine-id
 # Make sesman read environment variables
 RUN printf '%s\n' 'session required pam_env.so readenv=1' >> /etc/pam.d/xrdp-sesman
 
-# Configure server for use with VirtualGL
-RUN vglserver_config -config +s +f -t
-
 # Remove default keys and certificates
 RUN rm -f /etc/ssh/ssh_host_*
 RUN rm -f "${XRDP_TLS_KEY_PATH:?}" "${XRDP_TLS_CRT_PATH:?}"
