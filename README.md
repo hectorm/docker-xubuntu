@@ -5,6 +5,8 @@ A Docker image based on Ubuntu 20.04 with the Xfce desktop environment,
 [xrdp PulseAudio module](https://github.com/neutrinolabs/pulseaudio-module-xrdp) and
 [VirtualGL](https://github.com/VirtualGL/virtualgl).
 
+![Preview](img/preview.png)
+
 ## Start an instance
 
 ### Docker CLI
@@ -23,7 +25,7 @@ docker run \
 ### Docker Compose
 
 ```yaml
-version: '3.8'
+version: '3.9'
 services:
   xubuntu:
     image: 'docker.io/hectormolinero/xubuntu:latest'
@@ -35,7 +37,7 @@ services:
       - '/dev/dri:/dev/dri'
 ```
 
-> You will be able to connect to the container via SSH through 3322/tcp port and RDP through 3389/tcp port.
+> You will be able to connect to the container via SSH through 3322/TCP port and RDP through 3389/TCP port.
 
 > **Important:** some software (like Firefox) need the shared memory to be increased, if you
 encounter any problem related to this you may use the `--shm-size` option.
