@@ -198,10 +198,6 @@ push-cross-manifest:
 
 .PHONY: binfmt-register
 binfmt-register:
-	'$(DOCKER)' run --rm --privileged docker.io/hectormolinero/qemu-user-static:latest
-
-.PHONY: binfmt-reset
-binfmt-reset:
 	'$(DOCKER)' run --rm --privileged docker.io/hectormolinero/qemu-user-static:latest --reset
 
 ##################################################
