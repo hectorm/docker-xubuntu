@@ -32,7 +32,7 @@ if containerExists "${CONTAINER_NAME:?}"; then
 fi
 
 CONTAINER_DEVICES=$(find /dev/ -mindepth 1 -maxdepth 1 \
-	'(' -name 'dri' -or -name 'vga_arbiter' -or -name 'nvidia*' ')' \
+	'(' -name 'dri' -or -name 'vga_arbiter' -or -name 'nvidia*' -or -name 'nvhost*' -or -name 'nvmap' ')' \
 	-exec printf -- '--device %s:%s\n' '{}' '{}' ';' \
 )
 
