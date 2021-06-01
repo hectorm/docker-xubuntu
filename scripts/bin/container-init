@@ -95,11 +95,11 @@ if [ ! -f "${XRDP_TLS_KEY_PATH:?}" ] || [ ! -f "${XRDP_TLS_CRT_PATH:?}" ]; then
 	FQDN=$(hostname --fqdn)
 
 	(umask 077 \
-		&& openssl genrsa -out "${XRDP_TLS_KEY_PATH:?}" 2048 \
+		&& openssl ecparam -genkey -name prime256v1 > "${XRDP_TLS_KEY_PATH:?}" \
 	) >/dev/null
 
 	(umask 022 \
-		&& openssl req -x509 -subj "/CN=${FQDN:?}" -addext "subjectAltName=DNS:${FQDN:?}" -days 3650 -key "${XRDP_TLS_KEY_PATH:?}" > "${XRDP_TLS_CRT_PATH:?}" \
+		&& openssl req -x509 -sha256 -days 3650 -subj "/CN=${FQDN:?}" -addext "subjectAltName=DNS:${FQDN:?}" -key "${XRDP_TLS_KEY_PATH:?}" > "${XRDP_TLS_CRT_PATH:?}" \
 	) >/dev/null
 fi
 
