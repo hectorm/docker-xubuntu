@@ -3,7 +3,7 @@
 set -eu
 
 # Remove leftover files
-find /tmp/ -mindepth 1 -delete
+find /tmp/ -mindepth 1 -delete ||:
 
 # Add GPU devices groups to additional groups
 for dev in /dev/dri/*; do
