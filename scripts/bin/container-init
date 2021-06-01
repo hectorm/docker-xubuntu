@@ -108,7 +108,7 @@ openssl x509 -in "${XRDP_TLS_CRT_PATH:?}" -noout -fingerprint -sha1
 openssl x509 -in "${XRDP_TLS_CRT_PATH:?}" -noout -fingerprint -sha256
 
 # Dump environment variables
-env | grep -Ev '^(PWD|HOME|USER|USERNAME|SHELL|TERM|SHLVL)=' | sort > /etc/environment
+env | grep -Ev '^(PWD|OLDPWD|HOME|USER|SHELL|TERM|([^=]*(PASSWORD|SECRET)[^=]*))=' | sort > /etc/environment
 
 # Start runit
 exec tini -- runsvdir -P /etc/service/
