@@ -92,18 +92,14 @@ fi
 
 # Generate RDP certificate if it does not exist
 if [ ! -f "${XRDP_TLS_KEY_PATH:?}" ] || [ ! -f "${XRDP_TLS_CRT_PATH:?}" ]; then
-	KEY_FILE=${XRDP_TLS_KEY_PATH:?}
-	CRT_FILE=${XRDP_TLS_CRT_PATH:?}
-	CSR_FILE=$(mktemp -u)
+	FQDN=$(hostname --fqdn)
 
 	(umask 077 \
-		&& openssl genrsa -out "${KEY_FILE:?}" 2048 \
+		&& openssl genrsa -out "${XRDP_TLS_KEY_PATH:?}" 2048 \
 	) >/dev/null
 
 	(umask 022 \
-		&& openssl req -new -subj "/CN=$(uname -n)" -key "${KEY_FILE:?}" -out "${CSR_FILE:?}" \
-		&& openssl x509 -req -days 3650 -signkey "${KEY_FILE:?}" -in "${CSR_FILE:?}" -out "${CRT_FILE:?}" \
-		&& rm -f "${CSR_FILE:?}" \
+		&& openssl req -x509 -subj "/CN=${FQDN:?}" -addext "subjectAltName=DNS:${FQDN:?}" -days 3650 -key "${XRDP_TLS_KEY_PATH:?}" > "${XRDP_TLS_CRT_PATH:?}" \
 	) >/dev/null
 fi
 
