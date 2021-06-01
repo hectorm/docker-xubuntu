@@ -46,7 +46,7 @@ encounter any problem related to this you may use the `--shm-size` option.
 
 * `UNPRIVILEGED_USER_UID`: unprivileged user UID (`1000` by default).
 * `UNPRIVILEGED_USER_GID`: unprivileged user GID (`1000` by default).
-* `UNPRIVILEGED_USER_NAME`: unprivileged user name (`guest` by default).
+* `UNPRIVILEGED_USER_NAME`: unprivileged user name (`user` by default).
 * `UNPRIVILEGED_USER_PASSWORD`: unprivileged user password (`password` by default).
 * `UNPRIVILEGED_USER_GROUPS`: comma-separated list of additional GIDs for the unprivileged user (none by default).
 * `UNPRIVILEGED_USER_SHELL`: unprivileged user shell (`/bin/bash` by default).

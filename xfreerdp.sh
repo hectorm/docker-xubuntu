@@ -5,7 +5,7 @@ export LC_ALL=C
 
 RDP_HOST=127.0.0.1
 RDP_PORT=3389
-RDP_USER=guest
+RDP_USER=user
 RDP_PASSWORD=password
 
 exec xfreerdp \
