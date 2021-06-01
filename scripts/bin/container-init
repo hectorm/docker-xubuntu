@@ -103,6 +103,10 @@ if [ ! -f "${XRDP_TLS_KEY_PATH:?}" ] || [ ! -f "${XRDP_TLS_CRT_PATH:?}" ]; then
 	) >/dev/null
 fi
 
+# Print RDP certificate fingerprint
+openssl x509 -in "${XRDP_TLS_CRT_PATH:?}" -noout -fingerprint -sha1
+openssl x509 -in "${XRDP_TLS_CRT_PATH:?}" -noout -fingerprint -sha256
+
 # Dump environment variables
 env | grep -Ev '^(PWD|HOME|USER|USERNAME|SHELL|TERM|SHLVL)=' | sort > /etc/environment
 
