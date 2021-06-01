@@ -123,7 +123,7 @@ RUN dpkg -i ./libjpeg-turbo32_*.deb
 ]])m4_dnl
 
 # Build VirtualGL
-ARG VIRTUALGL_TREEISH=9d04f00f965fa75fb0903d9550dea1d1fe950446
+ARG VIRTUALGL_TREEISH=10c1138d6a8dd226c0df3ec1a2b30c85224ae6ac
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
 RUN mkdir /tmp/virtualgl/
 WORKDIR /tmp/virtualgl/
