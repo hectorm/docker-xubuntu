@@ -327,25 +327,25 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2 \
-		libnvidia-compute-460 \
-		libnvidia-decode-460 \
-		libnvidia-encode-460 \
-		libnvidia-extra-460 \
-		libnvidia-fbc1-460 \
-		libnvidia-gl-460 \
-		libnvidia-ifr1-460 \
+		libnvidia-compute-465 \
+		libnvidia-decode-465 \
+		libnvidia-encode-465 \
+		libnvidia-extra-465 \
+		libnvidia-fbc1-465 \
+		libnvidia-gl-465 \
+		libnvidia-ifr1-465 \
 		xserver-xorg-video-nouveau \
-		xserver-xorg-video-nvidia-460 \
+		xserver-xorg-video-nvidia-465 \
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2:i386 \
-		libnvidia-compute-460:i386 \
-		libnvidia-decode-460:i386 \
-		libnvidia-encode-460:i386 \
-		libnvidia-extra-460:i386 \
-		libnvidia-fbc1-460:i386 \
-		libnvidia-gl-460:i386 \
-		libnvidia-ifr1-460:i386 \
+		libnvidia-compute-465:i386 \
+		libnvidia-decode-465:i386 \
+		libnvidia-encode-465:i386 \
+		libnvidia-extra-465:i386 \
+		libnvidia-fbc1-465:i386 \
+		libnvidia-gl-465:i386 \
+		libnvidia-ifr1-465:i386 \
 ]])m4_dnl
 ]])m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
