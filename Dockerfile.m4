@@ -327,25 +327,25 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2 \
-		libnvidia-compute-465 \
-		libnvidia-decode-465 \
-		libnvidia-encode-465 \
-		libnvidia-extra-465 \
-		libnvidia-fbc1-465 \
-		libnvidia-gl-465 \
-		libnvidia-ifr1-465 \
+		libnvidia-compute-470 \
+		libnvidia-decode-470 \
+		libnvidia-encode-470 \
+		libnvidia-extra-470 \
+		libnvidia-fbc1-470 \
+		libnvidia-gl-470 \
+		libnvidia-ifr1-470 \
 		xserver-xorg-video-nouveau \
-		xserver-xorg-video-nvidia-465 \
+		xserver-xorg-video-nvidia-470 \
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2:i386 \
-		libnvidia-compute-465:i386 \
-		libnvidia-decode-465:i386 \
-		libnvidia-encode-465:i386 \
-		libnvidia-extra-465:i386 \
-		libnvidia-fbc1-465:i386 \
-		libnvidia-gl-465:i386 \
-		libnvidia-ifr1-465:i386 \
+		libnvidia-compute-470:i386 \
+		libnvidia-decode-470:i386 \
+		libnvidia-encode-470:i386 \
+		libnvidia-extra-470:i386 \
+		libnvidia-fbc1-470:i386 \
+		libnvidia-gl-470:i386 \
+		libnvidia-ifr1-470:i386 \
 ]])m4_dnl
 ]])m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
