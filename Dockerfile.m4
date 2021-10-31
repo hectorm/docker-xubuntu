@@ -506,20 +506,42 @@ RUN ln -sf /dev/stdout /var/log/xrdp-sesman.log
 
 # Copy and enable services
 COPY --chown=root:root ./scripts/service/ /etc/sv/
+RUN find /etc/sv/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+RUN find /etc/sv/ -type f -not -perm 0755 -exec chmod 0755 '{}' ';'
 RUN ln -sv /etc/sv/sshd /etc/service/
 RUN ln -sv /etc/sv/dbus-daemon /etc/service/
 RUN ln -sv /etc/sv/xrdp /etc/service/
 RUN ln -sv /etc/sv/xrdp-sesman /etc/service/
 
+# Copy SSH config
+COPY --chown=root:root ./config/ssh/ /etc/ssh/
+RUN find /etc/ssh/sshd_config -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+
+# Copy X11 config
+COPY --chown=root:root ./config/X11/ /etc/X11/
+RUN find /etc/X11/xorg.conf.d/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+RUN find /etc/X11/xorg.conf.d/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+
+# Copy xrdp config
+COPY --chown=root:root ./config/xrdp/ /etc/xrdp/
+RUN find /etc/xrdp/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+RUN find /etc/xrdp/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+RUN find /etc/xrdp/ -type f -name '*.sh' -not -perm 0755 -exec chmod 0755 '{}' ';'
+
+# Copy PulseAudio config
+COPY --chown=root:root ./config/pulse/ /etc/pulse/
+RUN find /etc/pulse/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+RUN find /etc/pulse/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+
+# Copy skeleton files
+COPY --chown=root:root ./config/skel/ /etc/skel/
+RUN find /etc/skel/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+RUN find /etc/skel/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+
 # Copy scripts
 COPY --chown=root:root ./scripts/bin/ /usr/local/bin/
-
-# Copy config
-COPY --chown=root:root ./config/ssh/ /etc/ssh/
-COPY --chown=root:root ./config/X11/ /etc/X11/
-COPY --chown=root:root ./config/xrdp/ /etc/xrdp/
-COPY --chown=root:root ./config/skel/ /etc/skel/
-COPY --chown=root:root ./config/pulse/ /etc/pulse/
+RUN find /usr/local/bin/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+RUN find /usr/local/bin/ -type f -not -perm 0755 -exec chmod 0755 '{}' ';'
 
 # Expose SSH port
 EXPOSE 3322/tcp
