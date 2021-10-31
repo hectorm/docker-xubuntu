@@ -32,6 +32,9 @@ IMAGE_AMD64_TARBALL := $(DISTDIR)/$(IMAGE_PROJECT).amd64.tzst
 IMAGE_ARM64V8_DOCKERFILE := $(DISTDIR)/Dockerfile.arm64v8
 IMAGE_ARM64V8_TARBALL := $(DISTDIR)/$(IMAGE_PROJECT).arm64v8.tzst
 
+export DOCKER_BUILDKIT := 1
+export BUILDKIT_PROGRESS := plain
+
 ##################################################
 ## "all" target
 ##################################################
