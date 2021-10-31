@@ -17,26 +17,26 @@ containerExists() { "${DOCKER:?}" ps -af name="${1:?}" --format '{{.Names}}' | g
 containerIsRunning() { "${DOCKER:?}" ps -f name="${1:?}" --format '{{.Names}}' | grep -Fxq "${1:?}"; }
 
 if ! imageExists "${IMAGE_NAME:?}" && ! imageExists "${IMAGE_NAME#docker.io/}"; then
-	>&2 printf -- '%s\n' "\"${IMAGE_NAME:?}\" image doesn't exist!"
+	>&2 printf '%s\n' "\"${IMAGE_NAME:?}\" image doesn't exist!"
 	exit 1
 fi
 
 if containerIsRunning "${CONTAINER_NAME:?}"; then
-	printf -- '%s\n' "Stopping \"${CONTAINER_NAME:?}\" container..."
+	printf '%s\n' "Stopping \"${CONTAINER_NAME:?}\" container..."
 	"${DOCKER:?}" stop "${CONTAINER_NAME:?}" >/dev/null
 fi
 
 if containerExists "${CONTAINER_NAME:?}"; then
-	printf -- '%s\n' "Removing \"${CONTAINER_NAME:?}\" container..."
+	printf '%s\n' "Removing \"${CONTAINER_NAME:?}\" container..."
 	"${DOCKER:?}" rm "${CONTAINER_NAME:?}" >/dev/null
 fi
 
 CONTAINER_DEVICES=$(find /dev/ -mindepth 1 -maxdepth 1 \
 	'(' -name 'dri' -or -name 'vga_arbiter' -or -name 'nvidia*' -or -name 'nvhost*' -or -name 'nvmap' ')' \
-	-exec printf -- '--device %s:%s\n' '{}' '{}' ';' \
+	-exec printf '--device %s:%s\n' '{}' '{}' ';' \
 )
 
-printf -- '%s\n' "Creating \"${CONTAINER_NAME:?}\" container..."
+printf '%s\n' "Creating \"${CONTAINER_NAME:?}\" container..."
 # shellcheck disable=SC2086
 "${DOCKER:?}" run \
 	--name "${CONTAINER_NAME:?}" \
@@ -48,5 +48,5 @@ printf -- '%s\n' "Creating \"${CONTAINER_NAME:?}\" container..."
 	${CONTAINER_DEVICES?} \
 	"${IMAGE_NAME:?}" "$@" >/dev/null
 
-printf -- '%s\n\n' 'Done!'
+printf '%s\n\n' 'Done!'
 exec "${DOCKER:?}" logs -f "${CONTAINER_NAME:?}"

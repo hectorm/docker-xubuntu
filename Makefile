@@ -209,13 +209,13 @@ binfmt-register:
 
 .PHONY: version
 version:
-	@if printf -- '%s' '$(IMAGE_VERSION)' | grep -q '^v[0-9]\{1,\}$$'; then \
+	@if printf '%s' '$(IMAGE_VERSION)' | grep -q '^v[0-9]\{1,\}$$'; then \
 		NEW_IMAGE_VERSION=$$(awk -v 'v=$(IMAGE_VERSION)' 'BEGIN {printf "v%.0f", substr(v,2)+1}'); \
-		printf -- '%s\n' "$${NEW_IMAGE_VERSION:?}" > '$(VERSION_FILE)'; \
+		printf '%s\n' "$${NEW_IMAGE_VERSION:?}" > '$(VERSION_FILE)'; \
 		'$(GIT)' add '$(VERSION_FILE)'; '$(GIT)' commit -m "$${NEW_IMAGE_VERSION:?}"; \
 		'$(GIT)' tag -a "$${NEW_IMAGE_VERSION:?}" -m "$${NEW_IMAGE_VERSION:?}"; \
 	else \
-		>&2 printf -- 'Malformed version string: %s\n' '$(IMAGE_VERSION)'; \
+		>&2 printf 'Malformed version string: %s\n' '$(IMAGE_VERSION)'; \
 		exit 1; \
 	fi
 
