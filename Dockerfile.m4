@@ -199,7 +199,7 @@ RUN make -j"$(nproc)"
 RUN checkinstall --default --pkgname=xorgxrdp --pkgversion=9:999 --pkgrelease=0
 
 # Build xrdp PulseAudio module
-ARG XRDP_PULSEAUDIO_TREEISH=v0.5
+ARG XRDP_PULSEAUDIO_TREEISH=v0.6
 ARG XRDP_PULSEAUDIO_REMOTE=https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
 WORKDIR /tmp/
 RUN DEBIAN_FRONTEND=noninteractive apt-get build-dep -y pulseaudio
