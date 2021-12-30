@@ -427,6 +427,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		libcanberra-gtk-module \
 		libcanberra-gtk3-module \
 		libgtk-3-bin \
+		librsvg2-common \
 		lshw \
 		lsof \
 		lsscsi \
