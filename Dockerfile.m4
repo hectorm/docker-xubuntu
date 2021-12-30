@@ -317,6 +317,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		runit \
 		tini \
 		tzdata \
+		x11-utils \
 		x11-xkb-utils \
 		xauth \
 		xkb-data \
@@ -327,6 +328,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		xserver-xorg-video-dummy \
 		xserver-xorg-video-fbdev \
 		xserver-xorg-video-vesa \
+		xterm \
 		zlib1g \
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
