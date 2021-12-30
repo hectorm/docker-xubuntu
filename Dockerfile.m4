@@ -27,11 +27,13 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		flex \
 		git \
 		intltool \
+		libbz2-dev \
 		libegl-dev \
 		libegl1-mesa \
 		libegl1-mesa-dev \
 		libepoxy-dev \
 		libfdk-aac-dev \
+		libfreetype-dev \
 		libfuse-dev \
 		libgbm-dev \
 		libgl-dev \
@@ -56,15 +58,20 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		libxfixes-dev \
 		libxml2-dev \
 		libxrandr-dev \
+		libxt-dev \
 		libxtst-dev \
 		libxv-dev \
 		nasm \
 		ocl-icd-opencl-dev \
 		pkg-config \
 		texinfo \
+		x11-xkb-utils \
+		xauth \
+		xkb-data \
 		xserver-xorg-dev \
 		xsltproc \
 		xutils-dev \
+		zlib1g-dev \
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		g++-multilib \
@@ -163,6 +170,36 @@ RUN make deb
 RUN dpkg -i ./virtualgl32_*.deb
 ]])m4_dnl
 
+# Build TurboVNC
+ARG TURBOVNC_TREEISH=3.0beta1
+ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
+RUN mkdir /tmp/turbovnc/
+WORKDIR /tmp/turbovnc/
+RUN git clone "${TURBOVNC_REMOTE:?}" ./
+RUN git checkout "${TURBOVNC_TREEISH:?}"
+RUN git submodule update --init --recursive
+RUN mkdir /tmp/turbovnc/build/
+WORKDIR /tmp/turbovnc/build/
+RUN cmake ./ \
+		-G 'Unix Makefiles' \
+		-D PKGNAME=turbovnc \
+		-D CMAKE_BUILD_TYPE=Release \
+		-D CMAKE_INSTALL_PREFIX=/opt/TurboVNC \
+		-D TVNC_BUILDSERVER=1 \
+		-D TVNC_BUILDWEBSERVER=0 \
+		-D TVNC_BUILDVIEWER=0 \
+		-D TVNC_BUILDHELPER=0 \
+		-D TVNC_SYSTEMLIBS=1 \
+		-D TVNC_SYSTEMX11=1 \
+		-D TVNC_DLOPENSSL=1 \
+		-D TVNC_USEPAM=1 \
+		-D TVNC_GLX=1 \
+		-D TVNC_NVCONTROL=1 \
+		../
+RUN make -j"$(nproc)"
+RUN make deb
+RUN dpkg -i ./turbovnc_*.deb
+
 # Build xrdp
 ARG XRDP_TREEISH=v0.9.17
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
@@ -233,10 +270,12 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		ca-certificates \
 		dbus \
 		dbus-x11 \
+		libbz2-1.0 \
 		libegl1 \
 		libegl1-mesa \
 		libepoxy0 \
 		libfdk-aac1 \
+		libfreetype6 \
 		libfuse2 \
 		libgbm1 \
 		libgl1 \
@@ -261,6 +300,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		libxfixes3 \
 		libxml2 \
 		libxrandr2 \
+		libxt6 \
 		libxtst6 \
 		libxv1 \
 		locales \
@@ -277,6 +317,9 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		runit \
 		tini \
 		tzdata \
+		x11-xkb-utils \
+		xauth \
+		xkb-data \
 		xserver-xorg-core \
 		xserver-xorg-input-evdev \
 		xserver-xorg-input-joystick \
@@ -284,6 +327,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		xserver-xorg-video-dummy \
 		xserver-xorg-video-fbdev \
 		xserver-xorg-video-vesa \
+		zlib1g \
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libegl1:i386 \
@@ -446,6 +490,10 @@ COPY --from=build --chown=root:root /tmp/virtualgl/build32/virtualgl32_*.deb /op
 RUN dpkg -i /opt/pkg/virtualgl32.deb
 ]])m4_dnl
 
+# Install TurboVNC from package
+COPY --from=build --chown=root:root /tmp/turbovnc/build/turbovnc_*.deb /opt/pkg/turbovnc.deb
+RUN dpkg -i /opt/pkg/turbovnc.deb
+
 # Install xrdp from package
 COPY --from=build --chown=root:root /tmp/xrdp/xrdp_*.deb /opt/pkg/xrdp.deb
 RUN dpkg -i /opt/pkg/xrdp.deb
@@ -483,7 +531,7 @@ RUN printf '%s\n' "${TZ:?}" > /etc/timezone \
 
 # Setup PATH
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
-ENV PATH=/opt/VirtualGL/bin:${PATH}
+ENV PATH=/opt/libjpeg-turbo/bin:/opt/VirtualGL/bin:/opt/TurboVNC/bin:${PATH}
 
 # Setup D-Bus
 RUN mkdir /run/dbus/ && chown messagebus:messagebus /run/dbus/
