@@ -180,8 +180,7 @@ RUN ./configure \
 		--enable-fdkaac \
 		--enable-opus \
 		--enable-mp3lame \
-		--enable-pixman \
-		CFLAGS='-Wno-format'
+		--enable-pixman
 RUN make -j"$(nproc)"
 RUN checkinstall --default --pkgname=xrdp --pkgversion=9:999 --pkgrelease=0
 
