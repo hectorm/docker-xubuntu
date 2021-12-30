@@ -313,12 +313,9 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		openssl \
 		policykit-1 \
 		pulseaudio \
-		pulseaudio-utils \
 		runit \
 		tini \
 		tzdata \
-		x11-utils \
-		x11-xkb-utils \
 		xauth \
 		xkb-data \
 		xserver-xorg-core \
@@ -328,7 +325,6 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		xserver-xorg-video-dummy \
 		xserver-xorg-video-fbdev \
 		xserver-xorg-video-vesa \
-		xterm \
 		zlib1g \
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
@@ -447,6 +443,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		pciutils \
 		procps \
 		psmisc \
+		pulseaudio-utils \
 		ristretto \
 		strace \
 		sudo \
@@ -454,7 +451,10 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		tumbler \
 		unzip \
 		usbutils \
+		vulkan-tools \
 		wget \
+		x11-utils \
+		x11-xkb-utils \
 		xauth \
 		xdg-user-dirs \
 		xdg-utils \
@@ -470,6 +470,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		xfonts-base \
 		xfpanel-switch \
 		xinput \
+		xterm \
 		xubuntu-default-settings \
 		xutils \
 		xz-utils \
