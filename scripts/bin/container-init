@@ -69,7 +69,7 @@ if [ -z "${VGL_DISPLAY-}" ]; then
 	else
 		for card in /dev/dri/card*; do
 			if /opt/VirtualGL/bin/eglinfo -B "${card:?}" 2>/dev/null; then
-				export VGL_DISPLAY=${card:?}
+				export VGL_DISPLAY="${card:?}"
 				break
 			fi
 		done
