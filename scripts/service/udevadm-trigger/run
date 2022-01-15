@@ -1,0 +1,6 @@
+#!/bin/sh
+
+sv start udevd || exit 1
+
+udevadm trigger
+exec sleep infinity

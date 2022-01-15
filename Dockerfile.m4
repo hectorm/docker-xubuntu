@@ -316,6 +316,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		runit \
 		tini \
 		tzdata \
+		udev \
 		xauth \
 		xkb-data \
 		xserver-xorg-core \
@@ -558,8 +559,10 @@ RUN ln -sf /dev/stdout /var/log/xrdp-sesman.log
 COPY --chown=root:root ./scripts/service/ /etc/sv/
 RUN find /etc/sv/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
 RUN find /etc/sv/ -type f -not -perm 0755 -exec chmod 0755 '{}' ';'
-RUN ln -sv /etc/sv/sshd /etc/service/
 RUN ln -sv /etc/sv/dbus-daemon /etc/service/
+RUN ln -sv /etc/sv/sshd /etc/service/
+RUN ln -sv /etc/sv/udevadm-trigger /etc/service/
+RUN ln -sv /etc/sv/udevd /etc/service/
 RUN ln -sv /etc/sv/xrdp /etc/service/
 RUN ln -sv /etc/sv/xrdp-sesman /etc/service/
 
