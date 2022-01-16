@@ -36,6 +36,13 @@ if ! getent passwd "${UNPRIVILEGED_USER_UID:?}" >/dev/null 2>&1; then
 		"${UNPRIVILEGED_USER_NAME:?}"
 fi
 
+# Set unprivileged user password
+if [ -n "${UNPRIVILEGED_USER_PASSWORD?}" ]; then
+	printf '%s' "${UNPRIVILEGED_USER_NAME:?}:${UNPRIVILEGED_USER_PASSWORD:?}" | chpasswd
+else
+	passwd -d "${UNPRIVILEGED_USER_NAME:?}"
+fi
+
 # Copy /etc/skel/ to unprivileged user home if empty
 UNPRIVILEGED_USER_HOME=$(getent passwd "${UNPRIVILEGED_USER_NAME:?}" | cut -d: -f6)
 if [ -z "$(ls -A "${UNPRIVILEGED_USER_HOME:?}")" ]; then
@@ -43,16 +50,30 @@ if [ -z "$(ls -A "${UNPRIVILEGED_USER_HOME:?}")" ]; then
 	chown -R "${UNPRIVILEGED_USER_NAME:?}:" "${UNPRIVILEGED_USER_HOME:?}"
 fi
 
-# Create /run/user/${UNPRIVILEGED_USER_UID}/dbus-1/ directory
-mkdir -p /run/user/"${UNPRIVILEGED_USER_UID:?}"/dbus-1/
-chmod -R 700 /run/user/"${UNPRIVILEGED_USER_UID:?}"/
-chown -R "${UNPRIVILEGED_USER_NAME:?}:" /run/user/"${UNPRIVILEGED_USER_UID:?}"/
+# Create /run/dbus/ directory if it does not exist
+if [ ! -d /run/dbus/ ]; then
+	mkdir -p /run/dbus/
+	chmod 755 /run/dbus/
+	chown messagebus: /run/dbus/
+fi
 
-# Set unprivileged user password
-if [ -n "${UNPRIVILEGED_USER_PASSWORD?}" ]; then
-	printf '%s' "${UNPRIVILEGED_USER_NAME:?}:${UNPRIVILEGED_USER_PASSWORD:?}" | chpasswd
-else
-	passwd -d "${UNPRIVILEGED_USER_NAME:?}"
+# Create /run/sshd/ directory if it does not exist
+if [ ! -d /run/sshd/ ]; then
+	mkdir -p /run/sshd/
+	chmod 755 /run/sshd/
+fi
+
+# Create /run/udev/ directory if it does not exist
+if [ ! -d /run/udev/ ]; then
+	mkdir -p /run/udev/
+	chmod 755 /run/udev/
+fi
+
+# Create /run/user/${UNPRIVILEGED_USER_UID}/ directory if it does not exist
+if [ ! -d /run/user/"${UNPRIVILEGED_USER_UID:?}"/ ]; then
+	mkdir -p /run/user/"${UNPRIVILEGED_USER_UID:?}"/
+	chmod 700 /run/user/"${UNPRIVILEGED_USER_UID:?}"/
+	chown "${UNPRIVILEGED_USER_NAME:?}:" /run/user/"${UNPRIVILEGED_USER_UID:?}"/
 fi
 
 # Enable xdummy service if ENABLE_XDUMMY is true
@@ -74,11 +95,6 @@ if [ -z "${VGL_DISPLAY-}" ]; then
 			fi
 		done
 	fi
-fi
-
-# Create privilege separation directory for SSH server if it does not exist
-if [ ! -e /run/sshd/ ]; then
-	mkdir /run/sshd/
 fi
 
 # Generate SSH keys if they do not exist
