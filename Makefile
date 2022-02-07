@@ -1,34 +1,27 @@
 #!/usr/bin/make -f
 
 SHELL := /bin/sh
-.SHELLFLAGS := -eu -c
+.SHELLFLAGS := -euc
 
 DOCKER := $(shell command -v docker 2>/dev/null)
 GIT := $(shell command -v git 2>/dev/null)
 M4 := $(shell command -v m4 2>/dev/null)
 
 DISTDIR := ./dist
-VERSION_FILE = ./VERSION
 DOCKERFILE_TEMPLATE := ./Dockerfile.m4
 
 IMAGE_REGISTRY := docker.io
 IMAGE_NAMESPACE := hectormolinero
 IMAGE_PROJECT := xubuntu
 IMAGE_NAME := $(IMAGE_REGISTRY)/$(IMAGE_NAMESPACE)/$(IMAGE_PROJECT)
-
-IMAGE_VERSION := v0
-ifneq ($(wildcard $(VERSION_FILE)),)
-	IMAGE_VERSION := $(shell cat '$(VERSION_FILE)')
-endif
+IMAGE_VERSION := $(shell '$(GIT)' describe --abbrev=0 2>/dev/null || printf 'v0')
 
 IMAGE_BUILD_OPTS :=
 
 IMAGE_NATIVE_DOCKERFILE := $(DISTDIR)/Dockerfile
 IMAGE_NATIVE_TARBALL := $(DISTDIR)/$(IMAGE_PROJECT).tzst
-
 IMAGE_AMD64_DOCKERFILE := $(DISTDIR)/Dockerfile.amd64
 IMAGE_AMD64_TARBALL := $(DISTDIR)/$(IMAGE_PROJECT).amd64.tzst
-
 IMAGE_ARM64V8_DOCKERFILE := $(DISTDIR)/Dockerfile.arm64v8
 IMAGE_ARM64V8_TARBALL := $(DISTDIR)/$(IMAGE_PROJECT).arm64v8.tzst
 
@@ -53,10 +46,10 @@ $(IMAGE_NATIVE_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 	mkdir -p '$(DISTDIR)'
 	'$(M4)' \
 		--prefix-builtins \
-		-D ENABLE_AMD_SUPPORT=1 \
-		-D ENABLE_INTEL_SUPPORT=1 \
-		-D ENABLE_NVIDIA_SUPPORT=1 \
-		-D ENABLE_32BIT_SUPPORT=1 \
+		--define=ENABLE_AMD_SUPPORT=1 \
+		--define=ENABLE_INTEL_SUPPORT=1 \
+		--define=ENABLE_NVIDIA_SUPPORT=1 \
+		--define=ENABLE_32BIT_SUPPORT=1 \
 		'$(DOCKERFILE_TEMPLATE)' | cat --squeeze-blank > '$@'
 	'$(DOCKER)' build $(IMAGE_BUILD_OPTS) \
 		--tag '$(IMAGE_NAME):$(IMAGE_VERSION)' \
@@ -73,12 +66,12 @@ $(IMAGE_AMD64_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 	mkdir -p '$(DISTDIR)'
 	'$(M4)' \
 		--prefix-builtins \
-		-D CROSS_ARCH=amd64 \
-		-D CROSS_QEMU=/usr/bin/qemu-x86_64-static \
-		-D ENABLE_AMD_SUPPORT=1 \
-		-D ENABLE_INTEL_SUPPORT=1 \
-		-D ENABLE_NVIDIA_SUPPORT=1 \
-		-D ENABLE_32BIT_SUPPORT=1 \
+		--define=CROSS_ARCH=amd64 \
+		--define=CROSS_QEMU=/usr/bin/qemu-x86_64-static \
+		--define=ENABLE_AMD_SUPPORT=1 \
+		--define=ENABLE_INTEL_SUPPORT=1 \
+		--define=ENABLE_NVIDIA_SUPPORT=1 \
+		--define=ENABLE_32BIT_SUPPORT=1 \
 		'$(DOCKERFILE_TEMPLATE)' | cat --squeeze-blank > '$@'
 	'$(DOCKER)' build $(IMAGE_BUILD_OPTS) \
 		--tag '$(IMAGE_NAME):$(IMAGE_VERSION)-amd64' \
@@ -92,8 +85,8 @@ $(IMAGE_ARM64V8_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 	mkdir -p '$(DISTDIR)'
 	'$(M4)' \
 		--prefix-builtins \
-		-D CROSS_ARCH=arm64v8 \
-		-D CROSS_QEMU=/usr/bin/qemu-aarch64-static \
+		--define=CROSS_ARCH=arm64v8 \
+		--define=CROSS_QEMU=/usr/bin/qemu-aarch64-static \
 		'$(DOCKERFILE_TEMPLATE)' | cat --squeeze-blank > '$@'
 	'$(DOCKER)' build $(IMAGE_BUILD_OPTS) \
 		--tag '$(IMAGE_NAME):$(IMAGE_VERSION)-arm64v8' \
@@ -211,8 +204,7 @@ binfmt-register:
 version:
 	@if printf '%s' '$(IMAGE_VERSION)' | grep -q '^v[0-9]\{1,\}$$'; then \
 		NEW_IMAGE_VERSION=$$(awk -v 'v=$(IMAGE_VERSION)' 'BEGIN {printf "v%.0f", substr(v,2)+1}'); \
-		printf '%s\n' "$${NEW_IMAGE_VERSION:?}" > '$(VERSION_FILE)'; \
-		'$(GIT)' add '$(VERSION_FILE)'; '$(GIT)' commit -m "$${NEW_IMAGE_VERSION:?}"; \
+		'$(GIT)' commit --allow-empty -m "$${NEW_IMAGE_VERSION:?}"; \
 		'$(GIT)' tag -a "$${NEW_IMAGE_VERSION:?}" -m "$${NEW_IMAGE_VERSION:?}"; \
 	else \
 		>&2 printf 'Malformed version string: %s\n' '$(IMAGE_VERSION)'; \
