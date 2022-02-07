@@ -369,23 +369,23 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2 \
-		libnvidia-compute-495 \
-		libnvidia-decode-495 \
-		libnvidia-encode-495 \
-		libnvidia-extra-495 \
-		libnvidia-fbc1-495 \
-		libnvidia-gl-495 \
+		libnvidia-compute-510 \
+		libnvidia-decode-510 \
+		libnvidia-encode-510 \
+		libnvidia-extra-510 \
+		libnvidia-fbc1-510 \
+		libnvidia-gl-510 \
 		xserver-xorg-video-nouveau \
-		xserver-xorg-video-nvidia-495 \
+		xserver-xorg-video-nvidia-510 \
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2:i386 \
-		libnvidia-compute-495:i386 \
-		libnvidia-decode-495:i386 \
-		libnvidia-encode-495:i386 \
-		libnvidia-extra-495:i386 \
-		libnvidia-fbc1-495:i386 \
-		libnvidia-gl-495:i386 \
+		libnvidia-compute-510:i386 \
+		libnvidia-decode-510:i386 \
+		libnvidia-encode-510:i386 \
+		libnvidia-extra-510:i386 \
+		libnvidia-fbc1-510:i386 \
+		libnvidia-gl-510:i386 \
 ]])m4_dnl
 ]])m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
