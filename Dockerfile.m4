@@ -480,36 +480,28 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install libjpeg-turbo from package
-COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build/libjpeg-turbo_*.deb /opt/pkg/libjpeg-turbo.deb
-RUN dpkg -i /opt/pkg/libjpeg-turbo.deb
+RUN --mount=type=bind,from=build,source=/tmp/libjpeg-turbo/,target=/tmp/libjpeg-turbo/ dpkg -i /tmp/libjpeg-turbo/build/libjpeg-turbo_*.deb
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-COPY --from=build --chown=root:root /tmp/libjpeg-turbo/build32/libjpeg-turbo32_*.deb /opt/pkg/libjpeg-turbo32.deb
-RUN dpkg -i /opt/pkg/libjpeg-turbo32.deb
+RUN --mount=type=bind,from=build,source=/tmp/libjpeg-turbo/,target=/tmp/libjpeg-turbo/ dpkg -i /tmp/libjpeg-turbo/build32/libjpeg-turbo32_*.deb
 ]])m4_dnl
 
 # Install VirtualGL from package
-COPY --from=build --chown=root:root /tmp/virtualgl/build/virtualgl_*.deb /opt/pkg/virtualgl.deb
-RUN dpkg -i /opt/pkg/virtualgl.deb
+RUN --mount=type=bind,from=build,source=/tmp/virtualgl/,target=/tmp/virtualgl/ dpkg -i /tmp/virtualgl/build/virtualgl_*.deb
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-COPY --from=build --chown=root:root /tmp/virtualgl/build32/virtualgl32_*.deb /opt/pkg/virtualgl32.deb
-RUN dpkg -i /opt/pkg/virtualgl32.deb
+RUN --mount=type=bind,from=build,source=/tmp/virtualgl/,target=/tmp/virtualgl/ dpkg -i /tmp/virtualgl/build32/virtualgl32_*.deb
 ]])m4_dnl
 
 # Install TurboVNC from package
-COPY --from=build --chown=root:root /tmp/turbovnc/build/turbovnc_*.deb /opt/pkg/turbovnc.deb
-RUN dpkg -i /opt/pkg/turbovnc.deb
+RUN --mount=type=bind,from=build,source=/tmp/turbovnc/,target=/tmp/turbovnc/ dpkg -i /tmp/turbovnc/build/turbovnc_*.deb
 
 # Install xrdp from package
-COPY --from=build --chown=root:root /tmp/xrdp/xrdp_*.deb /opt/pkg/xrdp.deb
-RUN dpkg -i /opt/pkg/xrdp.deb
+RUN --mount=type=bind,from=build,source=/tmp/xrdp/,target=/tmp/xrdp/ dpkg -i /tmp/xrdp/xrdp_*.deb
 
 # Install xorgxrdp from package
-COPY --from=build --chown=root:root /tmp/xorgxrdp/xorgxrdp_*.deb /opt/pkg/xorgxrdp.deb
-RUN dpkg -i /opt/pkg/xorgxrdp.deb
+RUN --mount=type=bind,from=build,source=/tmp/xorgxrdp/,target=/tmp/xorgxrdp/ dpkg -i /tmp/xorgxrdp/xorgxrdp_*.deb
 
 # Install xrdp PulseAudio module from package
-COPY --from=build --chown=root:root /tmp/xrdp-pulseaudio/xrdp-pulseaudio_*.deb /opt/pkg/xrdp-pulseaudio.deb
-RUN dpkg -i /opt/pkg/xrdp-pulseaudio.deb
+RUN --mount=type=bind,from=build,source=/tmp/xrdp-pulseaudio/,target=/tmp/xrdp-pulseaudio/ dpkg -i /tmp/xrdp-pulseaudio/xrdp-pulseaudio_*.deb
 
 # Environment
 ENV UNPRIVILEGED_USER_UID=1000
