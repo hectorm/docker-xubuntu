@@ -391,7 +391,6 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		adwaita-icon-theme-full \
 		adwaita-qt \
-		apt-transport-https \
 		apt-utils \
 		audacity \
 		bash \
