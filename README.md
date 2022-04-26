@@ -19,7 +19,7 @@ docker run \
   --publish 3322:3322/tcp \
   --publish 3389:3389/tcp \
   --device /dev/dri:/dev/dri \
-  docker.io/hectormolinero/xubuntu:latest
+  docker.io/hectorm/xubuntu:latest
 ```
 
 ### Docker Compose
@@ -28,7 +28,7 @@ docker run \
 version: '3.9'
 services:
   xubuntu:
-    image: 'docker.io/hectormolinero/xubuntu:latest'
+    image: 'docker.io/hectorm/xubuntu:latest'
     shm_size: '2gb'
     ports:
       - '3322:3322/tcp'
