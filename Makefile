@@ -52,7 +52,7 @@ $(IMAGE_NATIVE_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 		--define=ENABLE_INTEL_SUPPORT=1 \
 		--define=ENABLE_NVIDIA_SUPPORT=1 \
 		--define=ENABLE_32BIT_SUPPORT=1 \
-		'$(DOCKERFILE_TEMPLATE)' | cat --squeeze-blank > '$@'
+		'$(DOCKERFILE_TEMPLATE)' > '$@'
 	'$(DOCKER)' build $(IMAGE_BUILD_OPTS) \
 		--tag '$(IMAGE_NAME):$(IMAGE_VERSION)' \
 		--tag '$(IMAGE_NAME):latest' \
@@ -74,7 +74,7 @@ $(IMAGE_AMD64_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 		--define=ENABLE_INTEL_SUPPORT=1 \
 		--define=ENABLE_NVIDIA_SUPPORT=1 \
 		--define=ENABLE_32BIT_SUPPORT=1 \
-		'$(DOCKERFILE_TEMPLATE)' | cat --squeeze-blank > '$@'
+		'$(DOCKERFILE_TEMPLATE)' > '$@'
 	'$(DOCKER)' build $(IMAGE_BUILD_OPTS) \
 		--tag '$(IMAGE_NAME):$(IMAGE_VERSION)-amd64' \
 		--tag '$(IMAGE_NAME):latest-amd64' \
@@ -89,7 +89,7 @@ $(IMAGE_ARM64V8_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 		--prefix-builtins \
 		--define=CROSS_ARCH=arm64v8 \
 		--define=CROSS_QEMU=/usr/bin/qemu-aarch64-static \
-		'$(DOCKERFILE_TEMPLATE)' | cat --squeeze-blank > '$@'
+		'$(DOCKERFILE_TEMPLATE)' > '$@'
 	'$(DOCKER)' build $(IMAGE_BUILD_OPTS) \
 		--tag '$(IMAGE_NAME):$(IMAGE_VERSION)-arm64v8' \
 		--tag '$(IMAGE_NAME):latest-arm64v8' \
