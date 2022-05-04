@@ -4,7 +4,7 @@ m4_changequote([[, ]])
 ## "build" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:20.04]], [[FROM docker.io/ubuntu:20.04]]) AS build
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS build
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
@@ -241,7 +241,7 @@ WORKDIR /tmp/
 RUN DEBIAN_FRONTEND=noninteractive apt-get build-dep -y pulseaudio
 RUN apt-get source pulseaudio && mv ./pulseaudio-*/ ./pulseaudio/
 WORKDIR /tmp/pulseaudio/
-RUN ./configure
+RUN meson ./build/
 RUN mkdir /tmp/xrdp-pulseaudio/
 WORKDIR /tmp/xrdp-pulseaudio/
 RUN git clone "${XRDP_PULSEAUDIO_REMOTE:?}" ./
@@ -256,7 +256,7 @@ RUN checkinstall --default --pkgname=xrdp-pulseaudio --pkgversion=9:999 --pkgrel
 ## "xubuntu" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:20.04]], [[FROM docker.io/ubuntu:20.04]]) AS main
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS main
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
@@ -274,7 +274,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		libegl1 \
 		libegl1-mesa \
 		libepoxy0 \
-		libfdk-aac1 \
+		libfdk-aac2 \
 		libfreetype6 \
 		libfuse2 \
 		libgbm1 \
@@ -289,7 +289,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		libpam0g \
 		libpixman-1-0 \
 		libpulse0 \
-		libssl1.1 \
+		libssl3 \
 		libsystemd0 \
 		libx11-6 \
 		libx11-xcb1 \
@@ -401,15 +401,15 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		desktop-file-utils \
 		dialog \
 		engrampa \
+		epiphany-browser \
 		exo-utils \
 		file \
-		firefox \
 		fonts-dejavu \
 		fonts-liberation \
 		fonts-noto \
 		fonts-noto-color-emoji \
 		fonts-ubuntu \
-		fuse \
+		fuse3 \
 		git \
 		gnome-keyring \
 		gnupg \
