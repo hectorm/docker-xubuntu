@@ -253,7 +253,7 @@ RUN make -j"$(nproc)"
 RUN checkinstall --default --pkgname=xrdp-pulseaudio --pkgversion=9:999 --pkgrelease=0
 
 ##################################################
-## "xubuntu" stage
+## "main" stage
 ##################################################
 
 m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS main
@@ -268,6 +268,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		at-spi2-core \
 		ca-certificates \
+		catatonit \
 		dbus \
 		dbus-x11 \
 		libbz2-1.0 \
@@ -314,7 +315,6 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		policykit-1 \
 		pulseaudio \
 		runit \
-		tini \
 		tzdata \
 		udev \
 		xauth \
