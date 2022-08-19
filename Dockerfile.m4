@@ -92,7 +92,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get clean
 
 # Build libjpeg-turbo
-ARG LIBJPEG_TURBO_TREEISH=2.1.3
+ARG LIBJPEG_TURBO_TREEISH=2.1.4
 ARG LIBJPEG_TURBO_REMOTE=https://github.com/libjpeg-turbo/libjpeg-turbo.git
 RUN mkdir /tmp/libjpeg-turbo/
 WORKDIR /tmp/libjpeg-turbo/
@@ -171,7 +171,7 @@ RUN dpkg -i ./virtualgl32_*.deb
 ]])m4_dnl
 
 # Build TurboVNC
-ARG TURBOVNC_TREEISH=3.0
+ARG TURBOVNC_TREEISH=3.0.1
 ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
 RUN mkdir /tmp/turbovnc/
 WORKDIR /tmp/turbovnc/
