@@ -263,6 +263,11 @@ RUN checkinstall --default --pkgname=xrdp-pulseaudio --pkgversion=9:999 --pkgrel
 m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS main
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
+# Copy APT config
+COPY --chown=root:root ./config/apt/preferences.d/ /etc/apt/preferences.d/
+RUN find /etc/apt/preferences.d/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+RUN find /etc/apt/preferences.d/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 # Enable i386 architecture
 RUN dpkg --add-architecture i386
@@ -399,6 +404,10 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 ]])m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
 
+# Add Mozilla Team repository
+RUN curl --proto '=https' --tlsv1.3 -sSf 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x0AB215679C571D1C8325275B9BDB3D89CE49EC21' | gpg --dearmor -o /etc/apt/trusted.gpg.d/mozillateam.gpg \
+	&& printf '%s\n' "deb [signed-by=/etc/apt/trusted.gpg.d/mozillateam.gpg] https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/mozillateam.list
+
 # Install extra packages
 RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get update \
@@ -413,9 +422,9 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		desktop-file-utils \
 		dialog \
 		engrampa \
-		epiphany-browser \
 		exo-utils \
 		file \
+		firefox \
 		fonts-dejavu \
 		fonts-liberation \
 		fonts-noto \
