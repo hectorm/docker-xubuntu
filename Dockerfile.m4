@@ -7,12 +7,16 @@ m4_changequote([[, ]])
 m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS build
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
-# Install system packages
-RUN export DEBIAN_FRONTEND=noninteractive \
-	&& sed -i 's/^#\s*\(deb-src\s\)/\1/g' /etc/apt/sources.list \
+# Enable source repositories
+RUN sed -i 's/^#\s*\(deb-src\s\)/\1/g' /etc/apt/sources.list
+
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-	&& dpkg --add-architecture i386 \
+# Enable i386 architecture
+RUN dpkg --add-architecture i386
 ]])m4_dnl
+
+# Install packages
+RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		autoconf \
@@ -259,18 +263,22 @@ RUN checkinstall --default --pkgname=xrdp-pulseaudio --pkgversion=9:999 --pkgrel
 m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS main
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
-# Install system packages
-RUN export DEBIAN_FRONTEND=noninteractive \
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-	&& dpkg --add-architecture i386 \
+# Enable i386 architecture
+RUN dpkg --add-architecture i386
 ]])m4_dnl
+
+# Install base packages
+RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		at-spi2-core \
 		ca-certificates \
 		catatonit \
+		curl \
 		dbus \
 		dbus-x11 \
+		gnupg \
 		libbz2-1.0 \
 		libegl1 \
 		libegl1-mesa \
@@ -305,6 +313,7 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		libxtst6 \
 		libxv1 \
 		locales \
+		lsb-release \
 		mesa-opencl-icd \
 		mesa-va-drivers \
 		mesa-vdpau-drivers \
@@ -388,16 +397,19 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		libnvidia-gl-515:i386 \
 ]])m4_dnl
 ]])m4_dnl
+	&& rm -rf /var/lib/apt/lists/*
+
+# Install extra packages
+RUN export DEBIAN_FRONTEND=noninteractive \
+	&& apt-get update \
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		adwaita-icon-theme-full \
 		adwaita-qt \
-		apt-utils \
 		audacity \
 		bash \
 		bash-completion \
 		binutils \
 		clinfo \
-		curl \
 		desktop-file-utils \
 		dialog \
 		engrampa \
@@ -412,7 +424,6 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 		fuse3 \
 		git \
 		gnome-keyring \
-		gnupg \
 		gtk2-engines-pixbuf \
 		htop \
 		indicator-application \
