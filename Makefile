@@ -11,8 +11,8 @@ DISTDIR := ./dist
 DOCKERFILE_TEMPLATE := ./Dockerfile.m4
 
 IMAGE_REGISTRY := docker.io
-IMAGE_NAMESPACE := hectorm
-IMAGE_PROJECT := xubuntu
+IMAGE_NAMESPACE := colpari
+IMAGE_PROJECT := xubuntu-hectorm
 IMAGE_NAME := $(IMAGE_REGISTRY)/$(IMAGE_NAMESPACE)/$(IMAGE_PROJECT)
 IMAGE_GIT_TAG := $(shell '$(GIT)' tag -l --contains HEAD 2>/dev/null)
 IMAGE_GIT_SHA := $(shell '$(GIT)' rev-parse HEAD 2>/dev/null)
