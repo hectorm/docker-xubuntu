@@ -134,7 +134,7 @@ RUN dpkg -i ./libjpeg-turbo32_*.deb
 ]])m4_dnl
 
 # Build VirtualGL
-ARG VIRTUALGL_TREEISH=3.0.1
+ARG VIRTUALGL_TREEISH=3.0.2
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
 RUN mkdir /tmp/virtualgl/
 WORKDIR /tmp/virtualgl/
@@ -612,4 +612,4 @@ EXPOSE 3322/tcp
 # Expose RDP port
 EXPOSE 3389/tcp
 
-ENTRYPOINT ["/usr/local/bin/container-init"]
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/usr/local/bin/container-init"]
