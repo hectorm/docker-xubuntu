@@ -126,4 +126,4 @@ openssl x509 -in "${XRDP_TLS_CRT_PATH:?}" -noout -fingerprint -sha256
 env | grep -Ev '^(PWD|OLDPWD|HOME|USER|SHELL|TERM|([^=]*(PASSWORD|SECRET)[^=]*))=' | sort > /etc/environment
 
 # Start runit
-exec catatonit -- runsvdir -P /etc/service/
+exec runsvdir -P /etc/service/
