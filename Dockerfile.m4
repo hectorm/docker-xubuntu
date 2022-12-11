@@ -175,7 +175,7 @@ RUN dpkg -i ./virtualgl32_*.deb
 ]])m4_dnl
 
 # Build TurboVNC
-ARG TURBOVNC_TREEISH=3.0.1
+ARG TURBOVNC_TREEISH=3.0.2
 ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
 RUN mkdir /tmp/turbovnc/
 WORKDIR /tmp/turbovnc/
