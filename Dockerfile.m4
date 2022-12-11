@@ -383,23 +383,23 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2 \
-		libnvidia-compute-515 \
-		libnvidia-decode-515 \
-		libnvidia-encode-515 \
-		libnvidia-extra-515 \
-		libnvidia-fbc1-515 \
-		libnvidia-gl-515 \
+		libnvidia-compute-525 \
+		libnvidia-decode-525 \
+		libnvidia-encode-525 \
+		libnvidia-extra-525 \
+		libnvidia-fbc1-525 \
+		libnvidia-gl-525 \
 		xserver-xorg-video-nouveau \
-		xserver-xorg-video-nvidia-515 \
+		xserver-xorg-video-nvidia-525 \
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2:i386 \
-		libnvidia-compute-515:i386 \
-		libnvidia-decode-515:i386 \
-		libnvidia-encode-515:i386 \
-		libnvidia-extra-515:i386 \
-		libnvidia-fbc1-515:i386 \
-		libnvidia-gl-515:i386 \
+		libnvidia-compute-525:i386 \
+		libnvidia-decode-525:i386 \
+		libnvidia-encode-525:i386 \
+		libnvidia-extra-525:i386 \
+		libnvidia-fbc1-525:i386 \
+		libnvidia-gl-525:i386 \
 ]])m4_dnl
 ]])m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
