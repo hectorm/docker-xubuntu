@@ -134,7 +134,7 @@ RUN dpkg -i ./libjpeg-turbo32_*.deb
 ]])m4_dnl
 
 # Build VirtualGL
-ARG VIRTUALGL_TREEISH=3.0.2
+ARG VIRTUALGL_TREEISH=3.1beta1
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
 RUN mkdir /tmp/virtualgl/
 WORKDIR /tmp/virtualgl/
@@ -175,7 +175,7 @@ RUN dpkg -i ./virtualgl32_*.deb
 ]])m4_dnl
 
 # Build TurboVNC
-ARG TURBOVNC_TREEISH=3.0.1
+ARG TURBOVNC_TREEISH=3.0.2
 ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
 RUN mkdir /tmp/turbovnc/
 WORKDIR /tmp/turbovnc/
@@ -205,7 +205,7 @@ RUN make deb
 RUN dpkg -i ./turbovnc_*.deb
 
 # Build xrdp
-ARG XRDP_TREEISH=v0.9.20
+ARG XRDP_TREEISH=v0.9.21
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
 RUN mkdir /tmp/xrdp/
 WORKDIR /tmp/xrdp/
@@ -383,23 +383,23 @@ m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2 \
-		libnvidia-compute-515 \
-		libnvidia-decode-515 \
-		libnvidia-encode-515 \
-		libnvidia-extra-515 \
-		libnvidia-fbc1-515 \
-		libnvidia-gl-515 \
+		libnvidia-compute-525 \
+		libnvidia-decode-525 \
+		libnvidia-encode-525 \
+		libnvidia-extra-525 \
+		libnvidia-fbc1-525 \
+		libnvidia-gl-525 \
 		xserver-xorg-video-nouveau \
-		xserver-xorg-video-nvidia-515 \
+		xserver-xorg-video-nvidia-525 \
 m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2:i386 \
-		libnvidia-compute-515:i386 \
-		libnvidia-decode-515:i386 \
-		libnvidia-encode-515:i386 \
-		libnvidia-extra-515:i386 \
-		libnvidia-fbc1-515:i386 \
-		libnvidia-gl-515:i386 \
+		libnvidia-compute-525:i386 \
+		libnvidia-decode-525:i386 \
+		libnvidia-encode-525:i386 \
+		libnvidia-extra-525:i386 \
+		libnvidia-fbc1-525:i386 \
+		libnvidia-gl-525:i386 \
 ]])m4_dnl
 ]])m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
