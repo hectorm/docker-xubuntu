@@ -10,11 +10,6 @@ m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest
 # Enable source repositories
 RUN sed -i 's/^#\s*\(deb-src\s\)/\1/g' /etc/apt/sources.list
 
-m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-# Enable i386 architecture
-RUN dpkg --add-architecture i386
-]])m4_dnl
-
 # Install packages
 RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get update \
@@ -76,23 +71,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		xsltproc \
 		xutils-dev \
 		zlib1g-dev \
-m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
-		g++-multilib \
-		libegl-dev:i386 \
-		libegl1-mesa:i386 \
-		libegl1-mesa-dev:i386 \
-		libgl-dev:i386 \
-		libgles-dev:i386 \
-		libglu1-mesa-dev:i386 \
-		libglvnd-dev:i386 \
-		libglx-dev:i386 \
-		libx11-xcb-dev:i386 \
-		libxcb-glx0-dev:i386 \
-		libxtst-dev:i386 \
-		libxv-dev:i386 \
-		ocl-icd-opencl-dev:i386 \
-]])m4_dnl
 	&& apt-get clean
 
 # Build libjpeg-turbo
@@ -115,23 +93,6 @@ RUN cmake ./ \
 RUN make -j"$(nproc)"
 RUN make deb
 RUN dpkg -i ./libjpeg-turbo_*.deb
-m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-RUN mkdir /tmp/libjpeg-turbo/build32/
-WORKDIR /tmp/libjpeg-turbo/build32/
-RUN cmake ./ \
-		-G 'Unix Makefiles' \
-		-D PKGNAME=libjpeg-turbo \
-		-D CMAKE_BUILD_TYPE=Release \
-		-D CMAKE_INSTALL_PREFIX=/opt/libjpeg-turbo \
-		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
-		-D CMAKE_C_FLAGS='-m32' \
-		-D CMAKE_CXX_FLAGS='-m32' \
-		-D CMAKE_EXE_LINKER_FLAGS='-m32' \
-		../
-RUN make -j"$(nproc)"
-RUN make deb
-RUN dpkg -i ./libjpeg-turbo32_*.deb
-]])m4_dnl
 
 # Build VirtualGL
 ARG VIRTUALGL_TREEISH=3.1beta1
@@ -155,24 +116,6 @@ RUN cmake ./ \
 RUN make -j"$(nproc)"
 RUN make deb
 RUN dpkg -i ./virtualgl_*.deb
-m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-RUN mkdir /tmp/virtualgl/build32/
-WORKDIR /tmp/virtualgl/build32/
-RUN cmake ./ \
-		-G 'Unix Makefiles' \
-		-D PKGNAME=virtualgl \
-		-D CMAKE_BUILD_TYPE=Release \
-		-D CMAKE_INSTALL_PREFIX=/opt/VirtualGL \
-		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
-		-D CMAKE_C_FLAGS='-m32' \
-		-D CMAKE_CXX_FLAGS='-m32' \
-		-D CMAKE_EXE_LINKER_FLAGS='-m32' \
-		-D VGL_EGLBACKEND=1 \
-		../
-RUN make -j"$(nproc)"
-RUN make deb
-RUN dpkg -i ./virtualgl32_*.deb
-]])m4_dnl
 
 # Build TurboVNC
 ARG TURBOVNC_TREEISH=3.0.2
@@ -268,11 +211,6 @@ COPY --chown=root:root ./config/apt/preferences.d/ /etc/apt/preferences.d/
 RUN find /etc/apt/preferences.d/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
 RUN find /etc/apt/preferences.d/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
 
-m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-# Enable i386 architecture
-RUN dpkg --add-architecture i386
-]])m4_dnl
-
 # Install base packages
 RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get update \
@@ -341,44 +279,16 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		xserver-xorg-video-fbdev \
 		xserver-xorg-video-vesa \
 		zlib1g \
-m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
-		libegl1:i386 \
-		libegl1-mesa:i386 \
-		libgl1:i386 \
-		libgl1-mesa-dri:i386 \
-		libgles2:i386 \
-		libglu1:i386 \
-		libglvnd0:i386 \
-		libglx-mesa0:i386 \
-		libx11-xcb1:i386 \
-		libxcb-glx0:i386 \
-		libxtst6:i386 \
-		libxv1:i386 \
-		mesa-opencl-icd:i386 \
-		mesa-va-drivers:i386 \
-		mesa-vdpau-drivers:i386 \
-		mesa-vulkan-drivers:i386 \
-		ocl-icd-opencl-dev:i386 \
-]])m4_dnl
 m4_ifelse(ENABLE_AMD_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-amdgpu1 \
 		xserver-xorg-video-amdgpu \
-m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
-		libdrm-amdgpu1:i386 \
-]])m4_dnl
 ]])m4_dnl
 m4_ifelse(ENABLE_INTEL_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		intel-opencl-icd \
 		libdrm-intel1 \
 		xserver-xorg-video-intel \
-m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
-		libdrm-intel1:i386 \
-]])m4_dnl
 ]])m4_dnl
 m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
@@ -391,16 +301,6 @@ m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 		libnvidia-gl-525 \
 		xserver-xorg-video-nouveau \
 		xserver-xorg-video-nvidia-525 \
-m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
-		libdrm-nouveau2:i386 \
-		libnvidia-compute-525:i386 \
-		libnvidia-decode-525:i386 \
-		libnvidia-encode-525:i386 \
-		libnvidia-extra-525:i386 \
-		libnvidia-fbc1-525:i386 \
-		libnvidia-gl-525:i386 \
-]])m4_dnl
 ]])m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -500,15 +400,9 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 
 # Install libjpeg-turbo from package
 RUN --mount=type=bind,from=build,source=/tmp/libjpeg-turbo/,target=/tmp/libjpeg-turbo/ dpkg -i /tmp/libjpeg-turbo/build/libjpeg-turbo_*.deb
-m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-RUN --mount=type=bind,from=build,source=/tmp/libjpeg-turbo/,target=/tmp/libjpeg-turbo/ dpkg -i /tmp/libjpeg-turbo/build32/libjpeg-turbo32_*.deb
-]])m4_dnl
 
 # Install VirtualGL from package
 RUN --mount=type=bind,from=build,source=/tmp/virtualgl/,target=/tmp/virtualgl/ dpkg -i /tmp/virtualgl/build/virtualgl_*.deb
-m4_ifelse(ENABLE_32BIT_SUPPORT, 1, [[m4_dnl
-RUN --mount=type=bind,from=build,source=/tmp/virtualgl/,target=/tmp/virtualgl/ dpkg -i /tmp/virtualgl/build32/virtualgl32_*.deb
-]])m4_dnl
 
 # Install TurboVNC from package
 RUN --mount=type=bind,from=build,source=/tmp/turbovnc/,target=/tmp/turbovnc/ dpkg -i /tmp/turbovnc/build/turbovnc_*.deb
