@@ -118,7 +118,7 @@ RUN make deb
 RUN dpkg -i ./virtualgl_*.deb
 
 # Build TurboVNC
-ARG TURBOVNC_TREEISH=3.0.2
+ARG TURBOVNC_TREEISH=3.0.3
 ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
 RUN mkdir /tmp/turbovnc/
 WORKDIR /tmp/turbovnc/
