@@ -74,7 +74,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get clean
 
 # Build libjpeg-turbo
-ARG LIBJPEG_TURBO_TREEISH=2.1.4
+ARG LIBJPEG_TURBO_TREEISH=2.1.5.1
 ARG LIBJPEG_TURBO_REMOTE=https://github.com/libjpeg-turbo/libjpeg-turbo.git
 RUN mkdir /tmp/libjpeg-turbo/
 WORKDIR /tmp/libjpeg-turbo/
