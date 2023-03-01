@@ -43,11 +43,11 @@ else
 	passwd -d "${UNPRIVILEGED_USER_NAME:?}"
 fi
 
-# Copy /etc/skel/ to unprivileged user home if empty
+# Copy /etc/skel/ to unprivileged user home if certain files do not exist
 UNPRIVILEGED_USER_HOME=$(getent passwd "${UNPRIVILEGED_USER_NAME:?}" | cut -d: -f6)
-if [ -z "$(ls -A "${UNPRIVILEGED_USER_HOME:?}")" ]; then
-	cp -aT /etc/skel/ "${UNPRIVILEGED_USER_HOME:?}"
-	chown -R "${UNPRIVILEGED_USER_NAME:?}:" "${UNPRIVILEGED_USER_HOME:?}"
+if [ ! -e "${UNPRIVILEGED_USER_HOME:?}"/.profile ]; then
+	cp -aT /etc/skel/ "${UNPRIVILEGED_USER_HOME:?}" 2>/dev/null ||:
+	chown -R "${UNPRIVILEGED_USER_NAME:?}:" "${UNPRIVILEGED_USER_HOME:?}" 2>/dev/null ||:
 fi
 
 # Create /run/dbus/ directory if it does not exist
