@@ -81,22 +81,6 @@ if [ "${ENABLE_XDUMMY:?}" = 'true' ]; then
 	ln -s /etc/sv/xdummy /etc/service/
 fi
 
-# Define VGL_DISPLAY variable if it is not set
-if [ -z "${VGL_DISPLAY-}" ]; then
-	# Use the dummy X server if it is enabled
-	if [ "${ENABLE_XDUMMY:?}" = 'true' ]; then
-		export VGL_DISPLAY=:0.0
-	# Otherwise try to use the EGL backend
-	else
-		for card in /dev/dri/card*; do
-			if /opt/VirtualGL/bin/eglinfo -B "${card:?}" 2>/dev/null; then
-				export VGL_DISPLAY="${card:?}"
-				break
-			fi
-		done
-	fi
-fi
-
 # Generate SSH keys if they do not exist
 if [ ! -f /etc/ssh/ssh_host_ed25519_key ]; then
 	ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' >/dev/null

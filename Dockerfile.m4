@@ -426,6 +426,8 @@ ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV XRDP_TLS_CRT_PATH=/etc/xrdp/cert.pem
 ENV ENABLE_XDUMMY=false
+ENV STARTUP=xfce4-session
+ENV DESKTOP_SESSION=xubuntu
 ## Use Adwaita theme in QT applications
 ENV QT_STYLE_OVERRIDE=Adwaita
 
@@ -490,11 +492,6 @@ RUN find /etc/xrdp/ -type f -name '*.sh' -not -perm 0755 -exec chmod 0755 '{}' '
 COPY --chown=root:root ./config/pulse/ /etc/pulse/
 RUN find /etc/pulse/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
 RUN find /etc/pulse/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
-
-# Copy skeleton files
-COPY --chown=root:root ./config/skel/ /etc/skel/
-RUN find /etc/skel/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-RUN find /etc/skel/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
 
 # Copy scripts
 COPY --chown=root:root ./scripts/bin/ /usr/local/bin/
