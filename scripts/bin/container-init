@@ -32,6 +32,7 @@ if ! getent passwd "${UNPRIVILEGED_USER_UID:?}" >/dev/null 2>&1; then
 		--gid "${UNPRIVILEGED_USER_GID:?}" \
 		--groups "${UNPRIVILEGED_USER_GROUPS?}" \
 		--shell "${UNPRIVILEGED_USER_SHELL:?}" \
+		--home-dir "${UNPRIVILEGED_USER_HOME:?}" \
 		--create-home \
 		"${UNPRIVILEGED_USER_NAME:?}"
 fi
@@ -43,11 +44,20 @@ else
 	passwd -d "${UNPRIVILEGED_USER_NAME:?}"
 fi
 
-# Copy /etc/skel/ to unprivileged user home if certain files do not exist
-UNPRIVILEGED_USER_HOME=$(getent passwd "${UNPRIVILEGED_USER_NAME:?}" | cut -d: -f6)
-if [ ! -e "${UNPRIVILEGED_USER_HOME:?}"/.profile ]; then
-	cp -aT /etc/skel/ "${UNPRIVILEGED_USER_HOME:?}" 2>/dev/null ||:
-	chown -R "${UNPRIVILEGED_USER_NAME:?}:" "${UNPRIVILEGED_USER_HOME:?}" 2>/dev/null ||:
+if [ -w "${UNPRIVILEGED_USER_HOME:?}" ]; then
+	# Copy /etc/skel/ to unprivileged user home if certain files do not exist
+	if [ ! -e "${UNPRIVILEGED_USER_HOME:?}"/.profile ]; then
+		cp -aT /etc/skel/ "${UNPRIVILEGED_USER_HOME:?}" ||:
+		find /etc/skel/ -mindepth 1 -exec sh -c 'chown "$1:" "$2/${3#/etc/skel/}"' _ "${UNPRIVILEGED_USER_NAME:?}" "${UNPRIVILEGED_USER_HOME:?}" '{}' ';'
+	fi
+
+	# Set unprivileged user home permissions
+	if [ "$(stat -c '%u' "${UNPRIVILEGED_USER_HOME:?}")" != "${UNPRIVILEGED_USER_UID:?}" ]; then
+		chown "${UNPRIVILEGED_USER_NAME:?}:" "${UNPRIVILEGED_USER_HOME:?}"
+	fi
+	if [ "$(stat -c '%a' "${UNPRIVILEGED_USER_HOME:?}")" != '750' ]; then
+		chmod 750 "${UNPRIVILEGED_USER_HOME:?}"
+	fi
 fi
 
 # Create /run/dbus/ directory if it does not exist
