@@ -74,7 +74,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get clean
 
 # Build libjpeg-turbo
-ARG LIBJPEG_TURBO_TREEISH=2.1.4
+ARG LIBJPEG_TURBO_TREEISH=2.1.5.1
 ARG LIBJPEG_TURBO_REMOTE=https://github.com/libjpeg-turbo/libjpeg-turbo.git
 RUN mkdir /tmp/libjpeg-turbo/
 WORKDIR /tmp/libjpeg-turbo/
@@ -118,7 +118,7 @@ RUN make deb
 RUN dpkg -i ./virtualgl_*.deb
 
 # Build TurboVNC
-ARG TURBOVNC_TREEISH=3.0.2
+ARG TURBOVNC_TREEISH=3.0.3
 ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
 RUN mkdir /tmp/turbovnc/
 WORKDIR /tmp/turbovnc/
@@ -148,7 +148,7 @@ RUN make deb
 RUN dpkg -i ./turbovnc_*.deb
 
 # Build xrdp
-ARG XRDP_TREEISH=v0.9.21
+ARG XRDP_TREEISH=v0.9.21.1
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
 RUN mkdir /tmp/xrdp/
 WORKDIR /tmp/xrdp/
@@ -182,7 +182,7 @@ RUN make -j"$(nproc)"
 RUN checkinstall --default --pkgname=xorgxrdp --pkgversion=9:999 --pkgrelease=0
 
 # Build xrdp PulseAudio module
-ARG XRDP_PULSEAUDIO_TREEISH=v0.6
+ARG XRDP_PULSEAUDIO_TREEISH=v0.7
 ARG XRDP_PULSEAUDIO_REMOTE=https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
 WORKDIR /tmp/
 RUN DEBIAN_FRONTEND=noninteractive apt-get build-dep -y pulseaudio
@@ -423,9 +423,12 @@ ENV UNPRIVILEGED_USER_NAME=user
 ENV UNPRIVILEGED_USER_PASSWORD=password
 ENV UNPRIVILEGED_USER_GROUPS=
 ENV UNPRIVILEGED_USER_SHELL=/bin/bash
+ENV UNPRIVILEGED_USER_HOME=/home/user/
 ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV XRDP_TLS_CRT_PATH=/etc/xrdp/cert.pem
 ENV ENABLE_XDUMMY=false
+ENV STARTUP=xfce4-session
+ENV DESKTOP_SESSION=xubuntu
 ## Use Adwaita theme in QT applications
 ENV QT_STYLE_OVERRIDE=Adwaita
 
@@ -490,11 +493,6 @@ RUN find /etc/xrdp/ -type f -name '*.sh' -not -perm 0755 -exec chmod 0755 '{}' '
 COPY --chown=root:root ./config/pulse/ /etc/pulse/
 RUN find /etc/pulse/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
 RUN find /etc/pulse/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
-
-# Copy skeleton files
-COPY --chown=root:root ./config/skel/ /etc/skel/
-RUN find /etc/skel/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-RUN find /etc/skel/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
 
 # Copy scripts
 COPY --chown=root:root ./scripts/bin/ /usr/local/bin/
