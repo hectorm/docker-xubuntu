@@ -95,7 +95,7 @@ RUN make deb
 RUN dpkg -i ./libjpeg-turbo_*.deb
 
 # Build VirtualGL
-ARG VIRTUALGL_TREEISH=3.1beta1
+ARG VIRTUALGL_TREEISH=3.1
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
 RUN mkdir /tmp/virtualgl/
 WORKDIR /tmp/virtualgl/
@@ -423,7 +423,7 @@ ENV UNPRIVILEGED_USER_NAME=user
 ENV UNPRIVILEGED_USER_PASSWORD=password
 ENV UNPRIVILEGED_USER_GROUPS=
 ENV UNPRIVILEGED_USER_SHELL=/bin/bash
-ENV UNPRIVILEGED_USER_HOME=/home/user/
+ENV UNPRIVILEGED_USER_HOME=/home/user
 ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV XRDP_TLS_CRT_PATH=/etc/xrdp/cert.pem
 ENV ENABLE_XDUMMY=false
