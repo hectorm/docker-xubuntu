@@ -86,9 +86,14 @@ if [ ! -d /run/user/"${UNPRIVILEGED_USER_UID:?}"/ ]; then
 	chown "${UNPRIVILEGED_USER_NAME:?}:" /run/user/"${UNPRIVILEGED_USER_UID:?}"/
 fi
 
-# Enable xdummy service if ENABLE_XDUMMY is true
-if [ "${ENABLE_XDUMMY:?}" = 'true' ]; then
-	ln -s /etc/sv/xdummy /etc/service/
+# Enable xrdp bootstrap service
+if [ "${SERVICE_XRDP_BOOTSTRAP_ENABLED:?}" = 'true' ]; then
+	ln -s /etc/sv/xrdp-bootstrap "${SVDIR:?}"
+fi
+
+# Enable headless X server service
+if [ "${SERVICE_XORG_HEADLESS_ENABLED:?}" = 'true' ]; then
+	ln -s /etc/sv/xorg-headless "${SVDIR:?}"
 fi
 
 # Generate SSH keys if they do not exist
@@ -120,4 +125,4 @@ openssl x509 -in "${XRDP_TLS_CRT_PATH:?}" -noout -fingerprint -sha256
 env | grep -Ev '^(PWD|OLDPWD|HOME|USER|SHELL|TERM|([^=]*(PASSWORD|SECRET)[^=]*))=' | sort > /etc/environment
 
 # Start runit
-exec runsvdir -P /etc/service/
+exec runsvdir -P "${SVDIR:?}"

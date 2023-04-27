@@ -1,4 +1,6 @@
 #!/bin/sh
 
+set -eu
+
 exec 2>&1
-exec /usr/sbin/xrdp-sesman --nodaemon
+exec xrdp-sesman --nodaemon

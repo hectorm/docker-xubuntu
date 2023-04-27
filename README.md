@@ -50,7 +50,8 @@ encounter any problem related to this you may use the `--shm-size` option.
 * `UNPRIVILEGED_USER_PASSWORD`: unprivileged user password (`password` by default).
 * `UNPRIVILEGED_USER_GROUPS`: comma-separated list of additional GIDs for the unprivileged user (none by default).
 * `UNPRIVILEGED_USER_SHELL`: unprivileged user shell (`/bin/bash` by default).
-* `ENABLE_XDUMMY`: enable a dummy X server (`false` by default).
+* `SERVICE_XRDP_BOOTSTRAP_ENABLED`: enable xrdp bootstrap service, initialises user session on startup (`false` by default).
+* `SERVICE_XORG_HEADLESS_ENABLED`: enable headless X server service (`false` by default).
 
 ## License
 

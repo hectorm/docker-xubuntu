@@ -1,6 +1,9 @@
 #!/bin/sh
 
-sv start udevd >/dev/null || exit 1
+set -eu
 
-/usr/bin/udevadm trigger
-exec sleep infinity
+sv start udevd >/dev/null
+
+exec 2>&1
+udevadm trigger ||:
+exec chpst -b udevadm-trigger perl -MPOSIX -e 'pause()'

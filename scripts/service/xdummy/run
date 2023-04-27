@@ -1,4 +1,0 @@
-#!/bin/sh
-
-exec 2>&1
-exec /usr/lib/xorg/Xorg -noreset -nolisten tcp -logfile /var/log/xdummy.log :0.0
