@@ -2,7 +2,7 @@
 
 if [ -z "${VGL_DISPLAY-}" ]; then
 	# Use the dummy X server if it is enabled
-	if [ "${ENABLE_XDUMMY:?}" = 'true' ]; then
+	if [ "${SERVICE_XORG_HEADLESS_ENABLED:?}" = 'true' ]; then
 		export VGL_DISPLAY=:0.0
 	else
 		# Otherwise try to use the EGL backend

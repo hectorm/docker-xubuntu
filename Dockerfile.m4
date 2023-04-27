@@ -264,6 +264,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		ocl-icd-opencl-dev \
 		openssh-server \
 		openssl \
+		perl-base \
 		policykit-1 \
 		pulseaudio \
 		runit \
@@ -293,14 +294,15 @@ m4_ifelse(ENABLE_INTEL_SUPPORT, 1, [[m4_dnl
 m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2 \
-		libnvidia-compute-525 \
-		libnvidia-decode-525 \
-		libnvidia-encode-525 \
-		libnvidia-extra-525 \
-		libnvidia-fbc1-525 \
-		libnvidia-gl-525 \
+		libnvidia-cfg1-530 \
+		libnvidia-compute-530 \
+		libnvidia-decode-530 \
+		libnvidia-encode-530 \
+		libnvidia-extra-530 \
+		libnvidia-fbc1-530 \
+		libnvidia-gl-530 \
 		xserver-xorg-video-nouveau \
-		xserver-xorg-video-nvidia-525 \
+		xserver-xorg-video-nvidia-530 \
 ]])m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -417,6 +419,7 @@ RUN --mount=type=bind,from=build,source=/tmp/xorgxrdp/,target=/tmp/xorgxrdp/ dpk
 RUN --mount=type=bind,from=build,source=/tmp/xrdp-pulseaudio/,target=/tmp/xrdp-pulseaudio/ dpkg -i /tmp/xrdp-pulseaudio/xrdp-pulseaudio_*.deb
 
 # Environment
+ENV SVDIR=/etc/service/
 ENV UNPRIVILEGED_USER_UID=1000
 ENV UNPRIVILEGED_USER_GID=1000
 ENV UNPRIVILEGED_USER_NAME=user
@@ -424,9 +427,10 @@ ENV UNPRIVILEGED_USER_PASSWORD=password
 ENV UNPRIVILEGED_USER_GROUPS=
 ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV UNPRIVILEGED_USER_HOME=/home/user
+ENV SERVICE_XRDP_BOOTSTRAP_ENABLED=false
+ENV SERVICE_XORG_HEADLESS_ENABLED=false
 ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV XRDP_TLS_CRT_PATH=/etc/xrdp/cert.pem
-ENV ENABLE_XDUMMY=false
 ENV STARTUP=xfce4-session
 ENV DESKTOP_SESSION=xubuntu
 ## Use Adwaita theme in QT applications
@@ -459,7 +463,7 @@ RUN rm -f /etc/ssh/ssh_host_*
 RUN rm -f "${XRDP_TLS_KEY_PATH:?}" "${XRDP_TLS_CRT_PATH:?}"
 
 # Forward logs to Docker log collector
-RUN ln -sf /dev/stdout /var/log/xdummy.log
+RUN ln -sf /dev/stdout /var/log/xorg-headless.log
 RUN ln -sf /dev/stdout /var/log/xrdp.log
 RUN ln -sf /dev/stdout /var/log/xrdp-sesman.log
 
@@ -467,12 +471,12 @@ RUN ln -sf /dev/stdout /var/log/xrdp-sesman.log
 COPY --chown=root:root ./scripts/service/ /etc/sv/
 RUN find /etc/sv/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
 RUN find /etc/sv/ -type f -not -perm 0755 -exec chmod 0755 '{}' ';'
-RUN ln -sv /etc/sv/dbus-daemon /etc/service/
-RUN ln -sv /etc/sv/sshd /etc/service/
-RUN ln -sv /etc/sv/udevadm-trigger /etc/service/
-RUN ln -sv /etc/sv/udevd /etc/service/
-RUN ln -sv /etc/sv/xrdp /etc/service/
-RUN ln -sv /etc/sv/xrdp-sesman /etc/service/
+RUN ln -sv /etc/sv/dbus-daemon "${SVDIR:?}"
+RUN ln -sv /etc/sv/sshd "${SVDIR:?}"
+RUN ln -sv /etc/sv/udevadm-trigger "${SVDIR:?}"
+RUN ln -sv /etc/sv/udevd "${SVDIR:?}"
+RUN ln -sv /etc/sv/xrdp "${SVDIR:?}"
+RUN ln -sv /etc/sv/xrdp-sesman "${SVDIR:?}"
 
 # Copy SSH config
 COPY --chown=root:root ./config/ssh/ /etc/ssh/

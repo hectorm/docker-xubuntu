@@ -45,7 +45,7 @@ printf '%s\n' "Creating \"${CONTAINER_NAME:?}\" container..."
 	--shm-size 2g \
 	--publish 3322:3322/tcp \
 	--publish 3389:3389/tcp \
-	--env ENABLE_XDUMMY=true \
+	--env SERVICE_XORG_HEADLESS_ENABLED=true \
 	${CONTAINER_DEVICES?} \
 	"${IMAGE_NAME:?}" "$@" >/dev/null
 

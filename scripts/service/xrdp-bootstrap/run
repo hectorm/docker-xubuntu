@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -eu
+
+sv start xrdp >/dev/null
+sv start xrdp-sesman >/dev/null
+
+exec 2>&1
+xrdp-sesrun -p "${UNPRIVILEGED_USER_PASSWORD?}" "${UNPRIVILEGED_USER_NAME:?}"
+exec chpst -b xrdp-bootstrap perl -MPOSIX -e 'pause()'
