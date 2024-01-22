@@ -14,9 +14,14 @@ IMAGE_REGISTRY := docker.io
 IMAGE_NAMESPACE := colpari
 IMAGE_PROJECT := xubuntu-hectorm
 IMAGE_NAME := $(IMAGE_REGISTRY)/$(IMAGE_NAMESPACE)/$(IMAGE_PROJECT)
-IMAGE_GIT_TAG := $(shell '$(GIT)' tag -l --contains HEAD 2>/dev/null)
-IMAGE_GIT_SHA := $(shell '$(GIT)' rev-parse HEAD 2>/dev/null)
-IMAGE_VERSION := $(if $(IMAGE_GIT_TAG),$(IMAGE_GIT_TAG),$(if $(IMAGE_GIT_SHA),$(IMAGE_GIT_SHA),nil))
+ifeq ($(shell '$(GIT)' status --porcelain 2>/dev/null),)
+	IMAGE_GIT_TAG := $(shell '$(GIT)' tag --list --contains HEAD 2>/dev/null)
+	IMAGE_GIT_SHA := $(shell '$(GIT)' rev-parse --verify --short HEAD 2>/dev/null)
+	IMAGE_VERSION := $(if $(IMAGE_GIT_TAG),$(IMAGE_GIT_TAG),$(if $(IMAGE_GIT_SHA),$(IMAGE_GIT_SHA),nil))
+else
+	IMAGE_GIT_BRANCH := $(shell '$(GIT)' symbolic-ref --short HEAD 2>/dev/null)
+	IMAGE_VERSION := $(if $(IMAGE_GIT_BRANCH),$(IMAGE_GIT_BRANCH)-dirty,nil)
+endif
 
 IMAGE_BUILD_OPTS :=
 
@@ -76,6 +81,7 @@ $(IMAGE_AMD64_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 	'$(DOCKER)' build $(IMAGE_BUILD_OPTS) \
 		--tag '$(IMAGE_NAME):$(IMAGE_VERSION)-amd64' \
 		--tag '$(IMAGE_NAME):latest-amd64' \
+		--platform linux/amd64 \
 		--file '$@' ./
 
 .PHONY: build-arm64v8-image
@@ -91,6 +97,7 @@ $(IMAGE_ARM64V8_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 	'$(DOCKER)' build $(IMAGE_BUILD_OPTS) \
 		--tag '$(IMAGE_NAME):$(IMAGE_VERSION)-arm64v8' \
 		--tag '$(IMAGE_NAME):latest-arm64v8' \
+		--platform linux/arm64/v8 \
 		--file '$@' ./
 
 ##################################################
@@ -194,7 +201,7 @@ push-cross-manifest:
 
 .PHONY: binfmt-register
 binfmt-register:
-	'$(DOCKER)' run --rm --privileged docker.io/hectorm/qemu-user-static:latest --reset
+	'$(DOCKER)' run --rm --privileged docker.io/hectorm/qemu-user-static:latest --reset --persistent yes --credential yes
 
 ##################################################
 ## "version" target
