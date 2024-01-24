@@ -307,9 +307,9 @@ m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 ]])m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
 
-# Add Mozilla Team repository
-RUN curl --proto '=https' --tlsv1.3 -sSf 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x0AB215679C571D1C8325275B9BDB3D89CE49EC21' | gpg --dearmor -o /etc/apt/trusted.gpg.d/mozillateam.gpg \
-	&& printf '%s\n' "deb [signed-by=/etc/apt/trusted.gpg.d/mozillateam.gpg] https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/mozillateam.list
+# Add Mozilla repository
+RUN curl --proto '=https' --tlsv1.3 -sSf 'https://packages.mozilla.org/apt/repo-signing-key.gpg' | gpg --dearmor -o /etc/apt/trusted.gpg.d/mozilla.gpg \
+	&& printf '%s\n' 'deb [signed-by=/etc/apt/trusted.gpg.d/mozilla.gpg] https://packages.mozilla.org/apt mozilla main' > /etc/apt/sources.list.d/mozilla.list
 
 # Install extra packages
 RUN export DEBIAN_FRONTEND=noninteractive \
