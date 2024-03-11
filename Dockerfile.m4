@@ -149,7 +149,7 @@ RUN make deb
 RUN dpkg -i ./turbovnc_*.deb
 
 # Build xrdp
-ARG XRDP_TREEISH=v0.9.24
+ARG XRDP_TREEISH=v0.9.25
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
 RUN mkdir /tmp/xrdp/
 WORKDIR /tmp/xrdp/
