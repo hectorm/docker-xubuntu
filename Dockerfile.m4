@@ -95,7 +95,7 @@ RUN make deb
 RUN dpkg -i ./libjpeg-turbo_*.deb
 
 # Build VirtualGL
-ARG VIRTUALGL_TREEISH=3.1
+ARG VIRTUALGL_TREEISH=3.1.1
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
 RUN mkdir /tmp/virtualgl/
 WORKDIR /tmp/virtualgl/
