@@ -21,6 +21,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		ca-certificates \
 		checkinstall \
 		cmake \
+		dbus-x11 \
 		devscripts \
 		dpkg-dev \
 		flex \
@@ -118,7 +119,7 @@ RUN make deb
 RUN dpkg -i ./virtualgl_*.deb
 
 # Build TurboVNC
-ARG TURBOVNC_TREEISH=3.1
+ARG TURBOVNC_TREEISH=3.1.1
 ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
 RUN mkdir /tmp/turbovnc/
 WORKDIR /tmp/turbovnc/
