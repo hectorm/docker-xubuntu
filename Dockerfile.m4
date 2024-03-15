@@ -21,6 +21,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		ca-certificates \
 		checkinstall \
 		cmake \
+		dbus-x11 \
 		devscripts \
 		dpkg-dev \
 		flex \
@@ -95,7 +96,7 @@ RUN make deb
 RUN dpkg -i ./libjpeg-turbo_*.deb
 
 # Build VirtualGL
-ARG VIRTUALGL_TREEISH=3.1
+ARG VIRTUALGL_TREEISH=3.1.1
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
 RUN mkdir /tmp/virtualgl/
 WORKDIR /tmp/virtualgl/
@@ -118,7 +119,7 @@ RUN make deb
 RUN dpkg -i ./virtualgl_*.deb
 
 # Build TurboVNC
-ARG TURBOVNC_TREEISH=3.1
+ARG TURBOVNC_TREEISH=3.1.1
 ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
 RUN mkdir /tmp/turbovnc/
 WORKDIR /tmp/turbovnc/
@@ -148,7 +149,7 @@ RUN make deb
 RUN dpkg -i ./turbovnc_*.deb
 
 # Build xrdp
-ARG XRDP_TREEISH=v0.9.24
+ARG XRDP_TREEISH=v0.9.25
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
 RUN mkdir /tmp/xrdp/
 WORKDIR /tmp/xrdp/
@@ -170,7 +171,7 @@ RUN make -j"$(nproc)"
 RUN checkinstall --default --pkgname=xrdp --pkgversion=9:999 --pkgrelease=0
 
 # Build xorgxrdp
-ARG XORGXRDP_TREEISH=v0.9.19
+ARG XORGXRDP_TREEISH=v0.9.20
 ARG XORGXRDP_REMOTE=https://github.com/neutrinolabs/xorgxrdp.git
 RUN mkdir /tmp/xorgxrdp/
 WORKDIR /tmp/xorgxrdp/
