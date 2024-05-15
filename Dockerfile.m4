@@ -29,7 +29,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		intltool \
 		libbz2-dev \
 		libegl-dev \
-		libegl1-mesa \
 		libegl1-mesa-dev \
 		libepoxy-dev \
 		libfdk-aac-dev \
@@ -226,7 +225,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		gnupg \
 		libbz2-1.0 \
 		libegl1 \
-		libegl1-mesa \
 		libepoxy0 \
 		libfdk-aac2 \
 		libfreetype6 \
@@ -351,12 +349,12 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		lshw \
 		lsof \
 		lsscsi \
+		media-types \
 		menu \
 		menu-xdg \
 		menulibre \
 		mesa-utils \
 		mesa-utils-extra \
-		mime-support \
 		mousepad \
 		mugshot \
 		nano \
@@ -385,6 +383,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		xfce4 \
 		xfce4-indicator-plugin \
 		xfce4-notifyd \
+		xfce4-panel \
+		xfce4-panel-profiles \
 		xfce4-pulseaudio-plugin \
 		xfce4-screenshooter \
 		xfce4-statusnotifier-plugin \
@@ -392,7 +392,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		xfce4-terminal \
 		xfce4-whiskermenu-plugin \
 		xfonts-base \
-		xfpanel-switch \
 		xinput \
 		xterm \
 		xubuntu-default-settings \
