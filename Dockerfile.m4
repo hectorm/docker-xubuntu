@@ -296,15 +296,15 @@ m4_ifelse(ENABLE_INTEL_SUPPORT, 1, [[m4_dnl
 m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2 \
-		libnvidia-cfg1-535 \
-		libnvidia-compute-535 \
-		libnvidia-decode-535 \
-		libnvidia-encode-535 \
-		libnvidia-extra-535 \
-		libnvidia-fbc1-535 \
-		libnvidia-gl-535 \
+		libnvidia-cfg1-550 \
+		libnvidia-compute-550 \
+		libnvidia-decode-550 \
+		libnvidia-encode-550 \
+		libnvidia-extra-550 \
+		libnvidia-fbc1-550 \
+		libnvidia-gl-550 \
 		xserver-xorg-video-nouveau \
-		xserver-xorg-video-nvidia-535 \
+		xserver-xorg-video-nvidia-550 \
 ]])m4_dnl
 	&& rm -rf /var/lib/apt/lists/*
 
