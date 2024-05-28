@@ -3,4 +3,4 @@
 set -eu
 
 exec 2>&1
-exec xrdp-sesman --nodaemon
+exec xrdp-sesman --config /opt/xrdp/etc/xrdp/sesman.ini --nodaemon

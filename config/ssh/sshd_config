@@ -1,6 +1,7 @@
 Protocol                        2
 HostKey                         /etc/ssh/ssh_host_ed25519_key
 HostKey                         /etc/ssh/ssh_host_rsa_key
+ListenAddress                   0.0.0.0
 ListenAddress                   ::0
 Port                            3322
 UseDNS                          no

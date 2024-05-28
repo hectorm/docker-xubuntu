@@ -3,4 +3,4 @@
 set -eu
 
 exec 2>&1
-exec xrdp --nodaemon
+exec xrdp --config /opt/xrdp/etc/xrdp/xrdp.ini --nodaemon

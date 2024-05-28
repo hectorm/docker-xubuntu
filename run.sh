@@ -45,6 +45,10 @@ printf '%s\n' "Creating \"${CONTAINER_NAME:?}\" container..."
 	--shm-size 2g \
 	--publish 3322:3322/tcp \
 	--publish 3389:3389/tcp \
+	--mount type=tmpfs,dst=/etc/xrdp/ \
+	--mount type=tmpfs,dst=/home/ \
+	--mount type=tmpfs,dst=/tmp/ \
+	--mount type=tmpfs,dst=/run/ \
 	${CONTAINER_DEVICES?} \
 	"${IMAGE_NAME:?}" "$@" >/dev/null
 

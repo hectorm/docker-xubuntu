@@ -1,6 +1,6 @@
 # Xubuntu on Docker
 
-A Docker image based on Ubuntu 22.04 with the Xfce desktop environment,
+A Docker image based on Ubuntu 24.04 with the Xfce desktop environment,
 [xrdp](https://github.com/neutrinolabs/xrdp),
 [xrdp PulseAudio module](https://github.com/neutrinolabs/pulseaudio-module-xrdp) and
 [VirtualGL](https://github.com/VirtualGL/virtualgl).
@@ -25,7 +25,6 @@ docker run \
 ### Docker Compose
 
 ```yaml
-version: '3.9'
 services:
   xubuntu:
     image: 'docker.io/hectorm/xubuntu:latest'

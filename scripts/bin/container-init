@@ -104,14 +104,24 @@ if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
 	ssh-keygen -t rsa -b 4096 -f /etc/ssh/ssh_host_rsa_key -N '' >/dev/null
 fi
 
+# Generate xrdp RSA keys if they do not exist
+if [ ! -f "${XRDP_RSAKEYS_PATH:?}" ]; then
+	mkdir -p "$(dirname "${XRDP_RSAKEYS_PATH:?}")"
+	(umask 077 \
+		&& xrdp-keygen xrdp "${XRDP_RSAKEYS_PATH:?}" \
+	) >/dev/null
+fi
+
 # Generate RDP certificate if it does not exist
 if [ ! -f "${XRDP_TLS_KEY_PATH:?}" ] || [ ! -f "${XRDP_TLS_CRT_PATH:?}" ]; then
 	FQDN=$(hostname --fqdn)
 
+	mkdir -p "$(dirname "${XRDP_TLS_KEY_PATH:?}")"
 	(umask 077 \
 		&& openssl ecparam -genkey -name prime256v1 > "${XRDP_TLS_KEY_PATH:?}" \
 	) >/dev/null
 
+	mkdir -p "$(dirname "${XRDP_TLS_CRT_PATH:?}")"
 	(umask 022 \
 		&& openssl req -x509 -sha256 -days 3650 -subj "/CN=${FQDN:?}" -addext "subjectAltName=DNS:${FQDN:?}" -key "${XRDP_TLS_KEY_PATH:?}" > "${XRDP_TLS_CRT_PATH:?}" \
 	) >/dev/null

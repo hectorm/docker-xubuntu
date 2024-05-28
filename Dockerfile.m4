@@ -4,16 +4,21 @@ m4_changequote([[, ]])
 ## "build" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS build
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:24.04]], [[FROM docker.io/ubuntu:24.04]]) AS build
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
+SHELL ["/bin/sh", "-euc"]
+
 # Enable source repositories
-RUN sed -i 's/^#\s*\(deb-src\s\)/\1/g' /etc/apt/sources.list
+RUN <<-EOF
+	sed -i '/^Types: deb$/s/$/ deb-src/' /etc/apt/sources.list.d/ubuntu.sources
+EOF
 
 # Install packages
-RUN export DEBIAN_FRONTEND=noninteractive \
-	&& apt-get update \
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+RUN <<-EOF
+	export DEBIAN_FRONTEND=noninteractive
+	apt-get update
+	apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		autoconf \
 		automake \
 		bison \
@@ -70,42 +75,43 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		xserver-xorg-dev \
 		xsltproc \
 		xutils-dev \
-		zlib1g-dev \
-	&& apt-get clean
+		zlib1g-dev
+	apt-get clean
+EOF
 
 # Build libjpeg-turbo
 ARG LIBJPEG_TURBO_TREEISH=3.0.3
 ARG LIBJPEG_TURBO_REMOTE=https://github.com/libjpeg-turbo/libjpeg-turbo.git
-RUN mkdir /tmp/libjpeg-turbo/
 WORKDIR /tmp/libjpeg-turbo/
-RUN git clone "${LIBJPEG_TURBO_REMOTE:?}" ./
-RUN git checkout "${LIBJPEG_TURBO_TREEISH:?}"
-RUN git submodule update --init --recursive
-RUN mkdir /tmp/libjpeg-turbo/build/
+RUN <<-EOF
+	git clone "${LIBJPEG_TURBO_REMOTE:?}" ./
+	git checkout "${LIBJPEG_TURBO_TREEISH:?}"
+	git submodule update --init --recursive
+EOF
 WORKDIR /tmp/libjpeg-turbo/build/
-RUN cmake ./ \
+RUN <<-EOF
+	cmake ./ \
 		-G 'Unix Makefiles' \
 		-D PKGNAME=libjpeg-turbo \
 		-D CMAKE_BUILD_TYPE=Release \
 		-D CMAKE_INSTALL_PREFIX=/opt/libjpeg-turbo \
 		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
 		../
-RUN make -j"$(nproc)"
-RUN make deb
-RUN dpkg -i ./libjpeg-turbo_*.deb
+	make -j"$(nproc)" install
+EOF
 
 # Build VirtualGL
 ARG VIRTUALGL_TREEISH=3.1.1
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
-RUN mkdir /tmp/virtualgl/
 WORKDIR /tmp/virtualgl/
-RUN git clone "${VIRTUALGL_REMOTE:?}" ./
-RUN git checkout "${VIRTUALGL_TREEISH:?}"
-RUN git submodule update --init --recursive
-RUN mkdir /tmp/virtualgl/build/
+RUN <<-EOF
+	git clone "${VIRTUALGL_REMOTE:?}" ./
+	git checkout "${VIRTUALGL_TREEISH:?}"
+	git submodule update --init --recursive
+EOF
 WORKDIR /tmp/virtualgl/build/
-RUN sed -i "s|@DEBARCH@|$(dpkg-architecture -qDEB_HOST_ARCH)|g" ../release/deb-control.in
-RUN cmake ./ \
+RUN <<-EOF
+	cmake ./ \
 		-G 'Unix Makefiles' \
 		-D PKGNAME=virtualgl \
 		-D CMAKE_BUILD_TYPE=Release \
@@ -113,21 +119,21 @@ RUN cmake ./ \
 		-D CMAKE_POSITION_INDEPENDENT_CODE=1 \
 		-D VGL_EGLBACKEND=1 \
 		../
-RUN make -j"$(nproc)"
-RUN make deb
-RUN dpkg -i ./virtualgl_*.deb
+	make -j"$(nproc)" install
+EOF
 
 # Build TurboVNC
 ARG TURBOVNC_TREEISH=3.1.1
 ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
-RUN mkdir /tmp/turbovnc/
 WORKDIR /tmp/turbovnc/
-RUN git clone "${TURBOVNC_REMOTE:?}" ./
-RUN git checkout "${TURBOVNC_TREEISH:?}"
-RUN git submodule update --init --recursive
-RUN mkdir /tmp/turbovnc/build/
+RUN <<-EOF
+	git clone "${TURBOVNC_REMOTE:?}" ./
+	git checkout "${TURBOVNC_TREEISH:?}"
+	git submodule update --init --recursive
+EOF
 WORKDIR /tmp/turbovnc/build/
-RUN cmake ./ \
+RUN <<-EOF
+	cmake ./ \
 		-G 'Unix Makefiles' \
 		-D PKGNAME=turbovnc \
 		-D CMAKE_BUILD_TYPE=Release \
@@ -143,21 +149,23 @@ RUN cmake ./ \
 		-D TVNC_GLX=1 \
 		-D TVNC_NVCONTROL=1 \
 		../
-RUN make -j"$(nproc)"
-RUN make deb
-RUN dpkg -i ./turbovnc_*.deb
+	make -j"$(nproc)" install
+EOF
 
 # Build xrdp
 ARG XRDP_TREEISH=v0.10.0
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
-RUN mkdir /tmp/xrdp/
 WORKDIR /tmp/xrdp/
-RUN git clone "${XRDP_REMOTE:?}" ./
-RUN git checkout "${XRDP_TREEISH:?}"
-RUN git submodule update --init --recursive
-RUN ./bootstrap
-RUN ./configure \
-		--prefix=/usr \
+RUN <<-EOF
+	git clone "${XRDP_REMOTE:?}" ./
+	git checkout "${XRDP_TREEISH:?}"
+	git submodule update --init --recursive
+EOF
+RUN <<-EOF
+	./bootstrap
+	./configure \
+		--prefix=/opt/xrdp \
+		--enable-strict-locations \
 		--enable-vsock \
 		--enable-tjpeg \
 		--enable-fuse \
@@ -166,56 +174,75 @@ RUN ./configure \
 		--enable-mp3lame \
 		--enable-pixman \
 		--enable-ipv6
-RUN make -j"$(nproc)"
-RUN checkinstall --default --pkgname=xrdp --pkgversion=9:999 --pkgrelease=0
+	make -j"$(nproc)" install
+	rm -f /opt/xrdp/etc/xrdp/rsakeys.ini /opt/xrdp/etc/xrdp/*.pem
+EOF
 
 # Build xorgxrdp
 ARG XORGXRDP_TREEISH=v0.10.1
 ARG XORGXRDP_REMOTE=https://github.com/neutrinolabs/xorgxrdp.git
-RUN mkdir /tmp/xorgxrdp/
 WORKDIR /tmp/xorgxrdp/
-RUN git clone "${XORGXRDP_REMOTE:?}" ./
-RUN git checkout "${XORGXRDP_TREEISH:?}"
-RUN git submodule update --init --recursive
-RUN ./bootstrap
-RUN ./configure --enable-glamor
-RUN make -j"$(nproc)"
-RUN checkinstall --default --pkgname=xorgxrdp --pkgversion=9:999 --pkgrelease=0
+RUN <<-EOF
+	git clone "${XORGXRDP_REMOTE:?}" ./
+	git checkout "${XORGXRDP_TREEISH:?}"
+	git submodule update --init --recursive
+EOF
+RUN <<-EOF
+	./bootstrap
+	./configure \
+		--prefix=/opt/xrdp \
+		--enable-strict-locations \
+		--enable-glamor \
+		PKG_CONFIG_PATH=/opt/xrdp/lib/pkgconfig
+	make -j"$(nproc)" install
+EOF
 
 # Build xrdp PulseAudio module
 ARG XRDP_PULSEAUDIO_TREEISH=v0.7
 ARG XRDP_PULSEAUDIO_REMOTE=https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
 WORKDIR /tmp/
-RUN DEBIAN_FRONTEND=noninteractive apt-get build-dep -y pulseaudio
-RUN apt-get source pulseaudio && mv ./pulseaudio-*/ ./pulseaudio/
-WORKDIR /tmp/pulseaudio/
-RUN meson ./build/
-RUN mkdir /tmp/xrdp-pulseaudio/
-WORKDIR /tmp/xrdp-pulseaudio/
-RUN git clone "${XRDP_PULSEAUDIO_REMOTE:?}" ./
-RUN git checkout "${XRDP_PULSEAUDIO_TREEISH:?}"
-RUN git submodule update --init --recursive
-RUN ./bootstrap
-RUN ./configure PULSE_DIR=/tmp/pulseaudio/
-RUN make -j"$(nproc)"
-RUN checkinstall --default --pkgname=xrdp-pulseaudio --pkgversion=9:999 --pkgrelease=0
+RUN <<-EOF
+	DEBIAN_FRONTEND=noninteractive apt-get build-dep -y pulseaudio
+	apt-get source pulseaudio && mv ./pulseaudio-*/ ./pulseaudio/
+	meson setup ./pulseaudio/build/ ./pulseaudio/
+EOF
+WORKDIR /tmp/pulseaudio-module-xrdp/
+RUN <<-EOF
+	git clone "${XRDP_PULSEAUDIO_REMOTE:?}" ./
+	git checkout "${XRDP_PULSEAUDIO_TREEISH:?}"
+	git submodule update --init --recursive
+EOF
+RUN <<-EOF
+	./bootstrap
+	./configure \
+		--prefix=/opt/xrdp \
+		--with-module-dir=/opt/xrdp/lib/pulse/modules \
+		PKG_CONFIG_PATH=/opt/xrdp/lib/pkgconfig \
+		PULSE_DIR=/tmp/pulseaudio/
+	make -j"$(nproc)" install
+EOF
 
 ##################################################
 ## "main" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS main
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:24.04]], [[FROM docker.io/ubuntu:24.04]]) AS main
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
+
+SHELL ["/bin/sh", "-euc"]
 
 # Copy APT config
 COPY --chown=root:root ./config/apt/preferences.d/ /etc/apt/preferences.d/
-RUN find /etc/apt/preferences.d/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-RUN find /etc/apt/preferences.d/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+RUN <<-EOF
+	find /etc/apt/preferences.d/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+	find /etc/apt/preferences.d/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+EOF
 
 # Install base packages
-RUN export DEBIAN_FRONTEND=noninteractive \
-	&& apt-get update \
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+RUN <<-EOF
+	export DEBIAN_FRONTEND=noninteractive
+	apt-get update
+	apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		at-spi2-core \
 		ca-certificates \
 		catatonit \
@@ -279,20 +306,20 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		xserver-xorg-video-dummy \
 		xserver-xorg-video-fbdev \
 		xserver-xorg-video-vesa \
-		zlib1g \
+		zlib1g
 m4_ifelse(ENABLE_AMD_SUPPORT, 1, [[m4_dnl
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+	apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-amdgpu1 \
-		xserver-xorg-video-amdgpu \
+		xserver-xorg-video-amdgpu
 ]])m4_dnl
 m4_ifelse(ENABLE_INTEL_SUPPORT, 1, [[m4_dnl
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+	apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		intel-opencl-icd \
 		libdrm-intel1 \
-		xserver-xorg-video-intel \
+		xserver-xorg-video-intel
 ]])m4_dnl
 m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+	apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2 \
 		libnvidia-cfg1-550 \
 		libnvidia-compute-550 \
@@ -302,18 +329,23 @@ m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 		libnvidia-fbc1-550 \
 		libnvidia-gl-550 \
 		xserver-xorg-video-nouveau \
-		xserver-xorg-video-nvidia-550 \
+		xserver-xorg-video-nvidia-550
 ]])m4_dnl
-	&& rm -rf /var/lib/apt/lists/*
+	rm -rf /var/lib/apt/lists/*
+	rm -f /etc/ssh/ssh_host_*_key
+EOF
 
 # Add Mozilla Team repository
-RUN curl --proto '=https' --tlsv1.3 -sSf 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x0AB215679C571D1C8325275B9BDB3D89CE49EC21' | gpg --dearmor -o /etc/apt/trusted.gpg.d/mozillateam.gpg \
-	&& printf '%s\n' "deb [signed-by=/etc/apt/trusted.gpg.d/mozillateam.gpg] https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/mozillateam.list
+RUN <<-EOF
+	curl --proto '=https' --tlsv1.3 -sSf 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x0AB215679C571D1C8325275B9BDB3D89CE49EC21' | gpg --dearmor -o /etc/apt/trusted.gpg.d/mozillateam.gpg
+	printf '%s\n' "deb [signed-by=/etc/apt/trusted.gpg.d/mozillateam.gpg] https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/mozillateam.list
+EOF
 
 # Install extra packages
-RUN export DEBIAN_FRONTEND=noninteractive \
-	&& apt-get update \
-	&& apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
+RUN <<-EOF
+	export DEBIAN_FRONTEND=noninteractive
+	apt-get update
+	apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		adwaita-icon-theme-full \
 		adwaita-qt \
 		audacity \
@@ -387,7 +419,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		xfce4-panel-profiles \
 		xfce4-pulseaudio-plugin \
 		xfce4-screenshooter \
-		xfce4-statusnotifier-plugin \
 		xfce4-taskmanager \
 		xfce4-terminal \
 		xfce4-whiskermenu-plugin \
@@ -398,29 +429,26 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		xutils \
 		xz-utils \
 		zenity \
-		zip \
-	&& rm -rf /var/lib/apt/lists/*
+		zip
+	rm -rf /var/lib/apt/lists/*
+EOF
 
-# Install libjpeg-turbo from package
-RUN --mount=type=bind,from=build,source=/tmp/libjpeg-turbo/,target=/tmp/libjpeg-turbo/ dpkg -i /tmp/libjpeg-turbo/build/libjpeg-turbo_*.deb
+# Copy libjpeg-turbo build
+COPY --from=build /opt/libjpeg-turbo/ /opt/libjpeg-turbo/
 
-# Install VirtualGL from package
-RUN --mount=type=bind,from=build,source=/tmp/virtualgl/,target=/tmp/virtualgl/ dpkg -i /tmp/virtualgl/build/virtualgl_*.deb
+# Copy VirtualGL build
+COPY --from=build /opt/VirtualGL/ /opt/VirtualGL/
 
-# Install TurboVNC from package
-RUN --mount=type=bind,from=build,source=/tmp/turbovnc/,target=/tmp/turbovnc/ dpkg -i /tmp/turbovnc/build/turbovnc_*.deb
+# Copy TurboVNC build
+COPY --from=build /opt/TurboVNC/ /opt/TurboVNC/
 
-# Install xrdp from package
-RUN --mount=type=bind,from=build,source=/tmp/xrdp/,target=/tmp/xrdp/ dpkg -i /tmp/xrdp/xrdp_*.deb
-
-# Install xorgxrdp from package
-RUN --mount=type=bind,from=build,source=/tmp/xorgxrdp/,target=/tmp/xorgxrdp/ dpkg -i /tmp/xorgxrdp/xorgxrdp_*.deb
-
-# Install xrdp PulseAudio module from package
-RUN --mount=type=bind,from=build,source=/tmp/xrdp-pulseaudio/,target=/tmp/xrdp-pulseaudio/ dpkg -i /tmp/xrdp-pulseaudio/xrdp-pulseaudio_*.deb
+# Copy xrdp, xorgxrdp and PulseAudio module builds
+COPY --from=build /opt/xrdp/ /opt/xrdp/
 
 # Environment
 ENV SVDIR=/etc/service/
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+ENV PATH=/opt/libjpeg-turbo/bin:/opt/VirtualGL/bin:/opt/TurboVNC/bin:/opt/xrdp/sbin:/opt/xrdp/bin:${PATH}
 ENV UNPRIVILEGED_USER_UID=1000
 ENV UNPRIVILEGED_USER_GID=1000
 ENV UNPRIVILEGED_USER_NAME=user
@@ -430,83 +458,109 @@ ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV UNPRIVILEGED_USER_HOME=/home/user
 ENV SERVICE_XRDP_BOOTSTRAP_ENABLED=false
 ENV SERVICE_XORG_HEADLESS_ENABLED=false
+ENV XRDP_RSAKEYS_PATH=/etc/xrdp/rsakeys.ini
 ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV XRDP_TLS_CRT_PATH=/etc/xrdp/cert.pem
 ENV STARTUP=xfce4-session
 ENV DESKTOP_SESSION=xubuntu
-## Use Adwaita theme in QT applications
 ENV QT_STYLE_OVERRIDE=Adwaita
 
 # Setup locale
 ENV LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
-RUN printf '%s\n' "${LANG:?} UTF-8" > /etc/locale.gen \
-	&& localedef -c -i "${LANG%%.*}" -f UTF-8 "${LANG:?}" ||:
+RUN <<-EOF
+	printf '%s\n' "${LANG:?} UTF-8" > /etc/locale.gen
+	localedef -c -i "${LANG%%.*}" -f UTF-8 "${LANG:?}" ||:
+EOF
 
 # Setup timezone
 ENV TZ=UTC
-RUN printf '%s\n' "${TZ:?}" > /etc/timezone \
-	&& ln -snf "/usr/share/zoneinfo/${TZ:?}" /etc/localtime
-
-# Setup PATH
-ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
-ENV PATH=/opt/libjpeg-turbo/bin:/opt/VirtualGL/bin:/opt/TurboVNC/bin:${PATH}
+RUN <<-EOF
+	printf '%s\n' "${TZ:?}" > /etc/timezone
+	ln -snf "/usr/share/zoneinfo/${TZ:?}" /etc/localtime
+EOF
 
 # Setup D-Bus
-RUN mkdir /run/dbus/ && chown messagebus:messagebus /run/dbus/
-RUN dbus-uuidgen > /etc/machine-id
-RUN ln -sf /etc/machine-id /var/lib/dbus/machine-id
+RUN <<-EOF
+	dbus-uuidgen > /etc/machine-id
+	ln -sf /etc/machine-id /var/lib/dbus/machine-id
+EOF
 
 # Make sesman read environment variables
-RUN printf '%s\n' 'session required pam_env.so readenv=1' >> /etc/pam.d/xrdp-sesman
+RUN <<-EOF
+	printf '%s\n' 'session required pam_env.so readenv=1' >> /etc/pam.d/xrdp-sesman
+EOF
 
-# Remove default keys and certificates
-RUN rm -f /etc/ssh/ssh_host_*
-RUN rm -f "${XRDP_TLS_KEY_PATH:?}" "${XRDP_TLS_CRT_PATH:?}"
+# Remove default user and group
+RUN <<-EOF
+	if id -u "${UNPRIVILEGED_USER_UID:?}" >/dev/null 2>&1; then userdel -f "$(id -nu "${UNPRIVILEGED_USER_UID:?}")"; fi
+	if id -g "${UNPRIVILEGED_USER_GID:?}" >/dev/null 2>&1; then groupdel "$(id -nu "${UNPRIVILEGED_USER_GID:?}")"; fi
+EOF
+
+# Create symlinks for xrdp RSA keys and TLS certificates
+RUN <<-EOF
+	ln -svf "${XRDP_RSAKEYS_PATH:?}" /opt/xrdp/etc/xrdp/rsakeys.ini
+	ln -svf "${XRDP_TLS_KEY_PATH:?}" /opt/xrdp/etc/xrdp/key.pem
+	ln -svf "${XRDP_TLS_CRT_PATH:?}" /opt/xrdp/etc/xrdp/cert.pem
+EOF
 
 # Forward logs to Docker log collector
-RUN ln -sf /dev/stdout /var/log/xorg-headless.log
-RUN ln -sf /dev/stdout /var/log/xrdp.log
-RUN ln -sf /dev/stdout /var/log/xrdp-sesman.log
+RUN <<-EOF
+	ln -svf /dev/stdout /var/log/xorg-headless.log
+	ln -svf /dev/stdout /var/log/xrdp.log
+	ln -svf /dev/stdout /var/log/xrdp-sesman.log
+EOF
 
 # Copy and enable services
 COPY --chown=root:root ./scripts/service/ /etc/sv/
-RUN find /etc/sv/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-RUN find /etc/sv/ -type f -not -perm 0755 -exec chmod 0755 '{}' ';'
-RUN ln -sv /etc/sv/dbus-daemon "${SVDIR:?}"
-RUN ln -sv /etc/sv/sshd "${SVDIR:?}"
-RUN ln -sv /etc/sv/udevadm-trigger "${SVDIR:?}"
-RUN ln -sv /etc/sv/udevd "${SVDIR:?}"
-RUN ln -sv /etc/sv/xrdp "${SVDIR:?}"
-RUN ln -sv /etc/sv/xrdp-sesman "${SVDIR:?}"
+RUN <<-EOF
+	find /etc/sv/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+	find /etc/sv/ -type f -not -perm 0755 -exec chmod 0755 '{}' ';'
+	ln -sv /etc/sv/dbus-daemon "${SVDIR:?}"
+	ln -sv /etc/sv/sshd "${SVDIR:?}"
+	ln -sv /etc/sv/udevadm-trigger "${SVDIR:?}"
+	ln -sv /etc/sv/udevd "${SVDIR:?}"
+	ln -sv /etc/sv/xrdp "${SVDIR:?}"
+	ln -sv /etc/sv/xrdp-sesman "${SVDIR:?}"
+EOF
 
 # Copy SSH config
 COPY --chown=root:root ./config/ssh/ /etc/ssh/
-RUN find /etc/ssh/sshd_config -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+RUN <<-EOF
+	find /etc/ssh/sshd_config -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+EOF
 
 # Copy X11 config
 COPY --chown=root:root ./config/X11/ /etc/X11/
-RUN find /etc/X11/xorg.conf.d/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-RUN find /etc/X11/xorg.conf.d/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+RUN <<-EOF
+	find /etc/X11/xorg.conf.d/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+	find /etc/X11/xorg.conf.d/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+EOF
 
 # Copy xrdp config
-COPY --chown=root:root ./config/xrdp/ /etc/xrdp/
-RUN find /etc/xrdp/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-RUN find /etc/xrdp/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
-RUN find /etc/xrdp/ -type f -name '*.sh' -not -perm 0755 -exec chmod 0755 '{}' ';'
+COPY --chown=root:root ./config/xrdp/ /opt/xrdp/etc/xrdp/
+RUN <<-EOF
+	find /opt/xrdp/etc/xrdp/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+	find /opt/xrdp/etc/xrdp/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+	find /opt/xrdp/etc/xrdp/ -type f -name '*.sh' -not -perm 0755 -exec chmod 0755 '{}' ';'
+EOF
 
 # Copy PulseAudio config
 COPY --chown=root:root ./config/pulse/ /etc/pulse/
-RUN find /etc/pulse/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-RUN find /etc/pulse/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+RUN <<-EOF
+	find /etc/pulse/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+	find /etc/pulse/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+EOF
 
 # Copy scripts
 COPY --chown=root:root ./scripts/bin/ /usr/local/bin/
-RUN find /usr/local/bin/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-RUN find /usr/local/bin/ -type f -not -perm 0755 -exec chmod 0755 '{}' ';'
+RUN <<-EOF
+	find /usr/local/bin/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+	find /usr/local/bin/ -type f -not -perm 0755 -exec chmod 0755 '{}' ';'
+EOF
 
-# Expose SSH port
+# SSH
 EXPOSE 3322/tcp
-# Expose RDP port
+# RDP
 EXPOSE 3389/tcp
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/usr/local/bin/container-init"]
