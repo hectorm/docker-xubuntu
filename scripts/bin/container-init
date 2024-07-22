@@ -3,7 +3,7 @@
 set -eu
 
 # Remove leftover files
-find /tmp/ -mindepth 1 -delete ||:
+find /tmp/ /run/ -mindepth 1 -delete ||:
 
 # Add GPU devices groups to additional groups
 for dev in /dev/dri/*; do
@@ -58,25 +58,6 @@ if [ -w "${UNPRIVILEGED_USER_HOME:?}" ]; then
 	if [ "$(stat -c '%a' "${UNPRIVILEGED_USER_HOME:?}")" != '750' ]; then
 		chmod 750 "${UNPRIVILEGED_USER_HOME:?}"
 	fi
-fi
-
-# Create /run/dbus/ directory if it does not exist
-if [ ! -d /run/dbus/ ]; then
-	mkdir -p /run/dbus/
-	chmod 755 /run/dbus/
-	chown messagebus: /run/dbus/
-fi
-
-# Create /run/sshd/ directory if it does not exist
-if [ ! -d /run/sshd/ ]; then
-	mkdir -p /run/sshd/
-	chmod 755 /run/sshd/
-fi
-
-# Create /run/udev/ directory if it does not exist
-if [ ! -d /run/udev/ ]; then
-	mkdir -p /run/udev/
-	chmod 755 /run/udev/
 fi
 
 # Create /run/user/${UNPRIVILEGED_USER_UID}/ directory if it does not exist

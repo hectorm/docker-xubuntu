@@ -2,5 +2,9 @@
 
 set -eu
 
+if [ ! -d /run/dbus/ ]; then
+	install -m 755 -o messagebus -g messagebus -d /run/dbus/
+fi
+
 exec 2>&1
 exec chpst -u messagebus dbus-daemon --system --nofork --nopidfile

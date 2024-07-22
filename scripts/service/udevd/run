@@ -2,5 +2,9 @@
 
 set -eu
 
+if [ ! -d /run/udev/ ]; then
+	install -m 755 -o root -g root -d /run/udev/
+fi
+
 exec 2>&1
 exec /lib/systemd/systemd-udevd
