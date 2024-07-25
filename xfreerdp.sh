@@ -13,7 +13,7 @@ exec xfreerdp3 \
 	/v:"${RDP_HOST:?}":"${RDP_PORT:?}" \
 	/u:"${RDP_DOMAIN:?}"\\"${RDP_USER:?}" /p:"${RDP_PASSWORD:?}" \
 	/log-level:INFO /cert:ignore \
-	/rfx /rfx-mode:video /dynamic-resolution \
+	/gfx:AVC444 /bpp:32 /dynamic-resolution \
 	/audio-mode:0 /sound:sys:pulse,rate:44100 \
 	/microphone:sys:pulse,rate:44100 \
 	+clipboard +home-drive \
