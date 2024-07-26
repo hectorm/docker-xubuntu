@@ -23,7 +23,6 @@ RUN <<-EOF
 		bison \
 		build-essential \
 		ca-certificates \
-		checkinstall \
 		cmake \
 		dbus-x11 \
 		devscripts \
