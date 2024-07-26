@@ -252,7 +252,7 @@ RUN <<-EOF
 		libepoxy0 \
 		libfdk-aac2 \
 		libfreetype6 \
-		libfuse2 \
+		libfuse2t64 \
 		libgbm1 \
 		libgl1 \
 		libgl1-mesa-dri \
@@ -265,7 +265,7 @@ RUN <<-EOF
 		libpam0g \
 		libpixman-1-0 \
 		libpulse0 \
-		libssl3 \
+		libssl3t64 \
 		libsystemd0 \
 		libx11-6 \
 		libx11-xcb1 \
@@ -276,7 +276,7 @@ RUN <<-EOF
 		libxfixes3 \
 		libxml2 \
 		libxrandr2 \
-		libxt6 \
+		libxt6t64 \
 		libxtst6 \
 		libxv1 \
 		locales \
