@@ -151,7 +151,7 @@ RUN <<-EOF
 EOF
 
 # Build xrdp
-ARG XRDP_TREEISH=v0.10.0
+ARG XRDP_TREEISH=v0.10.1
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp/
 RUN <<-EOF
