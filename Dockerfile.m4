@@ -99,7 +99,7 @@ RUN <<-EOF
 EOF
 
 # Build VirtualGL
-ARG VIRTUALGL_TREEISH=3.1.1
+ARG VIRTUALGL_TREEISH=3.1.2
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
 WORKDIR /tmp/virtualgl/
 RUN <<-EOF
