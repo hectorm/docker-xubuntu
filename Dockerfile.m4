@@ -43,6 +43,7 @@ RUN <<-EOF
 		libglu1-mesa-dev \
 		libglvnd-dev \
 		libglx-dev \
+		libimlib2-dev \
 		libmp3lame-dev \
 		libopus-dev \
 		libpam0g-dev \
@@ -53,6 +54,7 @@ RUN <<-EOF
 		libtool \
 		libx11-dev \
 		libx11-xcb-dev \
+		libx264-dev \
 		libxcb-glx0-dev \
 		libxcb-keysyms1-dev \
 		libxcb1-dev \
@@ -166,12 +168,18 @@ RUN <<-EOF
 		--enable-strict-locations \
 		--enable-vsock \
 		--enable-tjpeg \
-		--enable-fuse \
+		--enable-pixman \
+		--enable-x264 \
+		--enable-rfxcodec \
+		--enable-painter \
+		--enable-rdpsndaudin \
 		--enable-fdkaac \
 		--enable-opus \
 		--enable-mp3lame \
-		--enable-pixman \
-		--enable-ipv6
+		--enable-fuse \
+		--enable-ipv6 \
+		--with-freetype2 \
+		--with-imlib2
 	make -j"$(nproc)" install
 	rm -f /opt/xrdp/etc/xrdp/rsakeys.ini /opt/xrdp/etc/xrdp/*.pem
 EOF
@@ -260,6 +268,7 @@ RUN <<-EOF
 		libglu1 \
 		libglvnd0 \
 		libglx-mesa0 \
+		libimlib2 \
 		libmp3lame0 \
 		libopus0 \
 		libpam0g \
@@ -269,6 +278,7 @@ RUN <<-EOF
 		libsystemd0 \
 		libx11-6 \
 		libx11-xcb1 \
+		libx264-164 \
 		libxcb-glx0 \
 		libxcb-keysyms1 \
 		libxcb1 \
