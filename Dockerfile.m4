@@ -36,7 +36,7 @@ RUN <<-EOF
 		libepoxy-dev \
 		libfdk-aac-dev \
 		libfreetype-dev \
-		libfuse-dev \
+		libfuse3-dev \
 		libgbm-dev \
 		libgl-dev \
 		libgles-dev \
@@ -151,7 +151,7 @@ RUN <<-EOF
 EOF
 
 # Build xrdp
-ARG XRDP_TREEISH=v0.10.1
+ARG XRDP_TREEISH=v0.10.2
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp/
 RUN <<-EOF
@@ -252,7 +252,7 @@ RUN <<-EOF
 		libepoxy0 \
 		libfdk-aac2 \
 		libfreetype6 \
-		libfuse2t64 \
+		libfuse3-3 \
 		libgbm1 \
 		libgl1 \
 		libgl1-mesa-dri \
