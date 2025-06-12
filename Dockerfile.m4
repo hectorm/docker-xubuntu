@@ -62,6 +62,7 @@ RUN <<-EOF
 		libxfixes-dev \
 		libxml2-dev \
 		libxrandr-dev \
+		libxshmfence-dev \
 		libxt-dev \
 		libxtst-dev \
 		libxv-dev \
@@ -123,7 +124,7 @@ RUN <<-EOF
 EOF
 
 # Build TurboVNC
-ARG TURBOVNC_TREEISH=3.1.4
+ARG TURBOVNC_TREEISH=3.2
 ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
 WORKDIR /tmp/turbovnc/
 RUN <<-EOF
@@ -286,6 +287,7 @@ RUN <<-EOF
 		libxfixes3 \
 		libxml2 \
 		libxrandr2 \
+		libxshmfence1 \
 		libxt6t64 \
 		libxtst6 \
 		libxv1 \
