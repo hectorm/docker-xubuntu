@@ -31,6 +31,7 @@ RUN <<-EOF
 		git \
 		intltool \
 		libbz2-dev \
+		libdrm-dev \
 		libegl-dev \
 		libegl1-mesa-dev \
 		libepoxy-dev \
@@ -73,6 +74,7 @@ RUN <<-EOF
 		x11-xkb-utils \
 		xauth \
 		xkb-data \
+		xserver-xorg-core \
 		xserver-xorg-dev \
 		xsltproc \
 		xutils-dev \
@@ -186,7 +188,7 @@ RUN <<-EOF
 EOF
 
 # Build xorgxrdp
-ARG XORGXRDP_TREEISH=v0.10.3
+ARG XORGXRDP_TREEISH=v0.10.4
 ARG XORGXRDP_REMOTE=https://github.com/neutrinolabs/xorgxrdp.git
 WORKDIR /tmp/xorgxrdp/
 RUN <<-EOF
