@@ -207,7 +207,7 @@ RUN <<-EOF
 EOF
 
 # Build xrdp PulseAudio module
-ARG XRDP_PULSEAUDIO_TREEISH=v0.7
+ARG XRDP_PULSEAUDIO_TREEISH=v0.8
 ARG XRDP_PULSEAUDIO_REMOTE=https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
 WORKDIR /tmp/
 RUN <<-EOF
