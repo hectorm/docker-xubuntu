@@ -68,12 +68,12 @@ if [ ! -d /run/user/"${UNPRIVILEGED_USER_UID:?}"/ ]; then
 fi
 
 # Enable xrdp bootstrap service
-if [ "${SERVICE_XRDP_BOOTSTRAP_ENABLED:?}" = 'true' ]; then
+if [ "${SERVICE_XRDP_BOOTSTRAP_ENABLED:?}" = 'true' ] && [ ! -L "${SVDIR:?}"/xrdp-bootstrap ]; then
 	ln -s /etc/sv/xrdp-bootstrap "${SVDIR:?}"
 fi
 
 # Enable headless X server service
-if [ "${SERVICE_XORG_HEADLESS_ENABLED:?}" = 'true' ]; then
+if [ "${SERVICE_XORG_HEADLESS_ENABLED:?}" = 'true' ] && [ ! -L "${SVDIR:?}"/xorg-headless ]; then
 	ln -s /etc/sv/xorg-headless "${SVDIR:?}"
 fi
 
