@@ -67,6 +67,12 @@ if [ ! -d /run/user/"${UNPRIVILEGED_USER_UID:?}"/ ]; then
 	chown "${UNPRIVILEGED_USER_NAME:?}:" /run/user/"${UNPRIVILEGED_USER_UID:?}"/
 fi
 
+# Disable glx module if /dev/dri/ does not exist
+if [ ! -d /dev/dri/ ]; then
+	printf '%s\n' '"/dev/dri/" does not exist, glx module will be disabled' 1>&2
+	sed -i 's|Load \("glx"\)|Disable \1|g' /opt/xrdp/etc/X11/xrdp/xorg.conf
+fi
+
 # Enable xrdp bootstrap service
 if [ "${SERVICE_XRDP_BOOTSTRAP_ENABLED:?}" = 'true' ] && [ ! -L "${SVDIR:?}"/xrdp-bootstrap ]; then
 	ln -s /etc/sv/xrdp-bootstrap "${SVDIR:?}"
