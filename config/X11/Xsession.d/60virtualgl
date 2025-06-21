@@ -1,20 +1,15 @@
 #!/bin/sh
 
 if [ -z "${VGL_DISPLAY-}" ]; then
-	# Use the dummy X server if it is enabled
-	if [ "${SERVICE_XORG_HEADLESS_ENABLED:?}" = 'true' ]; then
-		export VGL_DISPLAY=:0.0
-	else
-		# Otherwise try to use the EGL backend
-		for card in /dev/dri/card*; do
-			if /opt/VirtualGL/bin/eglinfo -B "${card:?}" 2>/dev/null; then
-				export VGL_DISPLAY="${card:?}"
-				break
-			fi
-		done
-		# And fallback to DISPLAY if the EGL backend is not available
-		if [ -z "${VGL_DISPLAY-}" ] && [ -n "${DISPLAY-}" ]; then
-			export VGL_DISPLAY="${DISPLAY:?}"
+	# Try to use the EGL backend
+	for card in /dev/dri/card*; do
+		if /opt/VirtualGL/bin/eglinfo -B "${card:?}" 2>/dev/null; then
+			export VGL_DISPLAY="${card:?}"
+			break
 		fi
+	done
+	# And fallback to DISPLAY if the EGL backend is not available
+	if [ -z "${VGL_DISPLAY-}" ] && [ -n "${DISPLAY-}" ]; then
+		export VGL_DISPLAY="${DISPLAY:?}"
 	fi
 fi
