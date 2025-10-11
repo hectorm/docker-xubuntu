@@ -95,4 +95,4 @@ jobs:
       contents: "write"
     steps:
       - name: "Publish"
-        uses: "hectorm/ghaction-release@066200d04c3549852afa243d631ea3dc93390f68"
+        uses: "hectorm/ghaction-release@d0426a7a369ce2c1ed615e1a583788b22745ccfe"
