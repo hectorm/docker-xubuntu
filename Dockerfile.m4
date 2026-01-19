@@ -1,3 +1,6 @@
+# syntax=docker.io/docker/dockerfile:1
+# check=skip=SecretsUsedInArgOrEnv
+
 m4_changequote([[, ]])
 
 ##################################################
