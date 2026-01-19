@@ -129,7 +129,7 @@ RUN <<-EOF
 EOF
 
 # Build TurboVNC
-ARG TURBOVNC_TREEISH=3.2
+ARG TURBOVNC_TREEISH=3.2.1
 ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
 WORKDIR /tmp/turbovnc/
 RUN <<-EOF
