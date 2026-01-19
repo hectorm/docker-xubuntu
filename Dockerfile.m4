@@ -86,7 +86,7 @@ RUN <<-EOF
 EOF
 
 # Build libjpeg-turbo
-ARG LIBJPEG_TURBO_TREEISH=3.1.1
+ARG LIBJPEG_TURBO_TREEISH=3.1.3
 ARG LIBJPEG_TURBO_REMOTE=https://github.com/libjpeg-turbo/libjpeg-turbo.git
 WORKDIR /tmp/libjpeg-turbo/
 RUN <<-EOF
