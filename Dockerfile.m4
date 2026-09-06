@@ -335,15 +335,15 @@ m4_ifelse(ENABLE_INTEL_SUPPORT, 1, [[m4_dnl
 m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 	apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2 \
-		libnvidia-cfg1-580 \
-		libnvidia-compute-580 \
-		libnvidia-decode-580 \
-		libnvidia-encode-580 \
-		libnvidia-extra-580 \
-		libnvidia-fbc1-580 \
-		libnvidia-gl-580 \
+		libnvidia-cfg1-610 \
+		libnvidia-compute-610 \
+		libnvidia-decode-610 \
+		libnvidia-encode-610 \
+		libnvidia-extra-610 \
+		libnvidia-fbc1-610 \
+		libnvidia-gl-610 \
 		xserver-xorg-video-nouveau \
-		xserver-xorg-video-nvidia-580
+		xserver-xorg-video-nvidia-610
 ]])m4_dnl
 	rm -rf /var/lib/apt/lists/*
 	rm -f /etc/ssh/ssh_host_*_key
