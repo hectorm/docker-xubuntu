@@ -7,7 +7,7 @@ m4_changequote([[, ]])
 ## "build" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:24.04]], [[FROM docker.io/ubuntu:24.04]]) AS build
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:26.04]], [[FROM docker.io/ubuntu:26.04]]) AS build
 
 SHELL ["/bin/sh", "-euc"]
 
@@ -229,6 +229,7 @@ RUN <<-EOF
 	./configure \
 		--prefix=/opt/xrdp \
 		--with-module-dir=/opt/xrdp/lib/pulse/modules \
+		--with-xdgautostart-dir=/opt/xrdp/etc/xdg/autostart \
 		PKG_CONFIG_PATH=/opt/xrdp/lib/pkgconfig \
 		PULSE_DIR=/tmp/pulseaudio/
 	make -j"$(nproc)" install
@@ -238,7 +239,7 @@ EOF
 ## "main" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:24.04]], [[FROM docker.io/ubuntu:24.04]]) AS main
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:26.04]], [[FROM docker.io/ubuntu:26.04]]) AS main
 
 SHELL ["/bin/sh", "-euc"]
 
@@ -266,7 +267,7 @@ RUN <<-EOF
 		libepoxy0 \
 		libfdk-aac2 \
 		libfreetype6 \
-		libfuse3-3 \
+		libfuse3-4 \
 		libgbm1 \
 		libgl1 \
 		libgl1-mesa-dri \
@@ -284,13 +285,13 @@ RUN <<-EOF
 		libsystemd0 \
 		libx11-6 \
 		libx11-xcb1 \
-		libx264-164 \
+		libx264-165 \
 		libxcb-glx0 \
 		libxcb-keysyms1 \
 		libxcb1 \
 		libxext6 \
 		libxfixes3 \
-		libxml2 \
+		libxml2-16 \
 		libxrandr2 \
 		libxshmfence1 \
 		libxt6t64 \
@@ -306,7 +307,8 @@ RUN <<-EOF
 		openssh-server \
 		openssl \
 		perl-base \
-		policykit-1 \
+		pkexec \
+		polkitd \
 		pulseaudio \
 		runit \
 		tzdata \
@@ -388,7 +390,6 @@ RUN <<-EOF
 		iproute2 \
 		iputils-ping \
 		libavcodec-extra \
-		libcanberra-gtk-module \
 		libcanberra-gtk3-module \
 		libgtk-3-bin \
 		librsvg2-common \
@@ -431,6 +432,7 @@ RUN <<-EOF
 		xfce4-notifyd \
 		xfce4-panel \
 		xfce4-panel-profiles \
+		xfce4-power-manager-plugins \
 		xfce4-pulseaudio-plugin \
 		xfce4-screenshooter \
 		xfce4-taskmanager \
@@ -458,6 +460,13 @@ COPY --from=build /opt/TurboVNC/ /opt/TurboVNC/
 
 # Copy xrdp, xorgxrdp and PulseAudio module builds
 COPY --from=build /opt/xrdp/ /opt/xrdp/
+RUN <<-EOF
+	pulse_module_dir="$(pulseaudio --dump-conf | sed -n 's/^dl-search-path = //p')"
+	test -d "${pulse_module_dir:?}"
+	ln -sv /opt/xrdp/lib/pulse/modules/module-xrdp-sink.so "${pulse_module_dir:?}/module-xrdp-sink.so"
+	ln -sv /opt/xrdp/lib/pulse/modules/module-xrdp-source.so "${pulse_module_dir:?}/module-xrdp-source.so"
+	ln -sv /opt/xrdp/etc/xdg/autostart/pulseaudio-xrdp.desktop /etc/xdg/autostart/pulseaudio-xrdp.desktop
+EOF
 
 # Environment
 ENV SVDIR=/etc/service/
