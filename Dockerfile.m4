@@ -321,7 +321,6 @@ RUN <<-EOF
 		xserver-xorg-input-libinput \
 		xserver-xorg-video-dummy \
 		xserver-xorg-video-fbdev \
-		xserver-xorg-video-vesa \
 		zlib1g
 m4_ifelse(ENABLE_AMD_SUPPORT, 1, [[m4_dnl
 	apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
