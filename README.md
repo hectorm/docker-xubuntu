@@ -1,6 +1,6 @@
 # Xubuntu on Docker
 
-A Docker image based on Ubuntu 24.04 with the Xfce desktop environment,
+A Docker image based on Ubuntu 26.04 with the Xfce desktop environment,
 [xrdp](https://github.com/neutrinolabs/xrdp),
 [xrdp PulseAudio module](https://github.com/neutrinolabs/pulseaudio-module-xrdp) and
 [VirtualGL](https://github.com/VirtualGL/virtualgl).

@@ -7,4 +7,4 @@ if [ ! -d /run/udev/ ]; then
 fi
 
 exec 2>&1
-exec /lib/systemd/systemd-udevd
+exec /usr/lib/systemd/systemd-udevd
