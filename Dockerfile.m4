@@ -377,7 +377,9 @@ RUN <<-EOF
 		fonts-dejavu \
 		fonts-liberation \
 		fonts-noto \
+		fonts-noto-cjk \
 		fonts-noto-color-emoji \
+		fonts-noto-mono \
 		fonts-ubuntu \
 		fuse3 \
 		git \
@@ -413,6 +415,7 @@ RUN <<-EOF
 		psmisc \
 		pulseaudio-utils \
 		ristretto \
+		scrot \
 		strace \
 		sudo \
 		thunar-archive-plugin \
@@ -424,8 +427,10 @@ RUN <<-EOF
 		x11-utils \
 		x11-xkb-utils \
 		xauth \
+		xclip \
 		xdg-user-dirs \
 		xdg-utils \
+		xdotool \
 		xfce4 \
 		xfce4-indicator-plugin \
 		xfce4-notifyd \
@@ -442,6 +447,7 @@ RUN <<-EOF
 		xterm \
 		xubuntu-default-settings \
 		xutils \
+		xvfb \
 		xz-utils \
 		zenity \
 		zip
