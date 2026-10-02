@@ -392,6 +392,7 @@ RUN <<-EOF
 		iputils-ping \
 		libavcodec-extra \
 		libcanberra-gtk3-module \
+		libglib2.0-bin \
 		libgtk-3-bin \
 		librsvg2-common \
 		lshw \
@@ -428,6 +429,8 @@ RUN <<-EOF
 		x11-xkb-utils \
 		xauth \
 		xclip \
+		xdg-desktop-portal \
+		xdg-desktop-portal-gtk \
 		xdg-user-dirs \
 		xdg-utils \
 		xdotool \
@@ -491,7 +494,7 @@ ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV XRDP_TLS_CRT_PATH=/etc/xrdp/cert.pem
 ENV STARTUP=xfce4-session
 ENV DESKTOP_SESSION=xubuntu
-ENV QT_STYLE_OVERRIDE=Adwaita
+ENV QT_STYLE_OVERRIDE=Adwaita-Dark
 ENV MOZ_CRASHREPORTER_DISABLE=1
 
 # Setup locale
@@ -571,6 +574,27 @@ RUN <<-EOF
 	find /opt/xrdp/etc/xrdp/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
 	find /opt/xrdp/etc/xrdp/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
 	find /opt/xrdp/etc/xrdp/ -type f -name '*.sh' -not -perm 0755 -exec chmod 0755 '{}' ';'
+EOF
+
+# Copy XDG config
+COPY --chown=root:root ./config/xdg/ /etc/xdg/
+RUN <<-EOF
+	find /etc/xdg/xdg-docker/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+	find /etc/xdg/xdg-docker/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+EOF
+
+# Copy GSettings schema overrides
+COPY --chown=root:root ./config/glib-2.0/schemas/ /usr/share/glib-2.0/schemas/
+RUN <<-EOF
+	find /usr/share/glib-2.0/schemas/ -type f -name '*.override' -not -perm 0644 -exec chmod 0644 '{}' ';'
+	glib-compile-schemas /usr/share/glib-2.0/schemas/
+EOF
+
+# Add GTK 4 support to Greybird-dark theme
+RUN <<-EOF
+	mkdir /usr/share/themes/Greybird-dark/gtk-4.0/
+	test -f /usr/share/themes/Greybird/gtk-4.0/gtk-dark.css
+	printf '%s\n' '@import url("file:///usr/share/themes/Greybird/gtk-4.0/gtk-dark.css");' > /usr/share/themes/Greybird-dark/gtk-4.0/gtk.css
 EOF
 
 # Copy PulseAudio config

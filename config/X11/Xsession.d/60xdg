@@ -4,7 +4,7 @@
 {
 	set -a
 	XDG_DATA_DIRS=/usr/share/xubuntu:/usr/share/xfce4:/usr/local/share:/usr/share
-	XDG_CONFIG_DIRS=/etc/xdg/xdg-xubuntu:/etc/xdg
+	XDG_CONFIG_DIRS=/etc/xdg/xdg-docker:/etc/xdg/xdg-xubuntu:/etc/xdg
 	XDG_CURRENT_DESKTOP=XFCE
 	XDG_SESSION_DESKTOP=xubuntu
 	XDG_SESSION_TYPE=x11
