@@ -37,6 +37,18 @@ if ! getent passwd "${UNPRIVILEGED_USER_UID:?}" >/dev/null 2>&1; then
 		"${UNPRIVILEGED_USER_NAME:?}"
 fi
 
+# Create xrdp runtime user and group
+if ! getent passwd xrdp >/dev/null 2>&1; then
+	useradd \
+		--system \
+		--user-group \
+		--shell /usr/sbin/nologin \
+		--home-dir /nonexistent \
+		--no-create-home \
+		--comment 'xrdp daemon' \
+		xrdp
+fi
+
 # Set unprivileged user password
 if [ -n "${UNPRIVILEGED_USER_PASSWORD?}" ]; then
 	printf '%s' "${UNPRIVILEGED_USER_NAME:?}:${UNPRIVILEGED_USER_PASSWORD:?}" | chpasswd
@@ -103,6 +115,8 @@ if [ ! -f "${XRDP_RSAKEYS_PATH:?}" ]; then
 	(umask 077 \
 		&& xrdp-keygen xrdp "${XRDP_RSAKEYS_PATH:?}" \
 	) >/dev/null
+	chgrp xrdp "${XRDP_RSAKEYS_PATH:?}"
+	chmod 640 "${XRDP_RSAKEYS_PATH:?}"
 fi
 
 # Generate RDP certificate if it does not exist
@@ -113,12 +127,24 @@ if [ ! -f "${XRDP_TLS_KEY_PATH:?}" ] || [ ! -f "${XRDP_TLS_CRT_PATH:?}" ]; then
 	(umask 077 \
 		&& openssl ecparam -genkey -name prime256v1 > "${XRDP_TLS_KEY_PATH:?}" \
 	) >/dev/null
+	chgrp xrdp "${XRDP_TLS_KEY_PATH:?}"
+	chmod 640 "${XRDP_TLS_KEY_PATH:?}"
 
 	mkdir -p "$(dirname "${XRDP_TLS_CRT_PATH:?}")"
 	(umask 022 \
 		&& openssl req -x509 -sha256 -days 3650 -subj "/CN=${FQDN:?}" -addext "subjectAltName=DNS:${FQDN:?}" -key "${XRDP_TLS_KEY_PATH:?}" > "${XRDP_TLS_CRT_PATH:?}" \
 	) >/dev/null
 fi
+
+# Run xrdp as root if the xrdp user cannot read the RDP keys
+for file in "${XRDP_RSAKEYS_PATH:?}" "${XRDP_TLS_KEY_PATH:?}" "${XRDP_TLS_CRT_PATH:?}"; do
+	if ! setpriv --reuid=xrdp --regid=xrdp --init-groups test -r "${file:?}"; then
+		printf '%s\n' "\"${file:?}\" is not readable by the xrdp user, xrdp will run as root" 1>&2
+		sed -i '/^runtime_\(user\|group\)=/d' /opt/xrdp/etc/xrdp/xrdp.ini
+		sed -i '/^SessionSockdirGroup=/d' /opt/xrdp/etc/xrdp/sesman.ini
+		break
+	fi
+done
 
 # Print RDP certificate fingerprint
 openssl x509 -in "${XRDP_TLS_CRT_PATH:?}" -noout -fingerprint -sha1
