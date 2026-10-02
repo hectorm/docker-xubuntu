@@ -515,6 +515,7 @@ EOF
 RUN <<-EOF
 	dbus-uuidgen > /etc/machine-id
 	ln -sf /etc/machine-id /var/lib/dbus/machine-id
+	find /usr/share/dbus-1/system-services/ -type f -name '*.service' -exec grep -qx 'Exec=/bin/false' '{}' ';' -print -delete
 EOF
 
 # Make sesman read environment variables
