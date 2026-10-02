@@ -551,8 +551,6 @@ RUN <<-EOF
 	find /etc/sv/ -type f -not -perm 0755 -exec chmod 0755 '{}' ';'
 	ln -sv /etc/sv/dbus-daemon "${SVDIR:?}"
 	ln -sv /etc/sv/sshd "${SVDIR:?}"
-	ln -sv /etc/sv/udevadm-trigger "${SVDIR:?}"
-	ln -sv /etc/sv/udevd "${SVDIR:?}"
 	ln -sv /etc/sv/xrdp "${SVDIR:?}"
 	ln -sv /etc/sv/xrdp-sesman "${SVDIR:?}"
 EOF

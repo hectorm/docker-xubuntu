@@ -83,6 +83,12 @@ if [ "${SERVICE_XORG_HEADLESS_ENABLED:?}" = 'true' ] && [ ! -L "${SVDIR:?}"/xorg
 	ln -s /etc/sv/xorg-headless "${SVDIR:?}"
 fi
 
+# Enable udev services if sysfs is writable
+if [ -w /sys/ ] && [ ! -L "${SVDIR:?}"/udevd ]; then
+	ln -s /etc/sv/udevd "${SVDIR:?}"
+	ln -s /etc/sv/udevadm-trigger "${SVDIR:?}"
+fi
+
 # Generate SSH keys if they do not exist
 if [ ! -f /etc/ssh/ssh_host_ed25519_key ]; then
 	ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' >/dev/null
