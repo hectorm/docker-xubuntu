@@ -63,6 +63,11 @@ if [ -w "${UNPRIVILEGED_USER_HOME:?}" ]; then
 		find /etc/skel/ -mindepth 1 -exec sh -c 'chown "$1:" "$2/${3#/etc/skel/}"' _ "${UNPRIVILEGED_USER_NAME:?}" "${UNPRIVILEGED_USER_HOME:?}" '{}' ';'
 	fi
 
+	# Create an empty Xauthority file if it does not exist
+	if [ ! -e "${UNPRIVILEGED_USER_HOME:?}"/.Xauthority ]; then
+		install -m 600 -o "${UNPRIVILEGED_USER_NAME:?}" -g "${UNPRIVILEGED_USER_GID:?}" /dev/null "${UNPRIVILEGED_USER_HOME:?}"/.Xauthority
+	fi
+
 	# Set unprivileged user home permissions
 	if [ "$(stat -c '%u' "${UNPRIVILEGED_USER_HOME:?}")" != "${UNPRIVILEGED_USER_UID:?}" ]; then
 		chown "${UNPRIVILEGED_USER_NAME:?}:" "${UNPRIVILEGED_USER_HOME:?}"
