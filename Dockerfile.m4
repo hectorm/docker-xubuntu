@@ -492,6 +492,7 @@ ENV XRDP_TLS_CRT_PATH=/etc/xrdp/cert.pem
 ENV STARTUP=xfce4-session
 ENV DESKTOP_SESSION=xubuntu
 ENV QT_STYLE_OVERRIDE=Adwaita
+ENV MOZ_CRASHREPORTER_DISABLE=1
 
 # Setup locale
 ENV LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
@@ -577,6 +578,13 @@ COPY --chown=root:root ./config/pulse/ /etc/pulse/
 RUN <<-EOF
 	find /etc/pulse/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
 	find /etc/pulse/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+EOF
+
+# Copy Firefox config
+COPY --chown=root:root ./config/firefox/ /etc/firefox/
+RUN <<-EOF
+	find /etc/firefox/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+	find /etc/firefox/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
 EOF
 
 # Copy scripts

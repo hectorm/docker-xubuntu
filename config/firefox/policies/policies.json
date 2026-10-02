@@ -1,0 +1,61 @@
+{
+  "policies": {
+    "AIControls": {
+      "Default": { "Value": "blocked" }
+    },
+    "DisableFirefoxStudies": true,
+    "DisableProfileImport": true,
+    "DisableTelemetry": true,
+    "DontCheckDefaultBrowser": true,
+    "ExtensionSettings": {
+      "uBlock0@raymondhill.net": {
+        "default_area": "menupanel",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/uBlock0@raymondhill.net/latest.xpi",
+        "installation_mode": "normal_installed",
+        "private_browsing": true
+      }
+    },
+    "FirefoxHome": {
+      "Search": false,
+      "SponsoredStories": false,
+      "SponsoredTopSites": false,
+      "TopSites": false,
+      "Weather": false
+    },
+    "FirefoxSuggest": {
+      "ImproveSuggest": false,
+      "SponsoredSuggestions": false,
+      "WebSuggestions": false
+    },
+    "OfferToSaveLoginsDefault": false,
+    "OverrideFirstRunPage": "",
+    "OverridePostUpdatePage": "",
+    "Permissions": {
+      "Notifications": { "BlockNewRequests": true }
+    },
+    "Preferences": {
+      "browser.disableResetPrompt": { "Status": "default", "Value": true },
+      "browser.newtabpage.activity-stream.hideLogo": { "Status": "default", "Value": true },
+      "browser.newtabpage.activity-stream.showSponsoredCheckboxes": { "Status": "default", "Value": false },
+      "browser.sessionstore.resume_from_crash": { "Status": "default", "Value": false },
+      "browser.startup.couldRestoreSession.count": { "Status": "default", "Value": -1 },
+      "browser.translations.automaticallyPopup": { "Status": "default", "Value": false },
+      "browser.urlbar.suggest.engines": { "Status": "default", "Value": false },
+      "browser.urlbar.suggest.trending": { "Status": "default", "Value": false },
+      "browser.warnOnQuitShortcut": { "Status": "default", "Value": false },
+      "extensions.formautofill.addresses.enabled": { "Status": "default", "Value": false },
+      "extensions.formautofill.creditCards.enabled": { "Status": "default", "Value": false },
+      "extensions.ml.enabled": { "Status": "default", "Value": false },
+      "layout.spellcheckDefault": { "Status": "default", "Value": 0 }
+    },
+    "SkipTermsOfUse": true,
+    "UserMessaging": {
+      "ExtensionRecommendations": false,
+      "FeatureRecommendations": false,
+      "FirefoxLabs": false,
+      "MoreFromMozilla": false,
+      "SkipOnboarding": true,
+      "UrlbarInterventions": false
+    }
+  }
+}
