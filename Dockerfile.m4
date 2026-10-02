@@ -501,6 +501,7 @@ ENV MOZ_CRASHREPORTER_DISABLE=1
 ENV LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 RUN <<-EOF
 	printf '%s\n' "${LANG:?} UTF-8" > /etc/locale.gen
+	printf '%s\n' "LANG=${LANG:?}" > /etc/default/locale
 	localedef -c -i "${LANG%%.*}" -f UTF-8 "${LANG:?}" ||:
 EOF
 
