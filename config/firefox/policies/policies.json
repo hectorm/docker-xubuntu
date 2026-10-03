@@ -3,10 +3,14 @@
     "AIControls": {
       "Default": { "Value": "blocked" }
     },
+    "DisableFirefoxAccounts": true,
     "DisableFirefoxStudies": true,
     "DisableProfileImport": true,
+    "DisableRemoteImprovements": true,
     "DisableTelemetry": true,
-    "DontCheckDefaultBrowser": true,
+    "EncryptedMediaExtensions": {
+      "Enabled": true
+    },
     "ExtensionSettings": {
       "uBlock0@raymondhill.net": {
         "default_area": "menupanel",
@@ -16,17 +20,21 @@
       }
     },
     "FirefoxHome": {
+      "Highlights": false,
       "Search": false,
       "SponsoredStories": false,
       "SponsoredTopSites": false,
+      "Stories": false,
       "TopSites": false,
-      "Weather": false
+      "Weather": false,
+      "Widgets": { "Enabled": false }
     },
     "FirefoxSuggest": {
       "ImproveSuggest": false,
       "SponsoredSuggestions": false,
       "WebSuggestions": false
     },
+    "NoDefaultBookmarks": true,
     "OfferToSaveLoginsDefault": false,
     "OverrideFirstRunPage": "",
     "OverridePostUpdatePage": "",
@@ -34,19 +42,45 @@
       "Notifications": { "BlockNewRequests": true }
     },
     "Preferences": {
+      "browser.aboutConfig.showWarning": { "Status": "default", "Value": false },
+      "browser.backup.archive.enabled": { "Status": "default", "Value": false },
+      "browser.backup.enabled": { "Status": "default", "Value": false },
+      "browser.backup.restore.enabled": { "Status": "default", "Value": false },
       "browser.disableResetPrompt": { "Status": "default", "Value": true },
+      "browser.discovery.enabled": { "Status": "default", "Value": false },
+      "browser.download.alwaysOpenPanel": { "Status": "default", "Value": false },
+      "browser.ipProtection.enabled": { "Status": "default", "Value": false },
       "browser.newtabpage.activity-stream.hideLogo": { "Status": "default", "Value": true },
       "browser.newtabpage.activity-stream.showSponsoredCheckboxes": { "Status": "default", "Value": false },
+      "browser.places.speculativeConnect.enabled": { "Status": "default", "Value": false },
+      "browser.profiles.enabled": { "Status": "default", "Value": false },
+      "browser.safebrowsing.downloads.remote.enabled": { "Status": "default", "Value": false },
+      "browser.search.suggest.enabled": { "Status": "default", "Value": false },
+      "browser.search.visualSearch.featureGate": { "Status": "default", "Value": false },
       "browser.sessionstore.resume_from_crash": { "Status": "default", "Value": false },
+      "browser.shell.checkDefaultBrowser": { "Status": "default", "Value": false },
       "browser.startup.couldRestoreSession.count": { "Status": "default", "Value": -1 },
+      "browser.tabs.crashReporting.sendReport": { "Status": "default", "Value": false },
       "browser.translations.automaticallyPopup": { "Status": "default", "Value": false },
+      "browser.urlbar.speculativeConnect.enabled": { "Status": "default", "Value": false },
       "browser.urlbar.suggest.engines": { "Status": "default", "Value": false },
+      "browser.urlbar.suggest.searches": { "Status": "default", "Value": false },
       "browser.urlbar.suggest.trending": { "Status": "default", "Value": false },
       "browser.warnOnQuitShortcut": { "Status": "default", "Value": false },
       "extensions.formautofill.addresses.enabled": { "Status": "default", "Value": false },
       "extensions.formautofill.creditCards.enabled": { "Status": "default", "Value": false },
+      "extensions.getAddons.cache.enabled": { "Status": "default", "Value": false },
+      "extensions.htmlaboutaddons.recommendations.enabled": { "Status": "default", "Value": false },
       "extensions.ml.enabled": { "Status": "default", "Value": false },
-      "layout.spellcheckDefault": { "Status": "default", "Value": 0 }
+      "layout.spellcheckDefault": { "Status": "default", "Value": 0 },
+      "media.webspeech.synth.dont_notify_on_error": { "Status": "default", "Value": true },
+      "network.captive-portal-service.enabled": { "Status": "default", "Value": false },
+      "network.connectivity-service.enabled": { "Status": "default", "Value": false },
+      "network.dns.disablePrefetch": { "Status": "default", "Value": true },
+      "network.dns.disablePrefetchFromHTTPS": { "Status": "default", "Value": true },
+      "network.http.speculative-parallel-limit": { "Status": "default", "Value": 0 },
+      "network.prefetch-next": { "Status": "default", "Value": false },
+      "privacy.globalprivacycontrol.enabled": { "Status": "default", "Value": true }
     },
     "SkipTermsOfUse": true,
     "UserMessaging": {
