@@ -637,6 +637,13 @@ RUN <<-EOF
 	printf '%s\n' '@import url("file:///usr/share/themes/Greybird/gtk-4.0/gtk-dark.css");' > /usr/share/themes/Greybird-dark/gtk-4.0/gtk.css
 EOF
 
+# Update Whisker Menu favorites
+RUN <<-EOF
+	mkdir -p /etc/xdg/xdg-docker/xfce4/whiskermenu/
+	sed 's|^favorites=.*$|favorites=xfce4-web-browser.desktop,xfce4-file-manager.desktop,xfce4-terminal-emulator.desktop|' \
+		/etc/xdg/xdg-xubuntu/xfce4/whiskermenu/defaults.rc > /etc/xdg/xdg-docker/xfce4/whiskermenu/defaults.rc
+EOF
+
 # Copy TurboVNC config
 COPY --chown=root:root ./config/turbovnc/ /opt/TurboVNC/etc/
 RUN <<-EOF
