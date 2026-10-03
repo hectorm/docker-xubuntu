@@ -425,6 +425,7 @@ RUN <<-EOF
 		libcanberra-gtk3-module \
 		libglib2.0-bin \
 		libgtk-3-bin \
+		libpam-gnome-keyring \
 		librsvg2-common \
 		lshw \
 		lsof \
@@ -448,6 +449,7 @@ RUN <<-EOF
 		pulseaudio-utils \
 		ristretto \
 		scrot \
+		seahorse \
 		strace \
 		sudo \
 		thunar-archive-plugin \
@@ -554,11 +556,6 @@ RUN <<-EOF
 	dbus-uuidgen > /etc/machine-id
 	ln -sf /etc/machine-id /var/lib/dbus/machine-id
 	find /usr/share/dbus-1/system-services/ -type f -name '*.service' -exec grep -qx 'Exec=/bin/false' '{}' ';' -print -delete
-EOF
-
-# Make sesman read environment variables
-RUN <<-EOF
-	printf '%s\n' 'session required pam_env.so readenv=1' >> /etc/pam.d/xrdp-sesman
 EOF
 
 # Remove default user and group
