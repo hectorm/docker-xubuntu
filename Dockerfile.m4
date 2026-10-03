@@ -413,6 +413,7 @@ RUN <<-EOF
 		fonts-noto-mono \
 		fonts-ubuntu \
 		fuse3 \
+		gir1.2-atspi-2.0 \
 		git \
 		gnome-keyring \
 		gtk2-engines-pixbuf \
