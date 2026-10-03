@@ -154,6 +154,7 @@ RUN <<-EOF
 		-D TVNC_USEPAM=1 \
 		-D TVNC_GLX=1 \
 		-D TVNC_NVCONTROL=1 \
+		-D XORG_DRI_DRIVER_PATH="/usr/lib/$(dpkg-architecture -qDEB_HOST_MULTIARCH)/dri" \
 		../
 	make -j"$(nproc)" install
 EOF
@@ -235,6 +236,35 @@ RUN <<-EOF
 	make -j"$(nproc)" install
 EOF
 
+# Build noVNC
+ARG NOVNC_TREEISH=v1.7.0
+ARG NOVNC_REMOTE=https://github.com/novnc/noVNC.git
+WORKDIR /tmp/novnc/
+RUN <<-EOF
+	git clone "${NOVNC_REMOTE:?}" ./
+	git checkout "${NOVNC_TREEISH:?}"
+	git submodule update --init --recursive
+EOF
+RUN <<-EOF
+	mkdir /opt/noVNC/
+	cp -a ./app/ ./core/ ./vendor/ ./vnc.html ./vnc_lite.html ./defaults.json ./mandatory.json ./package.json /opt/noVNC/
+	ln -s ./vnc.html /opt/noVNC/index.html
+EOF
+
+# Build websockify
+ARG WEBSOCKIFY_TREEISH=v0.13.0
+ARG WEBSOCKIFY_REMOTE=https://github.com/novnc/websockify.git
+WORKDIR /tmp/websockify/
+RUN <<-EOF
+	git clone "${WEBSOCKIFY_REMOTE:?}" ./
+	git checkout "${WEBSOCKIFY_TREEISH:?}"
+	git submodule update --init --recursive
+EOF
+RUN <<-EOF
+	mkdir /opt/websockify/
+	cp -a ./websockify/ /opt/websockify/
+EOF
+
 ##################################################
 ## "main" stage
 ##################################################
@@ -310,6 +340,7 @@ RUN <<-EOF
 		pkexec \
 		polkitd \
 		pulseaudio \
+		python3 \
 		runit \
 		tzdata \
 		udev \
@@ -476,6 +507,10 @@ RUN <<-EOF
 	ln -sv /opt/xrdp/etc/xdg/autostart/pulseaudio-xrdp.desktop /etc/xdg/autostart/pulseaudio-xrdp.desktop
 EOF
 
+# Copy noVNC and websockify builds
+COPY --from=build /opt/noVNC/ /opt/noVNC/
+COPY --from=build /opt/websockify/ /opt/websockify/
+
 # Environment
 ENV SVDIR=/etc/service/
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
@@ -489,6 +524,7 @@ ENV UNPRIVILEGED_USER_SHELL=/bin/bash
 ENV UNPRIVILEGED_USER_HOME=/home/user
 ENV SERVICE_XRDP_BOOTSTRAP_ENABLED=false
 ENV SERVICE_XORG_HEADLESS_ENABLED=false
+ENV SERVICE_NOVNC_ENABLED=false
 ENV XRDP_RSAKEYS_PATH=/etc/xrdp/rsakeys.ini
 ENV XRDP_TLS_KEY_PATH=/etc/xrdp/key.pem
 ENV XRDP_TLS_CRT_PATH=/etc/xrdp/cert.pem
@@ -555,6 +591,12 @@ RUN <<-EOF
 	ln -sv /etc/sv/xrdp-sesman "${SVDIR:?}"
 EOF
 
+# Copy PAM config
+COPY --chown=root:root ./config/pam.d/ /etc/pam.d/
+RUN <<-EOF
+	find /etc/pam.d/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+EOF
+
 # Copy SSH config
 COPY --chown=root:root ./config/ssh/ /etc/ssh/
 RUN <<-EOF
@@ -597,6 +639,13 @@ RUN <<-EOF
 	printf '%s\n' '@import url("file:///usr/share/themes/Greybird/gtk-4.0/gtk-dark.css");' > /usr/share/themes/Greybird-dark/gtk-4.0/gtk.css
 EOF
 
+# Copy TurboVNC config
+COPY --chown=root:root ./config/turbovnc/ /opt/TurboVNC/etc/
+RUN <<-EOF
+	find /opt/TurboVNC/etc/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+	find /opt/TurboVNC/etc/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
+EOF
+
 # Copy PulseAudio config
 COPY --chown=root:root ./config/pulse/ /etc/pulse/
 RUN <<-EOF
@@ -622,5 +671,7 @@ EOF
 EXPOSE 3322/tcp
 # RDP
 EXPOSE 3389/tcp
+# noVNC
+EXPOSE 6080/tcp
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/usr/local/bin/container-init"]

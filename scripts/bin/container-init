@@ -50,11 +50,16 @@ if ! getent passwd xrdp >/dev/null 2>&1; then
 fi
 
 # Set unprivileged user password
-if [ -n "${UNPRIVILEGED_USER_PASSWORD?}" ]; then
-	printf '%s' "${UNPRIVILEGED_USER_NAME:?}:${UNPRIVILEGED_USER_PASSWORD:?}" | chpasswd
+if ! printenv UNPRIVILEGED_USER_PASSWORD >/dev/null; then
+	printf '%s\n' 'UNPRIVILEGED_USER_PASSWORD is not set' 1>&2
+	exit 1
+fi
+if [ -n "${UNPRIVILEGED_USER_PASSWORD:+x}" ]; then
+	{ printf '%s:' "${UNPRIVILEGED_USER_NAME:?}"; printenv UNPRIVILEGED_USER_PASSWORD; } | chpasswd
 else
 	passwd -d "${UNPRIVILEGED_USER_NAME:?}"
 fi
+unset UNPRIVILEGED_USER_PASSWORD
 
 if [ -w "${UNPRIVILEGED_USER_HOME:?}" ]; then
 	# Copy /etc/skel/ to unprivileged user home if certain files do not exist
@@ -84,20 +89,58 @@ if [ ! -d /run/user/"${UNPRIVILEGED_USER_UID:?}"/ ]; then
 	chown "${UNPRIVILEGED_USER_NAME:?}:" /run/user/"${UNPRIVILEGED_USER_UID:?}"/
 fi
 
-# Disable glx module if /dev/dri/ does not exist
+# Disable glx module and GLX extension in Xvnc sessions if /dev/dri/ does not exist
 if [ ! -d /dev/dri/ ]; then
 	printf '%s\n' '"/dev/dri/" does not exist, glx module will be disabled' 1>&2
 	sed -i 's|Load \("glx"\)|Disable \1|g' /opt/xrdp/etc/X11/xrdp/xorg.conf
+	if grep -qx 'param=+extension' /opt/xrdp/etc/xrdp/sesman.ini; then
+		sed -i 's|^param=+extension$|param=-extension|' /opt/xrdp/etc/xrdp/sesman.ini
+	fi
+fi
+
+# Use for DRI3 in Xvnc sessions the first DRM render node that the unprivileged user can open, or disable it if none
+dri_allowlist=$(sed -n 's/^[[:space:]]*Option[[:space:]]*"DRMAllowList"[[:space:]]*"\([^"]*\)".*/\1/p' /opt/xrdp/etc/X11/xrdp/xorg.conf)
+dri3_node=; for node in /dev/dri/renderD*; do
+	[ -c "${node:?}" ] || continue
+	driver=$(readlink -f /sys/class/drm/"${node##*/}"/device/driver 2>/dev/null) || continue
+	case " ${dri_allowlist?} " in *" ${driver##*/} "*) ;; *) continue ;; esac
+	# shellcheck disable=SC2016
+	if setpriv --reuid="${UNPRIVILEGED_USER_UID:?}" --regid="${UNPRIVILEGED_USER_GID:?}" --init-groups \
+		sh -c 'exec 3<>"$1"' _ "${node:?}" 2>/dev/null; then
+		dri3_node=${node:?}
+		break
+	fi
+done
+if [ -z "${dri3_node?}" ]; then
+	printf '%s\n' 'No accessible DRM render node with a supported driver exists, DRI3 will be disabled in Xvnc sessions' 1>&2
+	if grep -qx 'param=-drinode' /opt/xrdp/etc/xrdp/sesman.ini; then
+		sed -i '/^param=-drinode$/{N;d}' /opt/xrdp/etc/xrdp/sesman.ini
+	fi
+elif grep -qx 'param=-drinode' /opt/xrdp/etc/xrdp/sesman.ini; then
+	sed -i "/^param=-drinode\$/{n;s|^param=.*\$|param=${dri3_node:?}|}" /opt/xrdp/etc/xrdp/sesman.ini
+fi
+
+# Make Xvnc sessions listen on the IPv4 loopback address if the IPv6 one does not exist
+if ! grep -q '^0\{31\}1 .* lo$' /proc/net/if_inet6 2>/dev/null; then
+	printf '%s\n' '"::1" does not exist, Xvnc sessions will listen on "127.0.0.1"' 1>&2
+	if grep -qx 'param=-ipv6' /opt/xrdp/etc/xrdp/sesman.ini; then
+		sed -i '/^param=-ipv6$/d' /opt/xrdp/etc/xrdp/sesman.ini
+	fi
 fi
 
 # Enable xrdp bootstrap service
-if [ "${SERVICE_XRDP_BOOTSTRAP_ENABLED:?}" = 'true' ] && [ ! -L "${SVDIR:?}"/xrdp-bootstrap ]; then
+if [ "${SERVICE_XRDP_BOOTSTRAP_ENABLED:-}" = 'true' ] && [ ! -L "${SVDIR:?}"/xrdp-bootstrap ]; then
 	ln -s /etc/sv/xrdp-bootstrap "${SVDIR:?}"
 fi
 
 # Enable headless X server service
-if [ "${SERVICE_XORG_HEADLESS_ENABLED:?}" = 'true' ] && [ ! -L "${SVDIR:?}"/xorg-headless ]; then
+if [ "${SERVICE_XORG_HEADLESS_ENABLED:-}" = 'true' ] && [ ! -L "${SVDIR:?}"/xorg-headless ]; then
 	ln -s /etc/sv/xorg-headless "${SVDIR:?}"
+fi
+
+# Enable noVNC service
+if [ "${SERVICE_NOVNC_ENABLED:-}" = 'true' ] && [ ! -L "${SVDIR:?}"/novnc ]; then
+	ln -s /etc/sv/novnc "${SVDIR:?}"
 fi
 
 # Enable udev services if sysfs is writable

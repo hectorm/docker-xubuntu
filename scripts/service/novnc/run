@@ -1,0 +1,43 @@
+#!/bin/sh
+
+set -eu
+
+sv start xrdp-sesman >/dev/null
+
+exec 2>&1
+
+# Create the shared Xvnc session or reconnect to it if it already exists
+if ! output=$(sed -zn 's/^UNPRIVILEGED_USER_PASSWORD=//p' /proc/1/environ | xrdp-sesrun -t Xvnc -b 24 -F 0 "${UNPRIVILEGED_USER_NAME:?}"); then
+	printf '%s\n' "${output?}"
+	exit 1
+fi
+display=$(printf '%s\n' "${output:?}" | sed -n 's/^ok display=:\([0-9]\{1,\}\).*$/\1/p')
+port=$((5900 + ${display:?}))
+
+# Xvnc listens on the IPv6 loopback address unless it does not exist
+if grep -qx 'param=-ipv6' /opt/xrdp/etc/xrdp/sesman.ini; then
+	host='[::1]'
+	listen='::'
+else
+	host='127.0.0.1'
+	listen='0.0.0.0'
+fi
+
+# Restart this service when the session ends
+( while sleep 5 && grep -qsa websockify /proc/"$$"/cmdline; do
+	if ! pgrep -u "${UNPRIVILEGED_USER_NAME:?}" -f "Xvnc :${display:?} " >/dev/null; then
+		kill "$$"
+		break
+	fi
+done ) &
+
+# Serve noVNC and proxy its connections to the session as the same user and groups as xrdp
+user=$(sed -n 's/^runtime_user=//p' /opt/xrdp/etc/xrdp/xrdp.ini)
+group=$(sed -n 's/^runtime_group=//p' /opt/xrdp/etc/xrdp/xrdp.ini)
+exec setpriv --reuid="${user:-root}" --regid="${group:-root}" --init-groups env PYTHONPATH=/opt/websockify python3 \
+	-W "ignore:no 'numpy' module" -m websockify \
+	--web /opt/noVNC/ \
+	--cert "${XRDP_TLS_CRT_PATH:?}" \
+	--key "${XRDP_TLS_KEY_PATH:?}" \
+	--ssl-only \
+	"${listen:?}:6080" "${host:?}:${port:?}"

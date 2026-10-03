@@ -6,5 +6,5 @@ sv start xrdp >/dev/null
 sv start xrdp-sesman >/dev/null
 
 exec 2>&1
-xrdp-sesrun -p "${UNPRIVILEGED_USER_PASSWORD?}" "${UNPRIVILEGED_USER_NAME:?}"
+sed -zn 's/^UNPRIVILEGED_USER_PASSWORD=//p' /proc/1/environ | xrdp-sesrun -t Xorg -F 0 "${UNPRIVILEGED_USER_NAME:?}"
 exec chpst -b xrdp-bootstrap perl -MPOSIX -e 'pause()'

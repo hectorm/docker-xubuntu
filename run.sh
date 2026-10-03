@@ -45,10 +45,14 @@ printf '%s\n' "Creating \"${CONTAINER_NAME:?}\" container..."
 	--shm-size 2g \
 	--publish 3322:3322/tcp \
 	--publish 3389:3389/tcp \
+	--publish 6080:6080/tcp \
 	--mount type=tmpfs,dst=/etc/xrdp/ \
 	--mount type=tmpfs,dst=/home/ \
 	--mount type=tmpfs,dst=/tmp/ \
 	--mount type=tmpfs,dst=/run/ \
+	--env SERVICE_XRDP_BOOTSTRAP_ENABLED \
+	--env SERVICE_XORG_HEADLESS_ENABLED \
+	--env SERVICE_NOVNC_ENABLED \
 	${CONTAINER_DEVICES?} \
 	"${IMAGE_NAME:?}" "$@" >/dev/null
 

@@ -36,10 +36,11 @@ services:
       - '/dev/dri:/dev/dri'
 ```
 
-> You will be able to connect to the container via SSH through 3322/TCP port and RDP through 3389/TCP port.
+> You will be able to connect to the container via SSH through 3322/TCP port, RDP through 3389/TCP port and, if enabled,
+> noVNC through 6080/TCP port (HTTPS).
 
 > **Important:** some software (like Firefox) need the shared memory to be increased, if you
-encounter any problem related to this you may use the `--shm-size` option.
+> encounter any problem related to this you may use the `--shm-size` option.
 
 ## Environment variables
 
@@ -51,6 +52,7 @@ encounter any problem related to this you may use the `--shm-size` option.
 * `UNPRIVILEGED_USER_SHELL`: unprivileged user shell (`/bin/bash` by default).
 * `SERVICE_XRDP_BOOTSTRAP_ENABLED`: enable xrdp bootstrap service, initialises user session on startup (`false` by default).
 * `SERVICE_XORG_HEADLESS_ENABLED`: enable headless X server service (`false` by default).
+* `SERVICE_NOVNC_ENABLED`: enable noVNC service (`false` by default).
 
 ## License
 
