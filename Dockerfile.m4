@@ -456,6 +456,7 @@ RUN <<-EOF
 		usbutils \
 		vulkan-tools \
 		wget \
+		wmctrl \
 		x11-utils \
 		x11-xkb-utils \
 		xauth \
