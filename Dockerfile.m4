@@ -274,11 +274,7 @@ m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:26.04]], [[FROM dock
 SHELL ["/bin/sh", "-euc"]
 
 # Copy APT config
-COPY --chown=root:root ./config/apt/preferences.d/ /etc/apt/preferences.d/
-RUN <<-EOF
-	find /etc/apt/preferences.d/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-	find /etc/apt/preferences.d/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
-EOF
+COPY --chown=root:root --chmod=u=rwX,go=rX ./config/apt/preferences.d/ /etc/apt/preferences.d/
 
 # Install base packages
 RUN <<-EOF
@@ -580,10 +576,8 @@ RUN <<-EOF
 EOF
 
 # Copy and enable services
-COPY --chown=root:root ./scripts/service/ /etc/sv/
+COPY --chown=root:root --chmod=0755 ./scripts/service/ /etc/sv/
 RUN <<-EOF
-	find /etc/sv/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-	find /etc/sv/ -type f -not -perm 0755 -exec chmod 0755 '{}' ';'
 	ln -sv /etc/sv/dbus-daemon "${SVDIR:?}"
 	ln -sv /etc/sv/sshd "${SVDIR:?}"
 	ln -sv /etc/sv/xrdp "${SVDIR:?}"
@@ -591,43 +585,23 @@ RUN <<-EOF
 EOF
 
 # Copy PAM config
-COPY --chown=root:root ./config/pam.d/ /etc/pam.d/
-RUN <<-EOF
-	find /etc/pam.d/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
-EOF
+COPY --chown=root:root --chmod=u=rwX,go=rX ./config/pam.d/ /etc/pam.d/
 
 # Copy SSH config
-COPY --chown=root:root ./config/ssh/ /etc/ssh/
-RUN <<-EOF
-	find /etc/ssh/sshd_config -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
-EOF
+COPY --chown=root:root --chmod=u=rwX,go=rX ./config/ssh/ /etc/ssh/
 
 # Copy X11 config
-COPY --chown=root:root ./config/X11/ /etc/X11/
-RUN <<-EOF
-	find /etc/X11/xorg.conf.d/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-	find /etc/X11/xorg.conf.d/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
-EOF
+COPY --chown=root:root --chmod=u=rwX,go=rX ./config/X11/ /etc/X11/
 
 # Copy xrdp config
-COPY --chown=root:root ./config/xrdp/ /opt/xrdp/etc/xrdp/
-RUN <<-EOF
-	find /opt/xrdp/etc/xrdp/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-	find /opt/xrdp/etc/xrdp/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
-	find /opt/xrdp/etc/xrdp/ -type f -name '*.sh' -not -perm 0755 -exec chmod 0755 '{}' ';'
-EOF
+COPY --chown=root:root --chmod=u=rwX,go=rX ./config/xrdp/ /opt/xrdp/etc/xrdp/
 
 # Copy XDG config
-COPY --chown=root:root ./config/xdg/ /etc/xdg/
-RUN <<-EOF
-	find /etc/xdg/xdg-docker/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-	find /etc/xdg/xdg-docker/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
-EOF
+COPY --chown=root:root --chmod=u=rwX,go=rX ./config/xdg/ /etc/xdg/
 
 # Copy GSettings schema overrides
-COPY --chown=root:root ./config/glib-2.0/schemas/ /usr/share/glib-2.0/schemas/
+COPY --chown=root:root --chmod=u=rwX,go=rX ./config/glib-2.0/schemas/ /usr/share/glib-2.0/schemas/
 RUN <<-EOF
-	find /usr/share/glib-2.0/schemas/ -type f -name '*.override' -not -perm 0644 -exec chmod 0644 '{}' ';'
 	glib-compile-schemas /usr/share/glib-2.0/schemas/
 EOF
 
@@ -646,32 +620,16 @@ RUN <<-EOF
 EOF
 
 # Copy TurboVNC config
-COPY --chown=root:root ./config/turbovnc/ /opt/TurboVNC/etc/
-RUN <<-EOF
-	find /opt/TurboVNC/etc/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-	find /opt/TurboVNC/etc/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
-EOF
+COPY --chown=root:root --chmod=u=rwX,go=rX ./config/turbovnc/ /opt/TurboVNC/etc/
 
 # Copy PulseAudio config
-COPY --chown=root:root ./config/pulse/ /etc/pulse/
-RUN <<-EOF
-	find /etc/pulse/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-	find /etc/pulse/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
-EOF
+COPY --chown=root:root --chmod=u=rwX,go=rX ./config/pulse/ /etc/pulse/
 
 # Copy Firefox config
-COPY --chown=root:root ./config/firefox/ /etc/firefox/
-RUN <<-EOF
-	find /etc/firefox/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-	find /etc/firefox/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
-EOF
+COPY --chown=root:root --chmod=u=rwX,go=rX ./config/firefox/ /etc/firefox/
 
 # Copy scripts
-COPY --chown=root:root ./scripts/bin/ /usr/local/bin/
-RUN <<-EOF
-	find /usr/local/bin/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
-	find /usr/local/bin/ -type f -not -perm 0755 -exec chmod 0755 '{}' ';'
-EOF
+COPY --chown=root:root --chmod=0755 ./scripts/bin/ /usr/local/bin/
 
 # SSH
 EXPOSE 3322/tcp
