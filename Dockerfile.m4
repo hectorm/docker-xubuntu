@@ -274,7 +274,7 @@ m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:26.04]], [[FROM dock
 SHELL ["/bin/sh", "-euc"]
 
 # Copy APT config
-COPY --chown=root:root --chmod=u=rwX,go=rX ./config/apt/preferences.d/ /etc/apt/preferences.d/
+COPY --chown=root:root --chmod=a+rX,u+w,go-w ./config/apt/preferences.d/ /etc/apt/preferences.d/
 
 # Install base packages
 RUN <<-EOF
@@ -585,22 +585,22 @@ RUN <<-EOF
 EOF
 
 # Copy PAM config
-COPY --chown=root:root --chmod=u=rwX,go=rX ./config/pam.d/ /etc/pam.d/
+COPY --chown=root:root --chmod=a+rX,u+w,go-w ./config/pam.d/ /etc/pam.d/
 
 # Copy SSH config
-COPY --chown=root:root --chmod=u=rwX,go=rX ./config/ssh/ /etc/ssh/
+COPY --chown=root:root --chmod=a+rX,u+w,go-w ./config/ssh/ /etc/ssh/
 
 # Copy X11 config
-COPY --chown=root:root --chmod=u=rwX,go=rX ./config/X11/ /etc/X11/
+COPY --chown=root:root --chmod=a+rX,u+w,go-w ./config/X11/ /etc/X11/
 
 # Copy xrdp config
-COPY --chown=root:root --chmod=u=rwX,go=rX ./config/xrdp/ /opt/xrdp/etc/xrdp/
+COPY --chown=root:root --chmod=a+rX,u+w,go-w ./config/xrdp/ /opt/xrdp/etc/xrdp/
 
 # Copy XDG config
-COPY --chown=root:root --chmod=u=rwX,go=rX ./config/xdg/ /etc/xdg/
+COPY --chown=root:root --chmod=a+rX,u+w,go-w ./config/xdg/ /etc/xdg/
 
 # Copy GSettings schema overrides
-COPY --chown=root:root --chmod=u=rwX,go=rX ./config/glib-2.0/schemas/ /usr/share/glib-2.0/schemas/
+COPY --chown=root:root --chmod=a+rX,u+w,go-w ./config/glib-2.0/schemas/ /usr/share/glib-2.0/schemas/
 RUN <<-EOF
 	glib-compile-schemas /usr/share/glib-2.0/schemas/
 EOF
@@ -620,13 +620,13 @@ RUN <<-EOF
 EOF
 
 # Copy TurboVNC config
-COPY --chown=root:root --chmod=u=rwX,go=rX ./config/turbovnc/ /opt/TurboVNC/etc/
+COPY --chown=root:root --chmod=a+rX,u+w,go-w ./config/turbovnc/ /opt/TurboVNC/etc/
 
 # Copy PulseAudio config
-COPY --chown=root:root --chmod=u=rwX,go=rX ./config/pulse/ /etc/pulse/
+COPY --chown=root:root --chmod=a+rX,u+w,go-w ./config/pulse/ /etc/pulse/
 
 # Copy Firefox config
-COPY --chown=root:root --chmod=u=rwX,go=rX ./config/firefox/ /etc/firefox/
+COPY --chown=root:root --chmod=a+rX,u+w,go-w ./config/firefox/ /etc/firefox/
 
 # Copy scripts
 COPY --chown=root:root --chmod=0755 ./scripts/bin/ /usr/local/bin/
