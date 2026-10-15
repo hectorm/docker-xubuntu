@@ -1,0 +1,5 @@
+#!/bin/sh
+
+set -eu
+
+pgrep -u "${UNPRIVILEGED_USER_NAME:?}" -x Xorg >/dev/null

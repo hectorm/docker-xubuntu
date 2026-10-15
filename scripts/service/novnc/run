@@ -4,6 +4,11 @@ set -eu
 
 sv start xrdp-sesman >/dev/null
 
+# Wait for the xrdp bootstrap session if enabled
+if [ -L "${SVDIR:?}"/xrdp-bootstrap ]; then
+	sv start xrdp-bootstrap >/dev/null
+fi
+
 exec 2>&1
 
 # Create the shared Xvnc session or reconnect to it if it already exists
