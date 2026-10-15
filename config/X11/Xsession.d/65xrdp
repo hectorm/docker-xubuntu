@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if xdpyinfo | grep -q VNC-EXTENSION; then
+	export XRDP_SESSION_TYPE=Xvnc
+else
+	export XRDP_SESSION_TYPE=Xorg
+fi
