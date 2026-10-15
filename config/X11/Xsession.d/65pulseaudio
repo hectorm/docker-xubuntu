@@ -1,0 +1,3 @@
+#!/bin/sh
+
+export PULSE_RUNTIME_PATH="${XDG_RUNTIME_DIR:?}"/pulse-"${DISPLAY#*:}"
