@@ -379,10 +379,8 @@ m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 EOF
 
 # Add Mozilla repository
-RUN <<-EOF
-	curl --proto '=https' --tlsv1.3 -sSf 'https://packages.mozilla.org/apt/repo-signing-key.gpg' | gpg --dearmor -o /etc/apt/trusted.gpg.d/mozilla.gpg
-	printf '%s\n' 'deb [signed-by=/etc/apt/trusted.gpg.d/mozilla.gpg] https://packages.mozilla.org/apt mozilla main' > /etc/apt/sources.list.d/mozilla.list
-EOF
+COPY --chown=root:root --chmod=a+rX,u+w,go-w ./config/apt/keyrings/ /etc/apt/keyrings/
+COPY --chown=root:root --chmod=a+rX,u+w,go-w ./config/apt/sources.list.d/ /etc/apt/sources.list.d/
 
 # Install extra packages
 RUN <<-EOF
