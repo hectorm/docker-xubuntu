@@ -5,6 +5,11 @@ set -eu
 # Remove leftover files
 find /tmp/ /run/ -mindepth 1 -xdev -delete ||:
 
+# Generate machine ID if it does not exist
+if [ ! -s /etc/machine-id ]; then
+	dbus-uuidgen > /etc/machine-id
+fi
+
 # Add GPU devices groups to additional groups
 for dev in /dev/dri/*; do
 	[ -c "${dev:?}" ] || continue

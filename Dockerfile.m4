@@ -533,7 +533,7 @@ EOF
 
 # Setup D-Bus
 RUN <<-EOF
-	dbus-uuidgen > /etc/machine-id
+	: > /etc/machine-id
 	ln -sf /etc/machine-id /var/lib/dbus/machine-id
 	find /usr/share/dbus-1/system-services/ -type f -name '*.service' -exec grep -qx 'Exec=/bin/false' '{}' ';' -print -delete
 EOF
