@@ -359,7 +359,7 @@ m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
 		xserver-xorg-video-nvidia-"${nvidia_branch:?}"
 ]])m4_dnl
 	rm -rf /var/lib/apt/lists/*
-	rm -f /etc/ssh/ssh_host_*_key
+	rm -f /etc/ssh/ssh_host_*
 EOF
 
 # Add Mozilla repository
