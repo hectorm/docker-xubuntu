@@ -2,6 +2,9 @@
 
 set -eu
 
+# Default unprivileged user home to /home/${UNPRIVILEGED_USER_NAME}
+export UNPRIVILEGED_USER_HOME="${UNPRIVILEGED_USER_HOME:-/home/${UNPRIVILEGED_USER_NAME:?}}"
+
 # Remove leftover files
 find /tmp/ /run/ -mindepth 1 -xdev -delete ||:
 

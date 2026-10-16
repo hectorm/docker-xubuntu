@@ -50,6 +50,7 @@ services:
 * `UNPRIVILEGED_USER_PASSWORD`: unprivileged user password (`password` by default).
 * `UNPRIVILEGED_USER_GROUPS`: comma-separated list of additional GIDs for the unprivileged user (none by default).
 * `UNPRIVILEGED_USER_SHELL`: unprivileged user shell (`/bin/bash` by default).
+* `UNPRIVILEGED_USER_HOME`: unprivileged user home directory (`/home/${UNPRIVILEGED_USER_NAME}` by default).
 * `SERVICE_XRDP_BOOTSTRAP_ENABLED`: enable xrdp bootstrap service, initialises user session on startup (`false` by default).
 * `SERVICE_XORG_HEADLESS_ENABLED`: enable headless X server service (`false` by default).
 * `SERVICE_NOVNC_ENABLED`: enable noVNC service (`false` by default).
