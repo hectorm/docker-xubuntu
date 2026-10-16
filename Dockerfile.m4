@@ -361,17 +361,18 @@ m4_ifelse(ENABLE_INTEL_SUPPORT, 1, [[m4_dnl
 		xserver-xorg-video-intel
 ]])m4_dnl
 m4_ifelse(ENABLE_NVIDIA_SUPPORT, 1, [[m4_dnl
+	nvidia_branch="$(apt-cache pkgnames libnvidia-gl- | grep -Eo '[0-9]+$' | sort -n | tail -1)"
 	apt-get install -y --no-install-recommends -o APT::Immediate-Configure=0 \
 		libdrm-nouveau2 \
-		libnvidia-cfg1-610 \
-		libnvidia-compute-610 \
-		libnvidia-decode-610 \
-		libnvidia-encode-610 \
-		libnvidia-extra-610 \
-		libnvidia-fbc1-610 \
-		libnvidia-gl-610 \
+		libnvidia-cfg1-"${nvidia_branch:?}" \
+		libnvidia-compute-"${nvidia_branch:?}" \
+		libnvidia-decode-"${nvidia_branch:?}" \
+		libnvidia-encode-"${nvidia_branch:?}" \
+		libnvidia-extra-"${nvidia_branch:?}" \
+		libnvidia-fbc1-"${nvidia_branch:?}" \
+		libnvidia-gl-"${nvidia_branch:?}" \
 		xserver-xorg-video-nouveau \
-		xserver-xorg-video-nvidia-610
+		xserver-xorg-video-nvidia-"${nvidia_branch:?}"
 ]])m4_dnl
 	rm -rf /var/lib/apt/lists/*
 	rm -f /etc/ssh/ssh_host_*_key
