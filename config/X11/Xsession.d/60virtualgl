@@ -3,7 +3,7 @@
 if [ -z "${VGL_DISPLAY-}" ]; then
 	# Try to use the EGL backend
 	for card in /dev/dri/card*; do
-		if /opt/VirtualGL/bin/eglinfo -B "${card:?}" 2>/dev/null; then
+		if /opt/VirtualGL/bin/eglinfo -B "${card:?}" >/dev/null 2>&1; then
 			export VGL_DISPLAY="${card:?}"
 			break
 		fi
