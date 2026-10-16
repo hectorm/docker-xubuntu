@@ -199,7 +199,7 @@ openssl x509 -in "${XRDP_TLS_CRT_PATH:?}" -noout -fingerprint -sha1
 openssl x509 -in "${XRDP_TLS_CRT_PATH:?}" -noout -fingerprint -sha256
 
 # Dump environment variables
-env | grep -Ev '^(PWD|OLDPWD|HOME|USER|SHELL|TERM|([^=]*(PASSWORD|SECRET)[^=]*))=' | sort > /etc/environment
+env -0 | grep -zPv '^(PWD|OLDPWD|HOME|USER|SHELL|TERM|([^=]*_)?(PASSWORD|PASSWD|PASS|SECRET|TOKEN|KEY))=|\n' | tr '\0' '\n' | sort > /etc/environment
 
 # Start runit
 exec runsvdir -P "${SVDIR:?}"
