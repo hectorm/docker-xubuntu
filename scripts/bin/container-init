@@ -77,12 +77,13 @@ fi
 if [ -w "${UNPRIVILEGED_USER_HOME:?}" ]; then
 	# Copy /etc/skel/ to unprivileged user home if certain files do not exist
 	if [ ! -e "${UNPRIVILEGED_USER_HOME:?}"/.profile ]; then
-		cp -aT /etc/skel/ "${UNPRIVILEGED_USER_HOME:?}" ||:
-		find /etc/skel/ -mindepth 1 -exec sh -c 'chown "$1" "$2/${3#/etc/skel/}"' _ "${UNPRIVILEGED_USER_NAME:?}:${UNPRIVILEGED_USER_GID:?}" "${UNPRIVILEGED_USER_HOME:?}" '{}' ';'
+		cp -aT --remove-destination /etc/skel/ "${UNPRIVILEGED_USER_HOME:?}" ||:
+		find /etc/skel/ -mindepth 1 -exec sh -c 'chown -h "$1" "$2/${3#/etc/skel/}"' _ "${UNPRIVILEGED_USER_NAME:?}:${UNPRIVILEGED_USER_GID:?}" "${UNPRIVILEGED_USER_HOME:?}" '{}' ';'
 	fi
 
 	# Create an empty Xauthority file if it does not exist
 	if [ ! -e "${UNPRIVILEGED_USER_HOME:?}"/.Xauthority ]; then
+		rm -f "${UNPRIVILEGED_USER_HOME:?}"/.Xauthority
 		install -m 600 -o "${UNPRIVILEGED_USER_NAME:?}" -g "${UNPRIVILEGED_USER_GID:?}" /dev/null "${UNPRIVILEGED_USER_HOME:?}"/.Xauthority
 	fi
 
