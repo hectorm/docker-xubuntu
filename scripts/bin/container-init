@@ -188,6 +188,7 @@ fi
 # Generate RDP certificate if it does not exist
 if [ ! -f "${XRDP_TLS_KEY_PATH:?}" ] || [ ! -f "${XRDP_TLS_CRT_PATH:?}" ]; then
 	FQDN=$(hostname --fqdn)
+	CN=$(printf '%.64s' "${FQDN:?}")
 
 	mkdir -p "$(dirname "${XRDP_TLS_KEY_PATH:?}")"
 	(umask 077 \
@@ -198,7 +199,7 @@ if [ ! -f "${XRDP_TLS_KEY_PATH:?}" ] || [ ! -f "${XRDP_TLS_CRT_PATH:?}" ]; then
 
 	mkdir -p "$(dirname "${XRDP_TLS_CRT_PATH:?}")"
 	(umask 022 \
-		&& openssl req -x509 -sha256 -days 3650 -subj "/CN=${FQDN:?}" -addext "subjectAltName=DNS:${FQDN:?}" -key "${XRDP_TLS_KEY_PATH:?}" > "${XRDP_TLS_CRT_PATH:?}" \
+		&& openssl req -x509 -sha256 -days 3650 -subj "/CN=${CN:?}" -addext "subjectAltName=DNS:${FQDN:?}" -key "${XRDP_TLS_KEY_PATH:?}" > "${XRDP_TLS_CRT_PATH:?}" \
 	) >/dev/null
 fi
 
