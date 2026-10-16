@@ -621,4 +621,4 @@ EXPOSE 3389/tcp
 # noVNC
 EXPOSE 6080/tcp
 
-ENTRYPOINT ["/usr/bin/catatonit", "--", "/usr/local/bin/container-init"]
+ENTRYPOINT ["/usr/bin/catatonit", "-g", "--", "/usr/local/bin/container-init"]
