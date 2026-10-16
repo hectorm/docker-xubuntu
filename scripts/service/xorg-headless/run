@@ -3,4 +3,4 @@
 set -eu
 
 exec 2>&1
-exec /usr/lib/xorg/Xorg -noreset -nolisten tcp -logfile /var/log/xorg-headless.log :0.0
+exec /usr/lib/xorg/Xorg -configdir /etc/X11/xorg-headless.conf.d/ -noreset -nolisten tcp -logfile /var/log/xorg-headless.log :0.0
