@@ -9,6 +9,7 @@ M4 := $(shell command -v m4 2>/dev/null)
 
 DISTDIR := ./dist
 DOCKERFILE_TEMPLATE := ./Dockerfile.m4
+DOCKERFILE_DEPS := $(shell find ./config/ ./scripts/ 2>/dev/null)
 
 IMAGE_REGISTRY := docker.io
 IMAGE_NAMESPACE := hectorm
@@ -51,7 +52,7 @@ all: save-native-image
 .PHONY: build-native-image
 build-native-image: $(IMAGE_NATIVE_DOCKERFILE)
 
-$(IMAGE_NATIVE_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
+$(IMAGE_NATIVE_DOCKERFILE): $(DOCKERFILE_TEMPLATE) $(DOCKERFILE_DEPS)
 	mkdir -p '$(DISTDIR)'
 	'$(M4)' \
 		--prefix-builtins \
@@ -70,7 +71,7 @@ build-cross-images: build-amd64-image build-arm64v8-image
 .PHONY: build-amd64-image
 build-amd64-image: $(IMAGE_AMD64_DOCKERFILE)
 
-$(IMAGE_AMD64_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
+$(IMAGE_AMD64_DOCKERFILE): $(DOCKERFILE_TEMPLATE) $(DOCKERFILE_DEPS)
 	mkdir -p '$(DISTDIR)'
 	'$(M4)' \
 		--prefix-builtins \
@@ -88,7 +89,7 @@ $(IMAGE_AMD64_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 .PHONY: build-arm64v8-image
 build-arm64v8-image: $(IMAGE_ARM64V8_DOCKERFILE)
 
-$(IMAGE_ARM64V8_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
+$(IMAGE_ARM64V8_DOCKERFILE): $(DOCKERFILE_TEMPLATE) $(DOCKERFILE_DEPS)
 	mkdir -p '$(DISTDIR)'
 	'$(M4)' \
 		--prefix-builtins \
