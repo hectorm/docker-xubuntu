@@ -61,6 +61,11 @@ else
 fi
 unset UNPRIVILEGED_USER_PASSWORD
 
+# Create unprivileged user home if it does not exist
+if [ ! -e "${UNPRIVILEGED_USER_HOME:?}" ]; then
+	mkdir -p "${UNPRIVILEGED_USER_HOME:?}"
+fi
+
 if [ -w "${UNPRIVILEGED_USER_HOME:?}" ]; then
 	# Copy /etc/skel/ to unprivileged user home if certain files do not exist
 	if [ ! -e "${UNPRIVILEGED_USER_HOME:?}"/.profile ]; then
