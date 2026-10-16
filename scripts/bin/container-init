@@ -17,6 +17,7 @@ fi
 for dev in /dev/dri/*; do
 	[ -c "${dev:?}" ] || continue
 	gid=$(stat -c '%g' "${dev:?}")
+	[ "${gid:?}" -ne 0 ] || continue
 	uug=${UNPRIVILEGED_USER_GROUPS?}
 	UNPRIVILEGED_USER_GROUPS="${uug:+${uug:?},}${gid:?}"
 done
