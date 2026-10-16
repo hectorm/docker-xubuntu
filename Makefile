@@ -191,6 +191,7 @@ push-arm64v8-image:
 	$(call push_image,$(IMAGE_NAME):$(IMAGE_VERSION)-arm64v8)
 	$(call push_image,$(IMAGE_NAME):latest-arm64v8)
 
+.PHONY: push-cross-manifest
 push-cross-manifest:
 	$(call push_cross_manifest,$(IMAGE_NAME):$(IMAGE_VERSION),$(IMAGE_NAME):$(IMAGE_VERSION))
 	$(call push_cross_manifest,$(IMAGE_NAME):latest,$(IMAGE_NAME):latest)
