@@ -76,22 +76,25 @@ if [ ! -e "${UNPRIVILEGED_USER_HOME:?}" ]; then
 fi
 
 if [ -w "${UNPRIVILEGED_USER_HOME:?}" ]; then
+	# Set unprivileged user home owner
+	if [ "$(stat -c '%u' "${UNPRIVILEGED_USER_HOME:?}")" != "${UNPRIVILEGED_USER_UID:?}" ]; then
+		chown "${UNPRIVILEGED_USER_NAME:?}:${UNPRIVILEGED_USER_GID:?}" "${UNPRIVILEGED_USER_HOME:?}"
+	fi
+
 	# Copy /etc/skel/ to unprivileged user home if certain files do not exist
 	if [ ! -e "${UNPRIVILEGED_USER_HOME:?}"/.profile ]; then
-		cp -aT --remove-destination /etc/skel/ "${UNPRIVILEGED_USER_HOME:?}" ||:
-		find /etc/skel/ -mindepth 1 -exec sh -c 'chown -h "$1" "$2/${3#/etc/skel/}"' _ "${UNPRIVILEGED_USER_NAME:?}:${UNPRIVILEGED_USER_GID:?}" "${UNPRIVILEGED_USER_HOME:?}" '{}' ';'
+		setpriv --reuid="${UNPRIVILEGED_USER_UID:?}" --regid="${UNPRIVILEGED_USER_GID:?}" --init-groups \
+			cp -aT --remove-destination /etc/skel/ "${UNPRIVILEGED_USER_HOME:?}" ||:
 	fi
 
 	# Create an empty Xauthority file if it does not exist
 	if [ ! -e "${UNPRIVILEGED_USER_HOME:?}"/.Xauthority ]; then
-		rm -f "${UNPRIVILEGED_USER_HOME:?}"/.Xauthority
-		install -m 600 -o "${UNPRIVILEGED_USER_NAME:?}" -g "${UNPRIVILEGED_USER_GID:?}" /dev/null "${UNPRIVILEGED_USER_HOME:?}"/.Xauthority
+		# shellcheck disable=SC2016
+		setpriv --reuid="${UNPRIVILEGED_USER_UID:?}" --regid="${UNPRIVILEGED_USER_GID:?}" --init-groups \
+			sh -c 'rm -f "$1" && install -m 600 /dev/null "$1"' _ "${UNPRIVILEGED_USER_HOME:?}"/.Xauthority
 	fi
 
 	# Set unprivileged user home permissions
-	if [ "$(stat -c '%u' "${UNPRIVILEGED_USER_HOME:?}")" != "${UNPRIVILEGED_USER_UID:?}" ]; then
-		chown "${UNPRIVILEGED_USER_NAME:?}:${UNPRIVILEGED_USER_GID:?}" "${UNPRIVILEGED_USER_HOME:?}"
-	fi
 	if [ "$(stat -c '%a' "${UNPRIVILEGED_USER_HOME:?}")" != '750' ]; then
 		chmod 750 "${UNPRIVILEGED_USER_HOME:?}"
 	fi
