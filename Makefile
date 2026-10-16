@@ -93,6 +93,8 @@ $(IMAGE_ARM64V8_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 	'$(M4)' \
 		--prefix-builtins \
 		--define=CROSS_ARCH=arm64v8 \
+		--define=ENABLE_AMD_SUPPORT=1 \
+		--define=ENABLE_NVIDIA_SUPPORT=1 \
 		'$(DOCKERFILE_TEMPLATE)' > '$@'
 	'$(DOCKER)' build $(IMAGE_BUILD_OPTS) \
 		--tag '$(IMAGE_NAME):$(IMAGE_VERSION)-arm64v8' \
