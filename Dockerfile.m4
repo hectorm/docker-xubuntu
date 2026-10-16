@@ -313,7 +313,7 @@ RUN <<-EOF
 		mesa-va-drivers \
 		mesa-vdpau-drivers \
 		mesa-vulkan-drivers \
-		ocl-icd-opencl-dev \
+		ocl-icd-libopencl1 \
 		openssh-server \
 		openssl \
 		perl-base \
