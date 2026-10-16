@@ -195,6 +195,11 @@ if [ ! -f "${XRDP_TLS_KEY_PATH:?}" ] || [ ! -f "${XRDP_TLS_CRT_PATH:?}" ]; then
 	) >/dev/null
 fi
 
+# Create symlinks for xrdp RSA keys and TLS certificates
+ln -sf "${XRDP_RSAKEYS_PATH:?}" /opt/xrdp/etc/xrdp/rsakeys.ini
+ln -sf "${XRDP_TLS_KEY_PATH:?}" /opt/xrdp/etc/xrdp/key.pem
+ln -sf "${XRDP_TLS_CRT_PATH:?}" /opt/xrdp/etc/xrdp/cert.pem
+
 # Run xrdp as root if the xrdp user cannot read the RDP keys
 for file in "${XRDP_RSAKEYS_PATH:?}" "${XRDP_TLS_KEY_PATH:?}" "${XRDP_TLS_CRT_PATH:?}"; do
 	if ! setpriv --reuid=xrdp --regid=xrdp --init-groups test -r "${file:?}"; then

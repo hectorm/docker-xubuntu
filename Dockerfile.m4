@@ -544,13 +544,6 @@ RUN <<-EOF
 	if getent group "${UNPRIVILEGED_USER_GID:?}" >/dev/null 2>&1; then groupdel "$(getent group "${UNPRIVILEGED_USER_GID:?}" | cut -d: -f1)"; fi
 EOF
 
-# Create symlinks for xrdp RSA keys and TLS certificates
-RUN <<-EOF
-	ln -svf "${XRDP_RSAKEYS_PATH:?}" /opt/xrdp/etc/xrdp/rsakeys.ini
-	ln -svf "${XRDP_TLS_KEY_PATH:?}" /opt/xrdp/etc/xrdp/key.pem
-	ln -svf "${XRDP_TLS_CRT_PATH:?}" /opt/xrdp/etc/xrdp/cert.pem
-EOF
-
 # Forward logs to Docker log collector
 RUN <<-EOF
 	ln -svf /dev/stdout /var/log/xorg-headless.log
