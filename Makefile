@@ -16,7 +16,7 @@ IMAGE_NAMESPACE := hectorm
 IMAGE_PROJECT := xubuntu
 IMAGE_NAME := $(IMAGE_REGISTRY)/$(IMAGE_NAMESPACE)/$(IMAGE_PROJECT)
 ifeq ($(shell '$(GIT)' status --porcelain 2>/dev/null),)
-	IMAGE_GIT_TAG := $(shell '$(GIT)' tag --list --contains HEAD 2>/dev/null)
+	IMAGE_GIT_TAG := $(shell '$(GIT)' tag --list --points-at HEAD 2>/dev/null)
 	IMAGE_GIT_SHA := $(shell '$(GIT)' rev-parse --verify --short HEAD 2>/dev/null)
 	IMAGE_VERSION := $(if $(IMAGE_GIT_TAG),$(IMAGE_GIT_TAG),$(if $(IMAGE_GIT_SHA),$(IMAGE_GIT_SHA),nil))
 else
