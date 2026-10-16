@@ -90,9 +90,7 @@ ARG LIBJPEG_TURBO_TREEISH=3.2.0
 ARG LIBJPEG_TURBO_REMOTE=https://github.com/libjpeg-turbo/libjpeg-turbo.git
 WORKDIR /tmp/libjpeg-turbo/
 RUN <<-EOF
-	git clone "${LIBJPEG_TURBO_REMOTE:?}" ./
-	git checkout "${LIBJPEG_TURBO_TREEISH:?}"
-	git submodule update --init --recursive
+	git clone --depth 1 --revision="${LIBJPEG_TURBO_TREEISH:?}" --recurse-submodules --shallow-submodules "${LIBJPEG_TURBO_REMOTE:?}" ./
 EOF
 WORKDIR /tmp/libjpeg-turbo/build/
 RUN <<-EOF
@@ -111,9 +109,7 @@ ARG VIRTUALGL_TREEISH=3.1.5
 ARG VIRTUALGL_REMOTE=https://github.com/VirtualGL/virtualgl.git
 WORKDIR /tmp/virtualgl/
 RUN <<-EOF
-	git clone "${VIRTUALGL_REMOTE:?}" ./
-	git checkout "${VIRTUALGL_TREEISH:?}"
-	git submodule update --init --recursive
+	git clone --depth 1 --revision="${VIRTUALGL_TREEISH:?}" --recurse-submodules --shallow-submodules "${VIRTUALGL_REMOTE:?}" ./
 EOF
 WORKDIR /tmp/virtualgl/build/
 RUN <<-EOF
@@ -133,9 +129,7 @@ ARG TURBOVNC_TREEISH=3.3.1
 ARG TURBOVNC_REMOTE=https://github.com/TurboVNC/turbovnc.git
 WORKDIR /tmp/turbovnc/
 RUN <<-EOF
-	git clone "${TURBOVNC_REMOTE:?}" ./
-	git checkout "${TURBOVNC_TREEISH:?}"
-	git submodule update --init --recursive
+	git clone --depth 1 --revision="${TURBOVNC_TREEISH:?}" --recurse-submodules --shallow-submodules "${TURBOVNC_REMOTE:?}" ./
 EOF
 WORKDIR /tmp/turbovnc/build/
 RUN <<-EOF
@@ -164,9 +158,7 @@ ARG XRDP_TREEISH=v0.10.6.1
 ARG XRDP_REMOTE=https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp/
 RUN <<-EOF
-	git clone "${XRDP_REMOTE:?}" ./
-	git checkout "${XRDP_TREEISH:?}"
-	git submodule update --init --recursive
+	git clone --depth 1 --revision="${XRDP_TREEISH:?}" --recurse-submodules --shallow-submodules "${XRDP_REMOTE:?}" ./
 EOF
 RUN <<-EOF
 	./bootstrap
@@ -196,9 +188,7 @@ ARG XORGXRDP_TREEISH=v0.10.5
 ARG XORGXRDP_REMOTE=https://github.com/neutrinolabs/xorgxrdp.git
 WORKDIR /tmp/xorgxrdp/
 RUN <<-EOF
-	git clone "${XORGXRDP_REMOTE:?}" ./
-	git checkout "${XORGXRDP_TREEISH:?}"
-	git submodule update --init --recursive
+	git clone --depth 1 --revision="${XORGXRDP_TREEISH:?}" --recurse-submodules --shallow-submodules "${XORGXRDP_REMOTE:?}" ./
 EOF
 RUN <<-EOF
 	./bootstrap
@@ -221,9 +211,7 @@ RUN <<-EOF
 EOF
 WORKDIR /tmp/pulseaudio-module-xrdp/
 RUN <<-EOF
-	git clone "${XRDP_PULSEAUDIO_REMOTE:?}" ./
-	git checkout "${XRDP_PULSEAUDIO_TREEISH:?}"
-	git submodule update --init --recursive
+	git clone --depth 1 --revision="${XRDP_PULSEAUDIO_TREEISH:?}" --recurse-submodules --shallow-submodules "${XRDP_PULSEAUDIO_REMOTE:?}" ./
 EOF
 RUN <<-EOF
 	./bootstrap
@@ -241,9 +229,7 @@ ARG NOVNC_TREEISH=v1.7.0
 ARG NOVNC_REMOTE=https://github.com/novnc/noVNC.git
 WORKDIR /tmp/novnc/
 RUN <<-EOF
-	git clone "${NOVNC_REMOTE:?}" ./
-	git checkout "${NOVNC_TREEISH:?}"
-	git submodule update --init --recursive
+	git clone --depth 1 --revision="${NOVNC_TREEISH:?}" --recurse-submodules --shallow-submodules "${NOVNC_REMOTE:?}" ./
 EOF
 RUN <<-EOF
 	mkdir /opt/noVNC/
@@ -256,9 +242,7 @@ ARG WEBSOCKIFY_TREEISH=v0.13.0
 ARG WEBSOCKIFY_REMOTE=https://github.com/novnc/websockify.git
 WORKDIR /tmp/websockify/
 RUN <<-EOF
-	git clone "${WEBSOCKIFY_REMOTE:?}" ./
-	git checkout "${WEBSOCKIFY_TREEISH:?}"
-	git submodule update --init --recursive
+	git clone --depth 1 --revision="${WEBSOCKIFY_TREEISH:?}" --recurse-submodules --shallow-submodules "${WEBSOCKIFY_REMOTE:?}" ./
 EOF
 RUN <<-EOF
 	mkdir /opt/websockify/
