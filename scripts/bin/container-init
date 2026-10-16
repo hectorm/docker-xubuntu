@@ -41,7 +41,7 @@ if ! getent passwd "${UNPRIVILEGED_USER_UID:?}" >/dev/null 2>&1; then
 		--groups "${UNPRIVILEGED_USER_GROUPS?}" \
 		--shell "${UNPRIVILEGED_USER_SHELL:?}" \
 		--home-dir "${UNPRIVILEGED_USER_HOME:?}" \
-		--create-home \
+		--no-create-home \
 		"${UNPRIVILEGED_USER_NAME:?}"
 fi
 
