@@ -171,10 +171,7 @@ define push_image
 endef
 
 define push_cross_manifest
-	'$(DOCKER)' manifest create --amend '$(1)' '$(2)-amd64' '$(2)-arm64v8'
-	'$(DOCKER)' manifest annotate '$(1)' '$(2)-amd64' --os linux --arch amd64
-	'$(DOCKER)' manifest annotate '$(1)' '$(2)-arm64v8' --os linux --arch arm64 --variant v8
-	'$(DOCKER)' manifest push --purge '$(1)'
+	'$(DOCKER)' buildx imagetools create --tag '$(1)' '$(2)-amd64' '$(2)-arm64v8'
 endef
 
 .PHONY: push-native-image
