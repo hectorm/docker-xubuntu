@@ -559,7 +559,7 @@ EOF
 # Remove default user and group
 RUN <<-EOF
 	if id -u "${UNPRIVILEGED_USER_UID:?}" >/dev/null 2>&1; then userdel -f "$(id -nu "${UNPRIVILEGED_USER_UID:?}")"; fi
-	if id -g "${UNPRIVILEGED_USER_GID:?}" >/dev/null 2>&1; then groupdel "$(id -nu "${UNPRIVILEGED_USER_GID:?}")"; fi
+	if getent group "${UNPRIVILEGED_USER_GID:?}" >/dev/null 2>&1; then groupdel "$(getent group "${UNPRIVILEGED_USER_GID:?}" | cut -d: -f1)"; fi
 EOF
 
 # Create symlinks for xrdp RSA keys and TLS certificates
