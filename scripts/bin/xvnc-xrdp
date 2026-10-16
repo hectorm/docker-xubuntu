@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -eu
+
+# Adapt xrdp Xvnc arguments to TurboVNC
+n=$#
+while [ "${n:?}" -gt 0 ]; do
+	arg=$1; shift; n=$((n - 1))
+	case "${arg?}" in
+		-rfbport) if [ "${1-}" = '-1' ]; then shift; n=$((n - 1)); continue; fi ;;
+		-rfbunixmode) set -- "$@" "${arg:?}" "$(printf '%o' "${1:?}")"; shift; n=$((n - 1)); continue ;;
+	esac
+	set -- "$@" "${arg?}"
+done
+
+exec /opt/TurboVNC/bin/Xvnc "$@"

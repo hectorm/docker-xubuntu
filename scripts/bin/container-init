@@ -138,14 +138,6 @@ elif grep -qx 'param=-drinode' /opt/xrdp/etc/xrdp/sesman.ini; then
 	sed -i "/^param=-drinode\$/{n;s|^param=.*\$|param=${dri3_node:?}|}" /opt/xrdp/etc/xrdp/sesman.ini
 fi
 
-# Make Xvnc sessions listen on the IPv4 loopback address if the IPv6 one does not exist
-if ! grep -q '^0\{31\}1 .* lo$' /proc/net/if_inet6 2>/dev/null; then
-	printf '%s\n' '"::1" does not exist, Xvnc sessions will listen on "127.0.0.1"' 1>&2
-	if grep -qx 'param=-ipv6' /opt/xrdp/etc/xrdp/sesman.ini; then
-		sed -i '/^param=-ipv6$/d' /opt/xrdp/etc/xrdp/sesman.ini
-	fi
-fi
-
 # Enable xrdp bootstrap service
 if [ "${SERVICE_XRDP_BOOTSTRAP_ENABLED:-}" = 'true' ] && [ ! -L "${SVDIR:?}"/xrdp-bootstrap ]; then
 	ln -s /etc/sv/xrdp-bootstrap "${SVDIR:?}"
