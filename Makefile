@@ -35,6 +35,8 @@ IMAGE_ARM64V8_TARBALL := $(DISTDIR)/$(IMAGE_PROJECT).arm64v8.tzst
 export DOCKER_BUILDKIT := 1
 export BUILDKIT_PROGRESS := plain
 
+.DELETE_ON_ERROR:
+
 ##################################################
 ## "all" target
 ##################################################
@@ -103,7 +105,7 @@ $(IMAGE_ARM64V8_DOCKERFILE): $(DOCKERFILE_TEMPLATE)
 ##################################################
 
 define save_image
-	'$(DOCKER)' save '$(1)' | zstd -T0 > '$(2)'
+	s=$$( { { '$(DOCKER)' save '$(1)' && printf 'ok' >&3; } | zstd -T0 > '$(2)'; } 3>&1 ); [ "$${s:?}" = 'ok' ]
 endef
 
 .PHONY: save-native-image
